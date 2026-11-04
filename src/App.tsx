@@ -99,7 +99,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAF7F2] text-stone-800 font-sans">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden flex flex-col bg-[#FAF7F2] text-stone-800 font-sans">
       
       {/* Official Header with Language Switcher */}
       <Header
@@ -111,7 +111,7 @@ export default function App() {
         onOpenReceiptSearch={() => setIsReceiptSearchOpen(true)}
       />
 
-      <main className="flex-1">
+      <main className="flex-1 w-full max-w-full overflow-x-hidden">
         
         {/* Section 1: Hero */}
         <div id="home">

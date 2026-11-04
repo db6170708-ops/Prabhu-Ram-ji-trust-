@@ -58,10 +58,10 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-stone-200">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-stone-200 w-full max-w-full overflow-hidden">
       
       {/* Top Sacred Ribbon: Location, Routines & Official Social Channels */}
-      <div className="bg-[#0b382c] text-amber-200 text-xs py-2 px-3 sm:px-8 border-b border-emerald-950/40">
+      <div className="bg-[#0b382c] text-amber-200 text-xs py-2 px-3 sm:px-8 border-b border-emerald-950/40 w-full overflow-hidden">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-2.5">
           
           {/* Left: Location & Routine */}
@@ -166,31 +166,31 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Main Navigation Bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20 gap-4">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 w-full">
+        <div className="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-4 w-full">
           
           {/* Official Brand Logo */}
           <button 
             onClick={() => handleNavClick('home')}
-            className="flex items-center gap-3 text-left group cursor-pointer focus:outline-none"
+            className="flex items-center gap-2 sm:gap-3 text-left group cursor-pointer focus:outline-none min-w-0 flex-1 sm:flex-initial"
           >
-            <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-amber-500 shadow-md animate-sacred-glow transition-transform group-hover:scale-105 shrink-0 bg-[#08241b]">
+            <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-full overflow-hidden border-2 border-amber-500 shadow-md animate-sacred-glow transition-transform group-hover:scale-105 shrink-0 bg-[#08241b]">
               <img
                 src={TRUST_INFO.logoUrl}
                 alt="प्रभु रामजी ट्रस्ट लोगो"
                 className="w-full h-full object-cover"
               />
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-1.5">
-                <span className="font-heading text-xl sm:text-2xl font-bold tracking-tight text-[#0f4d3a]">
+                <span className="font-heading text-base sm:text-2xl font-bold tracking-tight text-[#0f4d3a] truncate">
                   {t.trustName}
                 </span>
                 <span className="hidden lg:inline text-[11px] font-bold px-2 py-0.5 rounded-full text-amber-900 bg-gradient-to-r from-amber-200 to-amber-300 border border-amber-400 shadow-xs">
                   {t.officialBadge}
                 </span>
               </div>
-              <p className="text-xs text-stone-600 font-medium">
+              <p className="text-[10px] sm:text-xs text-stone-600 font-medium truncate">
                 {t.tagline}
               </p>
             </div>
@@ -258,17 +258,18 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* Mobile Menu & Language Button */}
-          <div className="flex items-center gap-2 xl:hidden">
+          <div className="flex items-center gap-1.5 sm:gap-2 xl:hidden shrink-0">
             <button
               onClick={onToggleLanguage}
-              className="px-2 py-1 text-xs font-bold text-stone-700 bg-stone-100 rounded-lg border border-stone-300"
+              className="px-2 py-1 text-xs font-bold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg border border-stone-300 shrink-0"
+              title="भाषा बदलें (Hindi / English)"
             >
               {language === 'hi' ? 'EN' : 'हिं'}
             </button>
 
             <button
               onClick={() => handleNavClick('donate')}
-              className="inline-flex sm:hidden items-center gap-1 px-3 py-1.5 text-xs font-bold text-white bg-[#0f4d3a] rounded-lg shadow-sm"
+              className="inline-flex sm:hidden items-center gap-1 px-2.5 py-1 text-xs font-bold text-white bg-[#0f4d3a] rounded-lg shadow-sm shrink-0"
             >
               <HeartHandshake className="w-3.5 h-3.5 text-amber-300" />
               <span>दान</span>
@@ -276,7 +277,7 @@ export const Header: React.FC<HeaderProps> = ({
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-stone-700 hover:bg-stone-100 rounded-lg transition-colors"
+              className="p-1.5 text-stone-700 hover:bg-stone-100 rounded-lg transition-colors shrink-0"
               aria-label="Menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}

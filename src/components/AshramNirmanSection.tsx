@@ -40,12 +40,12 @@ export const AshramNirmanSection: React.FC<AshramNirmanSectionProps> = ({ onDona
   };
 
   return (
-    <section id="ashram-nirman" className="py-16 md:py-24 bg-gradient-to-b from-[#0a3124] via-[#0f4d3a] to-[#0a2f22] text-white relative overflow-hidden border-b-4 border-amber-500">
+    <section id="ashram-nirman" className="py-16 md:py-24 bg-gradient-to-b from-[#0a3124] via-[#0f4d3a] to-[#0a2f22] text-white relative overflow-hidden border-b-4 border-amber-500 w-full max-w-full">
       
       {/* Background Sacred Geometric Aura */}
       <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#f59e0b_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full max-w-full overflow-hidden">
         
         {/* Section Heading with Sacred Banner */}
         <div className="text-center max-w-3xl mx-auto mb-14">

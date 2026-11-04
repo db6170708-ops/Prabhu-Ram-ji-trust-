@@ -103,15 +103,15 @@ export const Hero: React.FC<HeroProps> = ({
   const activeWork = ASHRAM_ACTIVE_WORKS[currentWorkIndex];
 
   return (
-    <section className="relative bg-gradient-to-b from-[#08241b] via-[#0e4333] to-[#0a3125] text-white overflow-hidden py-12 md:py-20 border-b-4 border-amber-500">
+    <section className="relative bg-gradient-to-b from-[#08241b] via-[#0e4333] to-[#0a3125] text-white overflow-hidden py-12 md:py-20 border-b-4 border-amber-500 w-full max-w-full">
       
       {/* Background illumination */}
       <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#f59e0b_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full max-w-full overflow-hidden">
         
         {/* Top Brand Lockup with Logo - Perfectly Centered */}
-        <div className="flex flex-col items-center justify-center text-center space-y-3 mb-8 sm:mb-10">
+        <div className="flex flex-col items-center justify-center text-center space-y-3 mb-8 sm:mb-10 w-full max-w-full">
           {/* Circular Glowing Logo in Center */}
           <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-2 border-amber-400 shadow-2xl animate-sacred-glow bg-[#08241b] shrink-0">
             <img
@@ -140,7 +140,7 @@ export const Hero: React.FC<HeroProps> = ({
 
           {/* Animated Ashram Works Showcase - Below Logo, Title & Location */}
           <div 
-            className="w-full max-w-4xl mx-auto pt-4"
+            className="w-full max-w-4xl mx-auto pt-4 min-w-0 overflow-hidden"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
@@ -225,7 +225,7 @@ export const Hero: React.FC<HeroProps> = ({
             </div>
 
             {/* Continuous Smooth Streaming Marquee Ribbon */}
-            <div className="mt-2.5 overflow-hidden rounded-xl bg-black/50 border border-amber-500/40 py-1.5 px-3 backdrop-blur-xs text-xs text-amber-200/90 relative shadow-inner">
+            <div className="mt-2.5 overflow-hidden rounded-xl bg-black/50 border border-amber-500/40 py-1.5 px-3 backdrop-blur-xs text-xs text-amber-200/90 relative shadow-inner w-full max-w-full">
               <div className="animate-marquee whitespace-nowrap flex items-center gap-8">
                 {ASHRAM_ACTIVE_WORKS.concat(ASHRAM_ACTIVE_WORKS).map((w, index) => (
                   <div key={index} className="inline-flex items-center gap-2">

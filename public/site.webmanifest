@@ -1,0 +1,19 @@
+{
+  "name": "प्रभु रामजी ट्रस्ट",
+  "short_name": "प्रभु रामजी ट्रस्ट",
+  "icons": [
+    {
+      "src": "/favicon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#08241b",
+  "background_color": "#08241b",
+  "display": "standalone"
+}

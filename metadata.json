@@ -1,0 +1,6 @@
+{
+  "name": "प्रभु रामजी ट्रस्ट | आधिकारिक वेबसाइट",
+  "description": "प्रभु रामजी ट्रस्ट, ग्राम गलगाँव, सनावद, खरगोन (मध्य प्रदेश) की आधिकारिक वेबसाइट। गौसेवा, माँ नर्मदा परिक्रमा सेवा, अन्नदान एवं जनकल्याण।",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

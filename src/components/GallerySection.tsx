@@ -129,6 +129,10 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ photos, videos }
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"
                     loading="lazy"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/shri_ram_kodanda.jpg';
+                    }}
                   />
                   <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <span className="text-white text-xs font-bold px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-xs flex items-center gap-1.5">
@@ -271,6 +275,10 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ photos, videos }
                 alt={previewPhoto.title}
                 className="w-full h-full object-contain"
                 referrerPolicy="no-referrer"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = '/shri_ram_kodanda.jpg';
+                }}
               />
             </div>
 

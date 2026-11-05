@@ -128,9 +128,12 @@ export const Hero: React.FC<HeroProps> = ({
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
           </div>
 
-          {/* Centered Trust Name */}
+          {/* Centered Trust Name with SEO Keywords */}
           <h1 className="font-heading text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-amber-50 leading-tight">
-            {t.trustName}
+            <span>{t.trustName}</span>
+            <span className="block text-xs sm:text-sm md:text-base font-sans font-semibold tracking-wider text-amber-300/90 mt-1 uppercase">
+              Prabhu Ram Ji Trust · Official Website · Ramji Trust
+            </span>
           </h1>
 
           {/* Centered Subtitle / Location */}
@@ -323,6 +326,10 @@ export const Hero: React.FC<HeroProps> = ({
                   alt="कोदण्डधारी मर्यादा पुरुषोत्तम प्रभु श्री रामजी - प्रभु रामजी ट्रस्ट ग्राम गलगाँव"
                   className="w-full h-auto object-cover max-h-[500px] group-hover:scale-105 transition-transform duration-700"
                   loading="eager"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = '/public/shri_ram_kodanda.jpg';
+                  }}
                 />
 
                 <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/95 via-black/75 to-transparent p-4 sm:p-5 text-center">

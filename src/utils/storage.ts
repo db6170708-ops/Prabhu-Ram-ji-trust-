@@ -27,7 +27,31 @@ export const StorageService = {
   getPhotos: (): GalleryPhoto[] => {
     try {
       const data = localStorage.getItem(KEYS.PHOTOS);
-      return data ? JSON.parse(data) : DEFAULT_PHOTOS;
+      if (!data) return DEFAULT_PHOTOS;
+      const parsed: GalleryPhoto[] = JSON.parse(data);
+      // Auto-migrate any legacy image paths or outdated Ram photo URLs in client localStorage
+      let hasMigration = false;
+      const migrated = parsed.map((photo) => {
+        if (
+          photo.id === 'p_ram_darbar' || 
+          photo.imageUrl.includes('shri_ram_devotional') ||
+          photo.imageUrl.includes('shri_ram_narmada')
+        ) {
+          hasMigration = true;
+          return {
+            ...photo,
+            title: 'कोदण्डधारी प्रभु श्री रामजी',
+            imageUrl: '/shri_ram_kodanda.jpg',
+            description: 'मर्यादा पुरुषोत्तम प्रभु श्री रामजी का पावन विग्रह जिनकी कृपा से समस्त सेवा प्रकल्प संचालित हैं।'
+          };
+        }
+        return photo;
+      });
+
+      if (hasMigration) {
+        localStorage.setItem(KEYS.PHOTOS, JSON.stringify(migrated));
+      }
+      return migrated;
     } catch {
       return DEFAULT_PHOTOS;
     }

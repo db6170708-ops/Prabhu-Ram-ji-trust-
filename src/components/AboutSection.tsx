@@ -30,6 +30,13 @@ export const AboutSection: React.FC = () => {
           <p className="text-stone-700 mt-5 text-base sm:text-lg font-medium leading-relaxed italic text-amber-950 bg-amber-50/70 p-4 rounded-2xl border border-amber-200">
             “{ABOUT_DECLARATION.mainHeader}”
           </p>
+
+          {/* Natural SEO On-Page Introduction */}
+          <div className="mt-4 p-4 bg-emerald-50/80 rounded-2xl border border-emerald-300/80 text-emerald-950 text-xs sm:text-sm font-medium leading-relaxed">
+            <p>
+              Aap sabhi ka <strong className="text-emerald-900 font-bold">Prabhu Ram ji trust</strong> (प्रभु रामजी ट्रस्ट) mein swagat hai. <strong className="text-emerald-900 font-bold">Ramji trust</strong> ka mukhya uddeshya dharmik, gauseva aur samajik sewa hai. <strong className="text-emerald-900 font-bold">Trust Prabhu Ram ji</strong> se judne ke liye humse sampark karein.
+            </p>
+          </div>
         </div>
 
         {/* Narrative & Values Grid */}

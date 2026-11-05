@@ -45,6 +45,7 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
   // UI status
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
   const [generatedReceipt, setGeneratedReceipt] = useState<DonationReceipt | null>(null);
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
 
@@ -116,16 +117,17 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
 
   const handleOnlineDonationConfirm = (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError(null);
     if (!donorName.trim()) {
-      alert('कृपया दानदाता का नाम दर्ज करें।');
+      setFormError('कृपया दानदाता का नाम दर्ज करें।');
       return;
     }
     if (!donorMobile.trim() || donorMobile.length < 10) {
-      alert('कृपया 10 अंकों का वैध मोबाइल नंबर दर्ज करें।');
+      setFormError('कृपया 10 अंकों का वैध मोबाइल नंबर दर्ज करें।');
       return;
     }
     if (currentAmount <= 0) {
-      alert('कृपया वैध दान राशि चुनें या दर्ज करें।');
+      setFormError('कृपया वैध दान राशि चुनें या दर्ज करें।');
       return;
     }
 
@@ -539,7 +541,13 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
                 </div>
 
                 {/* Submit / Generate Receipt Action */}
-                <div className="pt-4">
+                <div className="pt-4 space-y-2">
+                  {formError && (
+                    <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm font-semibold rounded-xl text-center animate-fadeIn">
+                      ⚠️ {formError}
+                    </div>
+                  )}
+
                   <button
                     type="submit"
                     disabled={isSubmitting}

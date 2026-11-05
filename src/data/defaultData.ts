@@ -277,11 +277,11 @@ export const DEFAULT_PHOTOS: GalleryPhoto[] = [
   },
   {
     id: "p_ram_darbar",
-    title: "प्रभु श्री रामजी का दिव्य विग्रह",
+    title: "कोदण्डधारी प्रभु श्री रामजी",
     category: "all",
-    imageUrl: "/src/assets/images/shri_ram_devotional_1793755165840.jpg",
+    imageUrl: "/shri_ram_kodanda.jpg",
     date: "2026-10-15",
-    description: "प्रभु श्री रामजी की पावन प्रेरणा जिससे सभी सेवा प्रकल्प संचालित हो रहे हैं।"
+    description: "मर्यादा पुरुषोत्तम प्रभु श्री रामजी का पावन विग्रह जिनकी कृपा से समस्त सेवा प्रकल्प संचालित हैं।"
   }
 ];
 

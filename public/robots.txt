@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Googlebot & Googlebot-Image specific allowance for favicons and media
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+Sitemap: https://prabhuramjitrustram.ai.studio/sitemap.xml

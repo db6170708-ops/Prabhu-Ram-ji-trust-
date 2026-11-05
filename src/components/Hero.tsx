@@ -319,8 +319,8 @@ export const Hero: React.FC<HeroProps> = ({
               
               <div className="relative rounded-3xl overflow-hidden shadow-2xl border-2 border-amber-300 bg-stone-900 group">
                 <img
-                  src="/src/assets/images/shri_ram_narmada_1793758371472.jpg"
-                  alt="माँ नर्मदा पावन तट पर प्रभु श्री रामजी का दिव्य विग्रह - प्रभु रामजी ट्रस्ट ग्राम गलगाँव"
+                  src="/shri_ram_kodanda.jpg"
+                  alt="कोदण्डधारी मर्यादा पुरुषोत्तम प्रभु श्री रामजी - प्रभु रामजी ट्रस्ट ग्राम गलगाँव"
                   className="w-full h-auto object-cover max-h-[500px] group-hover:scale-105 transition-transform duration-700"
                   loading="eager"
                 />
@@ -328,11 +328,11 @@ export const Hero: React.FC<HeroProps> = ({
                 <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/95 via-black/75 to-transparent p-4 sm:p-5 text-center">
                   <div className="text-amber-300 font-heading text-lg sm:text-xl font-bold flex items-center justify-center gap-2">
                     <Sparkles className="w-4 h-4 text-amber-400" />
-                    <span>॥ माँ नर्मदा पावन तट पर प्रभु श्री राम ॥</span>
+                    <span>॥ कोदण्डधारी प्रभु श्री राम ॥</span>
                     <Sparkles className="w-4 h-4 text-amber-400" />
                   </div>
                   <p className="text-xs text-stone-200 mt-1">
-                    ग्राम गलगाँव (सनावद) · माँ नर्मदा के पावन प्रवाह व प्रभु रामजी के आदर्शों पर निष्काम जनसेवा
+                    ग्राम गलगाँव (सनावद, खरगोन) · माँ नर्मदा के पावन प्रवाह व प्रभु रामजी के आदर्शों पर निष्काम जनसेवा
                   </p>
                 </div>
               </div>

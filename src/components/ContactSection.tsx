@@ -22,13 +22,15 @@ export const ContactSection: React.FC = () => {
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [contactError, setContactError] = useState<string | null>(null);
   const [mapView, setMapView] = useState<'k' | 'h' | 'm'>('k'); // Default to Satellite ('k')
   const [zoomLevel, setZoomLevel] = useState<number>(17);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setContactError(null);
     if (!name.trim() || !mobile.trim() || !message.trim()) {
-      alert('कृपया सभी आवश्यक जानकारी दर्ज करें।');
+      setContactError('कृपया सभी आवश्यक जानकारी (नाम, मोबाइल नंबर एवं संदेश) दर्ज करें।');
       return;
     }
 
@@ -331,6 +333,12 @@ export const ContactSection: React.FC = () => {
                       className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0f4d3a] focus:bg-white resize-none"
                     />
                   </div>
+
+                  {contactError && (
+                    <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm font-semibold rounded-xl text-center animate-fadeIn">
+                      ⚠️ {contactError}
+                    </div>
+                  )}
 
                   <button
                     type="submit"

@@ -16,7 +16,8 @@ import {
   Sparkles,
   ArrowRight,
   Maximize2,
-  Zap
+  Zap,
+  FileText
 } from 'lucide-react';
 
 interface DonationSystemProps {
@@ -356,6 +357,28 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
               </div>
             </div>
 
+            {/* Direct Step-by-Step Guide for UPI & Bank Donors to get Receipt ID */}
+            <div className="bg-emerald-50/90 rounded-3xl p-5 border border-emerald-200 space-y-2.5">
+              <div className="flex items-center gap-2 text-emerald-950 font-bold text-sm">
+                <FileText className="w-4 h-4 text-emerald-700" />
+                <span>UPI या बैंक से भेजने के बाद रसीद ID कैसे प्राप्त करें?</span>
+              </div>
+              <ol className="text-xs text-emerald-900 space-y-2 leading-relaxed">
+                <li className="flex items-start gap-2">
+                  <span className="w-5 h-5 rounded-full bg-emerald-200 text-emerald-900 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">1</span>
+                  <span>PhonePe QR या बैंक में राशि भेजने के बाद दाएँ तरफ दिए फॉर्म में अपना <strong>नाम, मोबाइल नंबर</strong> और <strong>राशि</strong> दर्ज करें।</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-5 h-5 rounded-full bg-emerald-200 text-emerald-900 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">2</span>
+                  <span><strong>"दान विवरण जमा करें व रसीद प्राप्त करें"</strong> पर क्लिक करते ही आपकी आधिकारिक <strong>रसीद संख्या (PRT-2026-XXXX)</strong> तुरंत स्क्रीन पर जनरेट हो जाएगी।</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-5 h-5 rounded-full bg-emerald-200 text-emerald-900 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">3</span>
+                  <span>अथवा सीधे WhatsApp (<a href={TRUST_INFO.whatsappContactUrl} target="_blank" rel="noopener noreferrer" className="font-bold underline text-emerald-950 hover:text-emerald-800">{TRUST_INFO.phone}</a>) पर पेमेंट स्क्रीनशॉट भेजकर भी अपनी रसीद संख्या मँगवा सकते हैं।</span>
+                </li>
+              </ol>
+            </div>
+
           </div>
 
           {/* Right Column: Interactive Donation Form with Cause & Instant Receipt */}
@@ -581,8 +604,8 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
             <div id="printable-receipt" className="space-y-6">
               
               {/* Header with Official Logo */}
-              <div className="text-center pb-4 border-b-2 border-stone-800">
-                <div className="w-20 h-20 mx-auto rounded-full overflow-hidden border-2 border-amber-500 shadow mb-2 bg-[#08241b]">
+              <div className="receipt-header text-center pb-4 border-b-2 border-stone-800">
+                <div className="receipt-logo w-20 h-20 mx-auto rounded-full overflow-hidden border-2 border-amber-500 shadow mb-2 bg-[#08241b]">
                   <img src={TRUST_INFO.logoUrl} alt="Logo" className="w-full h-full object-cover" />
                 </div>
                 <div className="text-xs font-bold text-amber-700 uppercase tracking-widest">
@@ -597,7 +620,7 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
                 <div className="text-xs text-stone-600 mt-1">
                   वेबसाइट: <span className="font-mono font-semibold text-emerald-800">https://prabhuramjitrustram.ai.studio/</span> | हेल्पलाइन: {TRUST_INFO.phone}
                 </div>
-                <div className="inline-block mt-2 px-3 py-0.5 rounded-full bg-emerald-50 border border-emerald-300 text-xs font-bold text-emerald-900">
+                <div className="receipt-badge inline-block mt-2 px-3 py-0.5 rounded-full bg-emerald-50 border border-emerald-300 text-xs font-bold text-emerald-900">
                   आधिकारिक दान पावती रसीद (Official Donation Receipt)
                 </div>
               </div>
@@ -654,16 +677,25 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
                 <strong>पारदर्शिता सूचना:</strong> प्रभु रामजी ट्रस्ट द्वारा प्राप्त समस्त दान राशि का उपयोग नियमानुसार गौसेवा, प्रतिदिन चाय सेवा, शनिवार शाम भंडारा व आश्रम निर्माण में किया जाता है। ट्रस्ट का 12AB एवं 80G पंजीकरण आयकर विभाग में प्रक्रियाधीन है।
               </div>
 
-              {/* Signatures */}
-              <div className="pt-4 flex items-end justify-between text-xs">
-                <div className="text-stone-500">
-                  <div>ट्रस्ट मुहर: प्रभु रामजी ट्रस्ट</div>
-                  <div className="text-[10px] text-stone-400">ग्राम गलगाँव (सनावद, खरगोन)</div>
+              {/* Signatures & Official Stamp */}
+              <div className="receipt-signatures pt-4 flex items-end justify-between text-xs">
+                <div className="text-center">
+                  <div className="receipt-stamp w-16 h-16 mx-auto rounded-full border-2 border-dashed border-emerald-700/60 flex items-center justify-center p-1 text-[10px] text-emerald-800 font-bold leading-tight">
+                    प्रभु रामजी ट्रस्ट<br />गलगाँव
+                  </div>
+                  <span className="stamp-label text-[10px] text-stone-500 mt-1 block">आधिकारिक मुहर</span>
                 </div>
-                <div className="text-right">
-                  <div className="font-heading font-bold text-stone-800 text-sm">गुलाबचंद / दिनेश जी</div>
-                  <div className="text-[11px] text-stone-500">अधिकृत हस्ताक्षरकर्ता (Authorized Signatory)</div>
+
+                <div className="signatory-block text-right text-stone-700">
+                  <div className="signatory-name font-serif italic font-bold text-stone-800 mb-1">दिनेश बिड़ला / गुलाबचंद</div>
+                  <div className="signatory-role text-[11px] font-semibold text-stone-900">अधिकृत हस्ताक्षरकर्ता (Authorized Signatory)</div>
+                  <div className="signatory-org text-[10px] text-stone-500">प्रभु रामजी ट्रस्ट, गलगाँव (सनावद)</div>
                 </div>
+              </div>
+
+              {/* Dual Verification Security Notice for Future Downloads */}
+              <div className="mt-4 bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-xs text-emerald-950 leading-relaxed no-print">
+                🔒 <strong>सुरक्षित रसीद सूचना:</strong> भविष्य में वेबसाइट पर रसीद खोजने के लिए अपना 10 अंकों का मोबाइल नंबर एवं यह रसीद क्रमांक <strong>"{generatedReceipt.receiptNo}"</strong> सुरक्षित रखें। गोपनीयता सुरक्षा हेतु दोनों विवरण दर्ज करने पर ही रसीद प्राप्त होगी।
               </div>
 
             </div>

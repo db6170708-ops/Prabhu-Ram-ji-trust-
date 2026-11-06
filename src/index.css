@@ -148,25 +148,239 @@
   animation: slideUpFade 0.4s ease-out forwards;
 }
 
-/* Custom print media styles for Donation Receipt */
+/* ==========================================================================
+   Professional Print Media Styles for Donation Receipt & Official Stamp
+   ========================================================================== */
+@page {
+  size: A4 portrait;
+  margin: 10mm 12mm 10mm 12mm;
+}
+
 @media print {
+  /* Enforce exact color rendering for print/PDF (preserves logo, seals, borders) */
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  html, body {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100% !important;
+    background: #ffffff !important;
+    color: #1c1917 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* Hide all regular web page chrome, navigation, buttons, and floating widgets */
   body * {
-    visibility: hidden;
+    visibility: hidden !important;
   }
-  #printable-receipt, #printable-receipt * {
-    visibility: visible;
-  }
-  #printable-receipt {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    margin: 0;
-    padding: 24px;
-    background: white !important;
-    color: black !important;
-  }
-  .no-print {
+
+  .no-print,
+  .no-print *,
+  header,
+  footer,
+  nav,
+  button,
+  .fixed,
+  .sticky {
     display: none !important;
+    visibility: hidden !important;
+  }
+
+  /* Make only the donation receipt container visible */
+  #printable-receipt,
+  #printable-receipt * {
+    visibility: visible !important;
+  }
+
+  /* Container page layout for the receipt */
+  #printable-receipt {
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 24px 28px !important;
+    box-sizing: border-box !important;
+    background-color: #ffffff !important;
+    border: 3px double #b45309 !important; /* Elegant sacred double border in gold/bronze */
+    border-radius: 12px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  /* Professional Header Section */
+  #printable-receipt .receipt-header,
+  #printable-receipt > div:first-child {
+    display: block !important;
+    text-align: center !important;
+    padding-bottom: 14px !important;
+    margin-bottom: 16px !important;
+    border-bottom: 2px solid #0f4d3a !important; /* Deep forest green accent border */
+  }
+
+  /* Official Trust Logo in Print */
+  #printable-receipt .receipt-logo,
+  #printable-receipt .receipt-header img {
+    width: 72px !important;
+    height: 72px !important;
+    max-width: 72px !important;
+    max-height: 72px !important;
+    object-fit: cover !important;
+    border-radius: 9999px !important;
+    border: 2px solid #b45309 !important; /* Golden emblem ring */
+    background: #08241b !important;
+    margin: 0 auto 8px auto !important;
+    display: block !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  /* Sacred Invocation Text */
+  #printable-receipt .receipt-header .uppercase,
+  #printable-receipt .receipt-header [class*="tracking-widest"] {
+    font-size: 10.5pt !important;
+    font-weight: 700 !important;
+    color: #b45309 !important;
+    letter-spacing: 0.08em !important;
+    margin-bottom: 2px !important;
+  }
+
+  /* Trust Name Heading */
+  #printable-receipt h2,
+  #printable-receipt h3,
+  #printable-receipt .font-heading {
+    font-size: 20pt !important;
+    line-height: 1.2 !important;
+    font-weight: 800 !important;
+    color: #0f4d3a !important; /* Deep sacred green */
+    margin: 4px 0 !important;
+  }
+
+  /* Trust Address & Contact Information */
+  #printable-receipt .receipt-header p,
+  #printable-receipt .receipt-header div {
+    font-size: 9.5pt !important;
+    line-height: 1.4 !important;
+    color: #44403c !important;
+  }
+
+  /* Official Digital Receipt Badge */
+  #printable-receipt .receipt-badge,
+  #printable-receipt .receipt-header [class*="bg-emerald-50"] {
+    display: inline-block !important;
+    background-color: #ecfdf5 !important;
+    border: 1.5px solid #059669 !important;
+    color: #064e3b !important;
+    font-weight: 700 !important;
+    font-size: 9pt !important;
+    padding: 3px 14px !important;
+    border-radius: 9999px !important;
+    margin-top: 6px !important;
+  }
+
+  /* Receipt Details Grid */
+  #printable-receipt .grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px 18px !important;
+    margin-bottom: 14px !important;
+    font-size: 10pt !important;
+  }
+
+  #printable-receipt strong {
+    color: #0c0a09 !important;
+    font-weight: 700 !important;
+  }
+
+  /* Amount Box Highlight */
+  #printable-receipt [class*="border-amber-300"] {
+    background-color: #fefce8 !important; /* Soft warm parchment tone */
+    border: 1.5px solid #d97706 !important;
+    border-radius: 10px !important;
+    padding: 12px 18px !important;
+    margin: 12px 0 !important;
+  }
+
+  #printable-receipt [class*="font-mono"],
+  #printable-receipt [class*="text-xl"],
+  #printable-receipt [class*="text-2xl"] {
+    color: #0f4d3a !important;
+    font-size: 18pt !important;
+    font-weight: 800 !important;
+  }
+
+  /* Official Stamp & Signatures Area */
+  #printable-receipt .receipt-signatures,
+  #printable-receipt div:has(> .receipt-stamp),
+  #printable-receipt > div:last-child {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-end !important;
+    margin-top: 18px !important;
+    padding-top: 14px !important;
+    border-top: 1px dashed #d6d3d1 !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Official Circular Stamp */
+  #printable-receipt .receipt-stamp,
+  #printable-receipt [class*="border-dashed"][class*="rounded-full"] {
+    width: 78px !important;
+    height: 78px !important;
+    border-radius: 9999px !important;
+    border: 2px dashed #047857 !important;
+    background-color: #f0fdf4 !important;
+    color: #065f46 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    font-size: 8.5pt !important;
+    font-weight: 800 !important;
+    line-height: 1.25 !important;
+    margin: 0 auto 4px auto !important;
+    box-shadow: inset 0 0 0 2px rgba(4, 120, 87, 0.15) !important;
+  }
+
+  #printable-receipt .stamp-label {
+    font-size: 8pt !important;
+    color: #57534e !important;
+    font-weight: 600 !important;
+    text-align: center !important;
+    display: block !important;
+  }
+
+  /* Authorized Signatory Block */
+  #printable-receipt .signatory-block {
+    text-align: right !important;
+  }
+
+  #printable-receipt .signatory-name {
+    font-size: 12pt !important;
+    font-weight: 700 !important;
+    font-style: italic !important;
+    color: #1c1917 !important;
+    margin-bottom: 2px !important;
+  }
+
+  #printable-receipt .signatory-role {
+    font-size: 8.5pt !important;
+    font-weight: 600 !important;
+    color: #292524 !important;
+  }
+
+  #printable-receipt .signatory-org {
+    font-size: 8pt !important;
+    color: #78716c !important;
   }
 }
+

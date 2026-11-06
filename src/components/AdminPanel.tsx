@@ -20,8 +20,13 @@ import {
   Eye,
   EyeOff,
   ShieldCheck,
-  RefreshCw
+  RefreshCw,
+  Receipt,
+  Printer,
+  Search,
+  FileDown
 } from 'lucide-react';
+import { TRUST_INFO } from '../data/defaultData';
 
 interface AdminPanelProps {
   isOpen: boolean;
@@ -33,7 +38,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [activeTab, setActiveTab] = useState<'news' | 'photos' | 'videos' | 'transparency' | 'receipts' | 'backup'>('photos');
+  const [activeTab, setActiveTab] = useState<'news' | 'photos' | 'videos' | 'transparency' | 'receipts' | 'backup'>('receipts');
   const [statusMessage, setStatusMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
 
   // Active in-memory state synced with storage
@@ -41,6 +46,22 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
   const [videosList, setVideosList] = useState<GalleryVideo[]>([]);
   const [newsList, setNewsList] = useState<NewsItem[]>([]);
   const [transparencyList, setTransparencyList] = useState<TransparencyRecord[]>([]);
+  const [receiptsList, setReceiptsList] = useState<DonationReceipt[]>([]);
+
+  // Donation Receipts Admin state
+  const [adminReceiptSearch, setAdminReceiptSearch] = useState('');
+  const [adminReceiptCauseFilter, setAdminReceiptCauseFilter] = useState('all');
+  const [isAddManualReceiptOpen, setIsAddManualReceiptOpen] = useState(false);
+  const [selectedReceiptForPrint, setSelectedReceiptForPrint] = useState<DonationReceipt | null>(null);
+
+  // Manual Receipt Form State
+  const [manualDonorName, setManualDonorName] = useState('');
+  const [manualDonorMobile, setManualDonorMobile] = useState('');
+  const [manualDonorAmount, setManualDonorAmount] = useState('');
+  const [manualDonorCause, setManualDonorCause] = useState('आश्रम एवं मंदिर निर्माण सहयोग');
+  const [manualDonorPaymentMode, setManualDonorPaymentMode] = useState('नकद (Cash Office)');
+  const [manualDonorPan, setManualDonorPan] = useState('');
+  const [manualDonorRef, setManualDonorRef] = useState('');
 
   // Form states - Photos
   const [photoTitle, setPhotoTitle] = useState('');
@@ -84,6 +105,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
       setVideosList(StorageService.getVideos());
       setNewsList(StorageService.getNews());
       setTransparencyList(StorageService.getTransparency());
+      setReceiptsList(StorageService.getReceipts());
     }
   }, [isOpen, isAuthenticated]);
 
@@ -353,6 +375,95 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
     showStatus('मासिक बहीखाता रिकॉर्ड दर्ज हुआ!', 'success');
   };
 
+  // 6.5 Donation Receipts Management Handlers
+  const handleAddManualReceipt = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!manualDonorName.trim()) {
+      showStatus('कृपया दानदाता का नाम दर्ज करें।', 'error');
+      return;
+    }
+    const amt = parseInt(manualDonorAmount, 10);
+    if (!amt || amt <= 0) {
+      showStatus('कृपया वैध दान राशि दर्ज करें।', 'error');
+      return;
+    }
+    const cleanPhone = manualDonorMobile.trim().replace(/[^0-9]/g, '');
+    if (cleanPhone.length < 10) {
+      showStatus('कृपया 10 अंकों का वैध मोबाइल नंबर दर्ज करें।', 'error');
+      return;
+    }
+
+    const receiptNo = `PRT-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+    const newReceipt: DonationReceipt = {
+      receiptNo,
+      donorName: manualDonorName.trim(),
+      mobile: manualDonorMobile.trim(),
+      pan: manualDonorPan.trim().toUpperCase() || undefined,
+      amount: amt,
+      cause: manualDonorCause,
+      date: new Date().toLocaleDateString('hi-IN', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }),
+      paymentMode: manualDonorPaymentMode,
+      transactionRef: manualDonorRef.trim() || `OFFICE/${Date.now().toString().slice(-6)}`
+    };
+
+    StorageService.saveReceipt(newReceipt);
+    const updated = StorageService.getReceipts();
+    setReceiptsList(updated);
+    onDataUpdated();
+
+    // Reset form
+    setManualDonorName('');
+    setManualDonorMobile('');
+    setManualDonorAmount('');
+    setManualDonorPan('');
+    setManualDonorRef('');
+    setIsAddManualReceiptOpen(false);
+    showStatus(`रसीद संख्या ${receiptNo} (${newReceipt.donorName} - ₹${amt}) सफलतापूर्वक दर्ज हुई!`, 'success');
+  };
+
+  const handleDeleteReceipt = (receiptNo: string, donorName: string) => {
+    const updated = StorageService.deleteReceipt(receiptNo);
+    setReceiptsList(updated);
+    onDataUpdated();
+    showStatus(`रसीद संख्या ${receiptNo} (${donorName}) सफलतापूर्वक हटा दी गई।`, 'success');
+  };
+
+  const handleExportReceiptsCsv = () => {
+    const receipts = StorageService.getReceipts();
+    if (receipts.length === 0) {
+      showStatus('कोई दान रसीद उपलब्ध नहीं है।', 'error');
+      return;
+    }
+
+    const headers = ['रसीद संख्या (Receipt No)', 'दिनांक (Date)', 'दानदाता का नाम (Donor Name)', 'मोबाइल नंबर (Mobile)', 'राशि (Amount INR)', 'सहयोग प्रकल्प (Cause)', 'भुगतान माध्यम (Mode)', 'पैन नंबर (PAN)', 'संदर्भ (Ref)'];
+    const rows = receipts.map(r => [
+      `"${r.receiptNo}"`,
+      `"${r.date}"`,
+      `"${r.donorName.replace(/"/g, '""')}"`,
+      `"${r.mobile}"`,
+      r.amount,
+      `"${r.cause.replace(/"/g, '""')}"`,
+      `"${r.paymentMode.replace(/"/g, '""')}"`,
+      `"${r.pan || ''}"`,
+      `"${r.transactionRef || ''}"`
+    ]);
+
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `prabhu_ramji_trust_donation_receipts_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showStatus('सभी दान रसीदों की Excel/CSV फ़ाइल डाउनलोड हो गई!', 'success');
+  };
+
   // 7. Security Password change
   const handleChangePassword = (e: React.FormEvent) => {
     e.preventDefault();
@@ -480,6 +591,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
                     setPhotosList(StorageService.getPhotos());
                     setVideosList(StorageService.getVideos());
                     setNewsList(StorageService.getNews());
+                    setTransparencyList(StorageService.getTransparency());
+                    setReceiptsList(StorageService.getReceipts());
                     showStatus('डेटा रीफ्रेश किया गया।', 'success');
                   }}
                   className="p-1.5 text-stone-600 hover:text-stone-900 bg-stone-100 rounded-lg text-xs flex items-center gap-1"
@@ -507,6 +620,16 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
 
             {/* Navigation Tabs */}
             <div className="flex flex-wrap gap-1.5 my-3 border-b border-stone-200 pb-2 shrink-0">
+              <button
+                onClick={() => setActiveTab('receipts')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer ${
+                  activeTab === 'receipts' ? 'bg-[#0f4d3a] text-white shadow-xs ring-1 ring-amber-400' : 'bg-emerald-50 text-emerald-950 hover:bg-emerald-100 border border-emerald-300'
+                }`}
+              >
+                <Receipt className="w-3.5 h-3.5 text-amber-500" />
+                <span>दान रिकॉर्ड ({receiptsList.length})</span>
+              </button>
+
               <button
                 onClick={() => setActiveTab('photos')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer ${
@@ -561,6 +684,349 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
             {/* TAB CONTENTS - Scrollable Container */}
             <div className="flex-1 overflow-y-auto pr-1 pb-4">
               
+              {/* TAB: DONATION RECEIPTS MANAGEMENT */}
+              {activeTab === 'receipts' && (
+                <div className="space-y-6">
+                  
+                  {/* Top Financial KPI Metric Cards */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div className="bg-emerald-50/80 p-3.5 rounded-2xl border border-emerald-200">
+                      <span className="text-[11px] font-bold text-emerald-800 uppercase block">कुल रसीदें</span>
+                      <span className="text-xl sm:text-2xl font-bold font-mono text-[#0f4d3a]">
+                        {receiptsList.length}
+                      </span>
+                    </div>
+
+                    <div className="bg-amber-50/80 p-3.5 rounded-2xl border border-amber-200">
+                      <span className="text-[11px] font-bold text-amber-800 uppercase block">कुल प्राप्त दान</span>
+                      <span className="text-xl sm:text-2xl font-bold font-mono text-[#0f4d3a]">
+                        ₹{receiptsList.reduce((acc, r) => acc + (Number(r.amount) || 0), 0).toLocaleString('en-IN')}
+                      </span>
+                    </div>
+
+                    <div className="bg-stone-50 p-3.5 rounded-2xl border border-stone-200">
+                      <span className="text-[11px] font-bold text-stone-600 uppercase block">आश्रम निर्माण</span>
+                      <span className="text-base sm:text-lg font-bold font-mono text-stone-900">
+                        ₹{receiptsList.filter(r => r.cause.includes('आश्रम') || r.cause.includes('निर्माण')).reduce((acc, r) => acc + (Number(r.amount) || 0), 0).toLocaleString('en-IN')}
+                      </span>
+                    </div>
+
+                    <div className="bg-stone-50 p-3.5 rounded-2xl border border-stone-200">
+                      <span className="text-[11px] font-bold text-stone-600 uppercase block">भंडारा व गौसेवा</span>
+                      <span className="text-base sm:text-lg font-bold font-mono text-stone-900">
+                        ₹{receiptsList.filter(r => !r.cause.includes('आश्रम')).reduce((acc, r) => acc + (Number(r.amount) || 0), 0).toLocaleString('en-IN')}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Actions & Filters Bar */}
+                  <div className="bg-stone-50 p-3.5 rounded-2xl border border-stone-200 space-y-3">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+                      <div className="relative flex-1">
+                        <Search className="absolute inset-y-0 left-3 my-auto w-3.5 h-3.5 text-stone-400" />
+                        <input
+                          type="text"
+                          placeholder="नाम, मोबाइल नंबर या रसीद क्र. खोजें..."
+                          value={adminReceiptSearch}
+                          onChange={(e) => setAdminReceiptSearch(e.target.value)}
+                          className="w-full pl-9 pr-3 py-2 bg-white border border-stone-300 rounded-xl text-xs focus:ring-1 focus:ring-[#0f4d3a]"
+                        />
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-2">
+                        <select
+                          value={adminReceiptCauseFilter}
+                          onChange={(e) => setAdminReceiptCauseFilter(e.target.value)}
+                          className="px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs"
+                        >
+                          <option value="all">सभी प्रकल्प (All Causes)</option>
+                          <option value="आश्रम">आश्रम व मंदिर निर्माण</option>
+                          <option value="भंडारा">शनिवार भंडारा महाप्रसाद</option>
+                          <option value="चाय">प्रतिदिन चाय सेवा</option>
+                          <option value="गौसेवा">गौसेवा व चारा</option>
+                        </select>
+
+                        <button
+                          type="button"
+                          onClick={() => setIsAddManualReceiptOpen(!isAddManualReceiptOpen)}
+                          className="px-3.5 py-2 bg-[#0f4d3a] hover:bg-[#125843] text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer shrink-0"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>{isAddManualReceiptOpen ? 'फॉर्म बंद करें' : 'ऑफ़िस दान रसीद बनाएं'}</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={handleExportReceiptsCsv}
+                          className="px-3 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold text-xs rounded-xl border border-stone-300 transition-colors flex items-center gap-1.5 cursor-pointer shrink-0"
+                          title="Excel / CSV डाउनलोड करें"
+                        >
+                          <FileDown className="w-3.5 h-3.5 text-emerald-700" />
+                          <span className="hidden sm:inline">Excel/CSV</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Manual Receipt Form (when open) */}
+                    {isAddManualReceiptOpen && (
+                      <form onSubmit={handleAddManualReceipt} className="mt-3 pt-3 border-t border-stone-200 bg-white p-4 rounded-xl border border-emerald-300 space-y-3 animate-in fade-in">
+                        <div className="flex items-center justify-between pb-1">
+                          <h5 className="font-heading font-bold text-sm text-[#0f4d3a] flex items-center gap-1.5">
+                            <Plus className="w-4 h-4 text-emerald-600" />
+                            <span>कार्यालय में प्राप्त दान की नई रसीद बनाएं (Manual Entry)</span>
+                          </h5>
+                          <span className="text-[11px] text-stone-500">नकद, चेक अथवा आश्रम काउंटर पर प्राप्त सहयोग</span>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          <div>
+                            <label className="block text-[11px] font-bold text-stone-700 mb-1">
+                              दानदाता का नाम *
+                            </label>
+                            <input
+                              type="text"
+                              required
+                              placeholder="उदा. श्री राहुल वर्मा"
+                              value={manualDonorName}
+                              onChange={(e) => setManualDonorName(e.target.value)}
+                              className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-lg text-xs"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] font-bold text-stone-700 mb-1">
+                              मोबाइल नंबर * (10 अंक)
+                            </label>
+                            <input
+                              type="tel"
+                              required
+                              maxLength={10}
+                              placeholder="उदा. 98260XXXXX"
+                              value={manualDonorMobile}
+                              onChange={(e) => setManualDonorMobile(e.target.value)}
+                              className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-lg text-xs font-mono"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] font-bold text-stone-700 mb-1">
+                              सहयोग राशि (₹) *
+                            </label>
+                            <input
+                              type="number"
+                              required
+                              min="1"
+                              placeholder="उदा. 1100"
+                              value={manualDonorAmount}
+                              onChange={(e) => setManualDonorAmount(e.target.value)}
+                              className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-lg text-xs font-mono font-bold text-[#0f4d3a]"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          <div>
+                            <label className="block text-[11px] font-bold text-stone-700 mb-1">
+                              सहयोग प्रकल्प (Cause)
+                            </label>
+                            <select
+                              value={manualDonorCause}
+                              onChange={(e) => setManualDonorCause(e.target.value)}
+                              className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-lg text-xs"
+                            >
+                              <option value="आश्रम एवं मंदिर निर्माण सहयोग">आश्रम एवं मंदिर निर्माण सहयोग</option>
+                              <option value="शनिवार शाम भंडारा महाप्रसाद">शनिवार शाम भंडारा महाप्रसाद</option>
+                              <option value="प्रतिदिन चाय सेवा">प्रतिदिन चाय सेवा (नर्मदा परिक्रमा)</option>
+                              <option value="गौसेवा एवं चारा व्यवस्था">गौसेवा एवं चारा व्यवस्था</option>
+                              <option value="सामान्य सेवा कोष">सामान्य सेवा कोष</option>
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] font-bold text-stone-700 mb-1">
+                              भुगतान का माध्यम
+                            </label>
+                            <select
+                              value={manualDonorPaymentMode}
+                              onChange={(e) => setManualDonorPaymentMode(e.target.value)}
+                              className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-lg text-xs"
+                            >
+                              <option value="नकद (Cash at Office)">नकद (आश्रम कार्यालय, गलगाँव)</option>
+                              <option value="PhonePe QR / UPI">PhonePe QR / UPI</option>
+                              <option value="Direct Bank Transfer">IDBI बैंक ट्रांसफर (NEFT/IMPS)</option>
+                              <option value="चेक / ड्राफ्ट">चेक / बैंक ड्राफ्ट</option>
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] font-bold text-stone-700 mb-1">
+                              पैन नंबर या संदर्भ (वैकल्पिक)
+                            </label>
+                            <input
+                              type="text"
+                              placeholder="उदा. ABCDE1234F / UTR"
+                              value={manualDonorPan}
+                              onChange={(e) => setManualDonorPan(e.target.value)}
+                              className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-lg text-xs uppercase"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="flex justify-end gap-2 pt-1">
+                          <button
+                            type="button"
+                            onClick={() => setIsAddManualReceiptOpen(false)}
+                            className="px-3.5 py-1.5 text-xs text-stone-600 hover:text-stone-900 border border-stone-300 rounded-lg cursor-pointer"
+                          >
+                            रद्द करें
+                          </button>
+                          <button
+                            type="submit"
+                            className="px-4 py-1.5 text-xs font-bold text-white bg-[#0f4d3a] hover:bg-[#125843] rounded-lg shadow cursor-pointer flex items-center gap-1.5"
+                          >
+                            <CheckCircle className="w-3.5 h-3.5" />
+                            <span>रसीद बनाएं व सहेजें</span>
+                          </button>
+                        </div>
+                      </form>
+                    )}
+                  </div>
+
+                  {/* Filtered Receipts Table / Cards View */}
+                  <div>
+                    {(() => {
+                      const filtered = receiptsList.filter((r) => {
+                        const term = adminReceiptSearch.toLowerCase().trim();
+                        const matchesTerm = !term || (
+                          r.donorName.toLowerCase().includes(term) ||
+                          r.mobile.includes(term) ||
+                          r.receiptNo.toLowerCase().includes(term) ||
+                          (r.transactionRef && r.transactionRef.toLowerCase().includes(term))
+                        );
+                        const matchesCause = adminReceiptCauseFilter === 'all' || r.cause.includes(adminReceiptCauseFilter);
+                        return matchesTerm && matchesCause;
+                      });
+
+                      if (filtered.length === 0) {
+                        return (
+                          <div className="text-center py-10 bg-stone-50 rounded-2xl border border-stone-200">
+                            <p className="text-xs text-stone-500">कोई दान रसीद नहीं मिली। ऊपर से नई रसीद दर्ज करें या सर्च फ़िल्टर बदलें।</p>
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-xs">
+                          {/* Desktop Table View */}
+                          <div className="hidden md:block overflow-x-auto">
+                            <table className="w-full text-left text-xs">
+                              <thead className="bg-stone-100 text-stone-700 font-bold border-b border-stone-200">
+                                <tr>
+                                  <th className="py-2.5 px-3">रसीद क्र.</th>
+                                  <th className="py-2.5 px-3">दिनांक</th>
+                                  <th className="py-2.5 px-3">दानदाता का नाम</th>
+                                  <th className="py-2.5 px-3">मोबाइल</th>
+                                  <th className="py-2.5 px-3">सहयोग प्रकल्प</th>
+                                  <th className="py-2.5 px-3 text-right">राशि (₹)</th>
+                                  <th className="py-2.5 px-3">माध्यम</th>
+                                  <th className="py-2.5 px-3 text-center">कार्रवाई</th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-stone-100 text-stone-800">
+                                {filtered.map((r) => (
+                                  <tr key={r.receiptNo} className="hover:bg-emerald-50/40 transition-colors">
+                                    <td className="py-2.5 px-3 font-mono font-bold text-[#0f4d3a]">
+                                      {r.receiptNo}
+                                    </td>
+                                    <td className="py-2.5 px-3 text-stone-500 whitespace-nowrap">
+                                      {r.date}
+                                    </td>
+                                    <td className="py-2.5 px-3 font-bold text-stone-900">
+                                      {r.donorName}
+                                    </td>
+                                    <td className="py-2.5 px-3 font-mono text-stone-600">
+                                      {r.mobile}
+                                    </td>
+                                    <td className="py-2.5 px-3 text-stone-700">
+                                      <span className="inline-block px-2 py-0.5 rounded bg-stone-100 text-stone-800 text-[11px] font-medium">
+                                        {r.cause}
+                                      </span>
+                                    </td>
+                                    <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-900 text-sm whitespace-nowrap">
+                                      ₹{Number(r.amount).toLocaleString('en-IN')}
+                                    </td>
+                                    <td className="py-2.5 px-3 text-stone-500 text-[11px]">
+                                      {r.paymentMode}
+                                    </td>
+                                    <td className="py-2.5 px-3 text-center whitespace-nowrap">
+                                      <div className="inline-flex items-center gap-1.5">
+                                        <button
+                                          type="button"
+                                          onClick={() => setSelectedReceiptForPrint(r)}
+                                          className="p-1.5 text-emerald-700 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 rounded-lg cursor-pointer transition-colors"
+                                          title="रसीद प्रिंट / PDF देखें"
+                                        >
+                                          <Printer className="w-3.5 h-3.5" />
+                                        </button>
+                                        <button
+                                          type="button"
+                                          onClick={() => handleDeleteReceipt(r.receiptNo, r.donorName)}
+                                          className="p-1.5 text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 rounded-lg cursor-pointer transition-colors"
+                                          title="रसीद हटाएँ"
+                                        >
+                                          <Trash2 className="w-3.5 h-3.5" />
+                                        </button>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+
+                          {/* Mobile Cards View */}
+                          <div className="md:hidden divide-y divide-stone-100">
+                            {filtered.map((r) => (
+                              <div key={r.receiptNo} className="p-3.5 space-y-2">
+                                <div className="flex items-center justify-between">
+                                  <span className="font-mono font-bold text-xs text-[#0f4d3a]">{r.receiptNo}</span>
+                                  <span className="font-mono font-bold text-sm text-emerald-900">₹{Number(r.amount).toLocaleString('en-IN')}</span>
+                                </div>
+                                <div className="text-xs">
+                                  <div className="font-bold text-stone-900">{r.donorName}</div>
+                                  <div className="text-stone-500 text-[11px]">मो: {r.mobile} · {r.date}</div>
+                                  <div className="text-emerald-800 font-medium text-[11px] mt-0.5">{r.cause} ({r.paymentMode})</div>
+                                </div>
+                                <div className="flex items-center justify-end gap-2 pt-1 border-t border-stone-100">
+                                  <button
+                                    type="button"
+                                    onClick={() => setSelectedReceiptForPrint(r)}
+                                    className="px-2.5 py-1 text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-lg flex items-center gap-1 cursor-pointer"
+                                  >
+                                    <Printer className="w-3 h-3" />
+                                    <span>प्रिंट रसीद</span>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDeleteReceipt(r.receiptNo, r.donorName)}
+                                    className="px-2.5 py-1 text-xs font-bold text-red-700 bg-red-50 border border-red-200 rounded-lg flex items-center gap-1 cursor-pointer"
+                                  >
+                                    <Trash2 className="w-3 h-3" />
+                                    <span>हटाएँ</span>
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+
+                        </div>
+                      );
+                    })()}
+                  </div>
+
+                </div>
+              )}
+
               {/* TAB: PHOTOS MANAGEMENT */}
               {activeTab === 'photos' && (
                 <div className="space-y-6">
@@ -1153,6 +1619,132 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
 
             </div>
 
+          </div>
+        )}
+
+        {/* Printable Receipt Modal for Admin */}
+        {selectedReceiptForPrint && (
+          <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs overflow-y-auto">
+            <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-stone-200 relative my-6 animate-in zoom-in-95">
+              
+              <button
+                type="button"
+                onClick={() => setSelectedReceiptForPrint(null)}
+                className="absolute top-4 right-4 p-2 text-stone-400 hover:text-stone-700 rounded-full hover:bg-stone-100 transition-colors cursor-pointer"
+                title="बंद करें"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div id="printable-receipt" className="bg-[#FAF7F2] p-5 sm:p-6 rounded-2xl border-2 border-amber-300 space-y-4 shadow-sm">
+                
+                {/* Header with Official Logo */}
+                <div className="receipt-header text-center pb-3 border-b-2 border-stone-800">
+                  <div className="receipt-logo w-16 h-16 mx-auto rounded-full overflow-hidden border-2 border-amber-500 shadow mb-1.5 bg-[#08241b]">
+                    <img src={TRUST_INFO.logoUrl} alt="Logo" className="w-full h-full object-cover" />
+                  </div>
+                  <div className="text-[11px] font-bold text-amber-800 uppercase tracking-widest">
+                    ॥ श्री गणेशाय नमः ॥ श्री जानकीनाथ सहाय ॥
+                  </div>
+                  <h3 className="font-heading text-xl sm:text-2xl font-bold text-[#0f4d3a]">
+                    {TRUST_INFO.name}
+                  </h3>
+                  <p className="text-xs font-medium text-stone-700">
+                    {TRUST_INFO.fullAddress}
+                  </p>
+                  <div className="text-[11px] text-stone-600 mt-0.5">
+                    वेबसाइट: <span className="font-mono font-semibold text-emerald-800">https://prabhuramjitrustram.ai.studio/</span> | हेल्पलाइन: {TRUST_INFO.phone}
+                  </div>
+                  <div className="receipt-badge inline-block mt-2 px-3 py-0.5 rounded-full bg-emerald-50 border border-emerald-300 text-xs font-bold text-emerald-900">
+                    आधिकारिक डिजिटल दान पावती रसीद
+                  </div>
+                </div>
+
+                {/* Receipt Details Grid */}
+                <div className="grid grid-cols-2 gap-3 text-xs sm:text-sm">
+                  <div>
+                    <span className="text-stone-500 block text-[11px]">रसीद संख्या:</span>
+                    <strong className="font-mono text-stone-900 font-bold">{selectedReceiptForPrint.receiptNo}</strong>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-stone-500 block text-[11px]">दिनांक:</span>
+                    <strong className="text-stone-900">{selectedReceiptForPrint.date}</strong>
+                  </div>
+
+                  <div>
+                    <span className="text-stone-500 block text-[11px]">दानदाता का नाम:</span>
+                    <strong className="text-sm sm:text-base text-stone-900 font-bold">{selectedReceiptForPrint.donorName}</strong>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-stone-500 block text-[11px]">मोबाइल नंबर:</span>
+                    <strong className="font-mono text-stone-900">{selectedReceiptForPrint.mobile}</strong>
+                  </div>
+
+                  {selectedReceiptForPrint.pan && (
+                    <div>
+                      <span className="text-stone-500 block text-[11px]">पैन नंबर (PAN):</span>
+                      <strong className="font-mono text-stone-900">{selectedReceiptForPrint.pan}</strong>
+                    </div>
+                  )}
+
+                  <div className={selectedReceiptForPrint.pan ? 'text-right' : 'col-span-2'}>
+                    <span className="text-stone-500 block text-[11px]">सहयोग प्रकल्प / उद्देश्य:</span>
+                    <strong className="text-emerald-900 font-semibold">{selectedReceiptForPrint.cause}</strong>
+                  </div>
+                </div>
+
+                {/* Amount Box */}
+                <div className="bg-white p-3.5 rounded-xl border border-amber-300 flex items-center justify-between">
+                  <div>
+                    <span className="text-[11px] text-stone-500 block">प्राप्त सहयोग राशि:</span>
+                    <span className="text-xl font-bold font-mono text-[#0f4d3a]">
+                      ₹{selectedReceiptForPrint.amount.toLocaleString('en-IN')} /-
+                    </span>
+                  </div>
+                  <div className="text-right text-xs text-stone-600">
+                    <div>माध्यम: <strong>{selectedReceiptForPrint.paymentMode}</strong></div>
+                    <div>संदर्भ: <span className="font-mono">{selectedReceiptForPrint.transactionRef}</span></div>
+                  </div>
+                </div>
+
+                {/* Signatures & Official Stamp */}
+                <div className="receipt-signatures pt-2 flex items-end justify-between text-xs">
+                  <div className="text-center">
+                    <div className="receipt-stamp w-16 h-16 mx-auto rounded-full border-2 border-dashed border-emerald-700/60 flex items-center justify-center p-1 text-[10px] text-emerald-800 font-bold leading-tight">
+                      प्रभु रामजी ट्रस्ट<br />गलगाँव
+                    </div>
+                    <span className="stamp-label text-[10px] text-stone-500 mt-1 block">आधिकारिक मुहर</span>
+                  </div>
+
+                  <div className="signatory-block text-right text-stone-700">
+                    <div className="signatory-name font-serif italic font-bold text-stone-800 mb-1">दिनेश बिड़ला / गुलाबचंद</div>
+                    <div className="signatory-role text-[11px] font-semibold text-stone-900">अधिकृत हस्ताक्षरकर्ता / व्यवस्थापक</div>
+                    <div className="signatory-org text-[10px] text-stone-500">प्रभु रामजी ट्रस्ट, गलगाँव (सनावद)</div>
+                  </div>
+                </div>
+
+              </div>
+
+              <div className="flex items-center justify-between gap-3 mt-4 pt-3 border-t border-stone-200 no-print">
+                <button
+                  type="button"
+                  onClick={() => setSelectedReceiptForPrint(null)}
+                  className="px-4 py-2 text-xs font-semibold text-stone-600 hover:text-stone-900 border border-stone-300 rounded-xl cursor-pointer"
+                >
+                  बंद करें
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="inline-flex items-center gap-1.5 px-5 py-2.5 text-xs font-bold text-white bg-[#0f4d3a] hover:bg-[#125843] rounded-xl shadow cursor-pointer transition-all"
+                >
+                  <Printer className="w-4 h-4" />
+                  <span>रसीद प्रिंट / PDF सेव करें</span>
+                </button>
+              </div>
+
+            </div>
           </div>
         )}
 

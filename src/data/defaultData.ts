@@ -38,8 +38,10 @@ export const TRUST_INFO = {
 
   // Social & Official Communication Channels
   email: "dineshbirla312@gmail.com",
-  phone: "+91 97538 46104",
-  whatsappContactUrl: "https://wa.me/qr/6D7JT43Y5AS5N1",
+  phone: "+91 95753 01233",
+  secondaryPhone: "+91 97538 46104",
+  whatsappNumber: "+91 95753 01233",
+  whatsappContactUrl: `https://api.whatsapp.com/send?phone=919575301233&text=${encodeURIComponent("जय श्री राम! मैं प्रभु रामजी ट्रस्ट से बात करना चाहता हूँ। मुझे गौसेवा, शनिवार भंडारा, नर्मदा परिक्रमा सेवा अथवा आश्रम निर्माण के संबंध में जानकारी व मार्गदर्शन चाहिए।")}`,
   whatsappChannel: "https://whatsapp.com/channel/0029Vb93t1aEQIauurkfRX2a",
   youtube: "https://youtube.com/@ramjitrust?si=4jFyZIqtamM7oxE4",
   facebook: "https://www.facebook.com/share/1FJX1492GR/",
@@ -87,21 +89,21 @@ export const DEFAULT_OFFICIALS: Official[] = [
     name: "श्री गुलाबचंद जी",
     designation: "अध्यक्ष (President)",
     roleDescription: "सुपुत्र श्री हीरालाल जी। संस्थापक अध्यक्ष, जिनके मार्गदर्शन में ग्राम गलगाँव में गौसेवा, प्रतिदिन चाय सेवा, शनिवार शाम भंडारा एवं आश्रम निर्माण की सेवा अविरल जारी है।",
-    phone: "+91 97538 46104"
+    phone: "+91 95753 01233"
   },
   {
     id: "2",
     name: "श्री दिनेश जी",
     designation: "सचिव (Secretary)",
     roleDescription: "ट्रस्ट के सेवा प्रबंधन, शनिवार शाम भंडारा आयोजन, प्रतिदिन चाय सेवा संचालन, आश्रम निर्माण निगरानी व डिजिटल संचार का दायित्व संभाल रहे हैं।",
-    phone: "+91 97538 46104"
+    phone: "+91 95753 01233"
   },
   {
     id: "3",
     name: "श्रीमती चम्पा बाई",
     designation: "कोषाध्यक्ष (Treasurer)",
     roleDescription: "वित्तीय पारदर्शिता, अन्नक्षेत्र व्यय नियंत्रण, गौसेवा बहीखाता एवं आश्रम निर्माण निधि का पारदर्शी लेखा-जोखा।",
-    phone: "+91 97538 46104"
+    phone: "+91 95753 01233"
   }
 ];
 
@@ -368,7 +370,7 @@ export const INITIAL_RECEIPTS: DonationReceipt[] = [
   {
     receiptNo: "PRT-2026-1091",
     donorName: "अशोक जी शर्मा",
-    mobile: "94250XXXXX",
+    mobile: "9425011111",
     amount: 5100,
     cause: "आश्रम एवं मंदिर निर्माण सहयोग",
     date: "2026-11-02",
@@ -378,7 +380,7 @@ export const INITIAL_RECEIPTS: DonationReceipt[] = [
   {
     receiptNo: "PRT-2026-1092",
     donorName: "रमेश पाटीदार",
-    mobile: "98260XXXXX",
+    mobile: "9826022222",
     amount: 2100,
     cause: "शनिवार शाम भंडारा प्रसादी",
     date: "2026-11-03",

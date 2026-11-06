@@ -60,6 +60,18 @@ export default function App() {
   useEffect(() => {
     refreshData();
 
+    // Support clean pathname routing and hash navigation for sitemap paths
+    const rawPath = window.location.pathname.replace(/^\/+/, '').split('/')[0].toLowerCase();
+    const rawHash = window.location.hash.replace(/^#+/, '').toLowerCase();
+    const targetSection = rawPath || rawHash;
+    const knownSections = ['home', 'ashram-nirman', 'about', 'objectives', 'services', 'officials', 'donate', 'transparency', 'gallery', 'news', 'contact'];
+    
+    if (targetSection && knownSections.includes(targetSection)) {
+      setTimeout(() => {
+        scrollToSection(targetSection);
+      }, 200);
+    }
+
     const handleScroll = () => {
       setShowScrollTop(window.scrollY > 400);
 
@@ -175,13 +187,13 @@ export default function App() {
       />
 
       {/* Floating Quick Action Widget for Mobile/Desktop */}
-      <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-3 no-print">
+      <div className="fixed bottom-4 right-3 sm:bottom-6 sm:right-6 z-40 flex flex-col items-end gap-2.5 no-print pointer-events-none">
         
         {/* Scroll To Top Button */}
         {showScrollTop && (
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="p-3 bg-white hover:bg-stone-100 text-stone-700 rounded-full shadow-lg border border-stone-200 transition-all hover:scale-105 cursor-pointer"
+            className="pointer-events-auto w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center bg-white/95 hover:bg-white text-stone-700 rounded-full shadow-md border border-stone-200 transition-all hover:scale-105 active:scale-95 cursor-pointer backdrop-blur-xs"
             title="ऊपर जाएं (Top)"
             aria-label="Scroll to top"
           >
@@ -194,10 +206,11 @@ export default function App() {
           href={TRUST_INFO.whatsappContactUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 px-4 py-3 bg-[#25D366] hover:bg-[#20ba59] text-white rounded-full shadow-2xl transition-all transform hover:scale-105 group font-medium text-xs sm:text-sm animate-pulse"
+          className="pointer-events-auto flex items-center justify-center w-11 h-11 sm:w-auto sm:px-4 sm:py-3 bg-[#25D366] hover:bg-[#20ba59] active:scale-95 text-white rounded-full shadow-xl transition-all transform hover:scale-105 group font-medium text-xs sm:text-sm"
           title="व्हाट्सएप पर संपर्क जोड़ें / चैट करें"
+          aria-label="WhatsApp Contact"
         >
-          <MessageCircle className="w-5 h-5 fill-current" />
+          <MessageCircle className="w-5 h-5 fill-current shrink-0" />
           <span className="hidden sm:inline font-bold">
             {language === 'hi' ? 'WhatsApp संपर्क' : 'WhatsApp Contact'}
           </span>

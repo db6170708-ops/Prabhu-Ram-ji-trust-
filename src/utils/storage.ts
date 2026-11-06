@@ -34,8 +34,11 @@ export const StorageService = {
       const migrated = parsed.map((photo) => {
         if (
           photo.id === 'p_ram_darbar' || 
+          photo.title.includes('विग्रह') ||
+          photo.title.includes('रामजी का दिव्य') ||
           photo.imageUrl.includes('shri_ram_devotional') ||
-          photo.imageUrl.includes('shri_ram_narmada')
+          photo.imageUrl.includes('shri_ram_narmada') ||
+          photo.imageUrl.includes('IMG-20261105-WA0002')
         ) {
           hasMigration = true;
           return {
@@ -87,7 +90,23 @@ export const StorageService = {
   getOfficials: (): Official[] => {
     try {
       const data = localStorage.getItem(KEYS.OFFICIALS);
-      return data ? JSON.parse(data) : DEFAULT_OFFICIALS;
+      if (!data) return DEFAULT_OFFICIALS;
+      const parsed: Official[] = JSON.parse(data);
+      let hasMigration = false;
+      const migrated = parsed.map((official) => {
+        if (official.phone && (official.phone === '+91 97538 46104' || official.phone.includes('97538'))) {
+          hasMigration = true;
+          return {
+            ...official,
+            phone: '+91 95753 01233'
+          };
+        }
+        return official;
+      });
+      if (hasMigration) {
+        localStorage.setItem(KEYS.OFFICIALS, JSON.stringify(migrated));
+      }
+      return migrated;
     } catch {
       return DEFAULT_OFFICIALS;
     }
@@ -111,6 +130,69 @@ export const StorageService = {
       localStorage.setItem(KEYS.RECEIPTS, JSON.stringify(updated));
     } catch (e) {
       console.error(e);
+    }
+  },
+  deleteReceipt: (receiptNo: string): DonationReceipt[] => {
+    try {
+      const existing = StorageService.getReceipts();
+      const updated = existing.filter(r => r.receiptNo !== receiptNo);
+      localStorage.setItem(KEYS.RECEIPTS, JSON.stringify(updated));
+      return updated;
+    } catch (e) {
+      console.error(e);
+      return [];
+    }
+  },
+  saveAllReceipts: (receipts: DonationReceipt[]) => {
+    try {
+      localStorage.setItem(KEYS.RECEIPTS, JSON.stringify(receipts));
+    } catch (e) {
+      console.error(e);
+    }
+  },
+
+  /**
+   * Strict lookup logic: Requires both 'phone' and 'receiptId' fields
+   * to match existing entries in StorageService before returning any donation data.
+   */
+  findReceiptByPhoneAndReceiptId: (phone: string, receiptId: string): DonationReceipt | null => {
+    try {
+      const cleanPhoneDigits = phone.trim().replace(/[^0-9]/g, '');
+      const cleanReceiptId = receiptId.trim().toLowerCase().replace(/[\s\-_]/g, '');
+
+      // Strict enforcement: both phone (at least 10 digits) and receiptId must be valid
+      if (cleanPhoneDigits.length < 10 || !cleanReceiptId) {
+        return null;
+      }
+
+      const allReceipts = StorageService.getReceipts();
+      const targetPhone10 = cleanPhoneDigits.slice(-10);
+
+      const found = allReceipts.find((entry) => {
+        // 1. Strict Phone Check: Compare 10 digits
+        const entryPhoneDigits = entry.mobile.replace(/[^0-9]/g, '');
+        const phoneMatches = 
+          entryPhoneDigits === targetPhone10 ||
+          entryPhoneDigits.endsWith(targetPhone10) ||
+          targetPhone10.endsWith(entryPhoneDigits);
+
+        // 2. Strict Receipt ID / UPI UTR Check: Compare normalized receipt ID or transaction reference
+        const entryReceiptNorm = entry.receiptNo.toLowerCase().replace(/[\s\-_]/g, '');
+        const entryRefNorm = (entry.transactionRef || '').toLowerCase().replace(/[\s\-_/]/g, '');
+
+        const receiptMatches = 
+          entryReceiptNorm === cleanReceiptId ||
+          (cleanReceiptId.length >= 4 && entryReceiptNorm.endsWith(cleanReceiptId)) ||
+          // Also allows donor to retrieve record using their UPI UTR / Bank Transaction Reference
+          (cleanReceiptId.length >= 6 && entryRefNorm.includes(cleanReceiptId));
+
+        return receiptMatches;
+      });
+
+      return found || null;
+    } catch (e) {
+      console.error('Error finding receipt by phone and receiptId:', e);
+      return null;
     }
   },
 

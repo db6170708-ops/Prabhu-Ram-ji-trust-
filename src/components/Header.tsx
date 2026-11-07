@@ -167,14 +167,14 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Main Navigation Bar */}
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 w-full">
-        <div className="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-4 w-full">
+        <div className="flex items-center justify-between h-20 sm:h-24 gap-2 sm:gap-4 w-full">
           
           {/* Official Brand Logo */}
           <button 
             onClick={() => handleNavClick('home')}
-            className="flex items-center gap-2 sm:gap-3 text-left group cursor-pointer focus:outline-none min-w-0 flex-1 sm:flex-initial"
+            className="flex items-center gap-2.5 sm:gap-4 text-left group cursor-pointer focus:outline-none min-w-0 flex-1 sm:flex-initial"
           >
-            <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-full overflow-hidden border-2 border-amber-500 shadow-md animate-sacred-glow transition-transform group-hover:scale-105 shrink-0 bg-[#08241b]">
+            <div className="w-14 h-14 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full overflow-hidden border-2.5 border-amber-500 shadow-lg animate-sacred-glow transition-transform group-hover:scale-105 shrink-0 bg-[#08241b] ring-2 ring-amber-300/40">
               <img
                 src={TRUST_INFO.logoUrl}
                 alt="प्रभु रामजी ट्रस्ट लोगो"
@@ -183,14 +183,14 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
-                <span className="font-heading text-base sm:text-2xl font-bold tracking-tight text-[#0f4d3a] truncate">
+                <span className="font-heading text-lg sm:text-2xl md:text-3xl font-bold tracking-tight text-[#0f4d3a] truncate">
                   {t.trustName}
                 </span>
                 <span className="hidden lg:inline text-[11px] font-bold px-2 py-0.5 rounded-full text-amber-900 bg-gradient-to-r from-amber-200 to-amber-300 border border-amber-400 shadow-xs">
                   {t.officialBadge}
                 </span>
               </div>
-              <p className="text-[10px] sm:text-xs text-stone-600 font-medium truncate">
+              <p className="text-[11px] sm:text-xs md:text-sm text-stone-600 font-medium truncate">
                 {t.tagline}
               </p>
             </div>

@@ -19,12 +19,14 @@ import {
 export const ContactSection: React.FC = () => {
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
-  const [subject, setSubject] = useState('');
+  const [subject, setSubject] = useState('गौसेवा हेतु चारा सहयोग');
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [submittedWhatsAppUrl, setSubmittedWhatsAppUrl] = useState<string>('');
   const [contactError, setContactError] = useState<string | null>(null);
   const [mapView, setMapView] = useState<'k' | 'h' | 'm'>('k'); // Default to Satellite ('k')
   const [zoomLevel, setZoomLevel] = useState<number>(17);
+  const [isInteractiveMapActive, setIsInteractiveMapActive] = useState<boolean>(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,12 +36,12 @@ export const ContactSection: React.FC = () => {
       return;
     }
 
-    setSubmitted(true);
-    // WhatsApp direct prefilled link with updated official Trust number
     const whatsappText = encodeURIComponent(
       `नमस्ते प्रभु रामजी ट्रस्ट,\nमेरा नाम: ${name}\nमोबाइल: ${mobile}\nविषय: ${subject || 'सेवा कार्य संबंधी'}\nसंदेश: ${message}`
     );
-    window.open(`https://api.whatsapp.com/send?phone=919575301233&text=${whatsappText}`, '_blank');
+    const targetUrl = `https://api.whatsapp.com/send?phone=919575301233&text=${whatsappText}`;
+    setSubmittedWhatsAppUrl(targetUrl);
+    setSubmitted(true);
   };
 
   return (
@@ -276,24 +278,40 @@ export const ContactSection: React.FC = () => {
               </p>
 
               {submitted ? (
-                <div className="bg-emerald-50 border border-emerald-300 rounded-2xl p-6 text-center space-y-3">
+                <div className="bg-emerald-50 border border-emerald-300 rounded-2xl p-6 text-center space-y-3.5">
                   <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto" />
                   <h4 className="font-heading text-lg font-bold text-emerald-900">
-                    आपका संदेश सफलता पूर्वक तैयार है!
+                    आपका संदेश तैयार है!
                   </h4>
                   <p className="text-xs sm:text-sm text-emerald-800">
-                    WhatsApp पर संदेश भेज दिया गया है। ट्रस्ट के प्रतिनिधि शीघ्र आपसे संपर्क करेंगे।
+                    नीचे दिए गए बटन पर क्लिक करके सीधे ट्रस्ट के अधिकृत WhatsApp पर अपना संदेश भेजें:
                   </p>
+                  
+                  {submittedWhatsAppUrl && (
+                    <div className="pt-1">
+                      <a
+                        href={submittedWhatsAppUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold text-white bg-emerald-700 hover:bg-emerald-800 rounded-xl shadow-md transition-all cursor-pointer"
+                      >
+                        <MessageCircle className="w-4 h-4 text-emerald-200" />
+                        <span>WhatsApp पर संदेश अभी भेजें →</span>
+                      </a>
+                    </div>
+                  )}
+
                   <button
                     onClick={() => {
                       setSubmitted(false);
                       setName('');
                       setMobile('');
                       setMessage('');
+                      setSubmittedWhatsAppUrl('');
                     }}
-                    className="mt-3 px-4 py-2 text-xs font-bold text-white bg-[#0f4d3a] rounded-lg"
+                    className="mt-2 text-xs font-semibold text-emerald-900 hover:underline cursor-pointer block mx-auto"
                   >
-                    अन्य संदेश भेजें
+                    अन्य संदेश लिखें
                   </button>
                 </div>
               ) : (
@@ -405,85 +423,164 @@ export const ContactSection: React.FC = () => {
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-white bg-[#0f4d3a] hover:bg-[#125843] rounded-lg shadow-sm transition-colors cursor-pointer"
                 >
                   <Globe className="w-3.5 h-3.5 text-amber-300" />
-                  <span>Google Maps सैटेलाइट में खोलें</span>
+                  <span>Google Maps में खोलें</span>
                   <ExternalLink className="w-3 h-3 text-emerald-200" />
                 </a>
               </div>
 
-              {/* Satellite / Hybrid / Roadmap Mode Selector & Zoom Controls */}
-              <div className="flex flex-wrap items-center justify-between gap-2 bg-stone-100/80 p-1.5 rounded-xl border border-stone-200 text-xs">
-                <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={() => setMapView('k')}
-                    className={`px-2.5 py-1 rounded-lg font-bold transition-all flex items-center gap-1.5 ${
-                      mapView === 'k'
-                        ? 'bg-[#0f4d3a] text-white shadow-sm'
-                        : 'text-stone-700 hover:bg-white/80'
-                    }`}
-                  >
-                    <span>🛰️ सैटेलाइट</span>
-                  </button>
+              {/* On-Demand Interactive Map Card (Optimized for Google Search Console & Mobile Speed) */}
+              {!isInteractiveMapActive ? (
+                <div className="relative rounded-2xl overflow-hidden border border-emerald-900/30 bg-gradient-to-br from-[#062017] via-[#0b3326] to-[#124d3a] p-6 text-white shadow-md">
+                  <div className="absolute inset-0 bg-[radial-gradient(#f59e0b_1px,transparent_1px)] [background-size:16px_16px] opacity-15 pointer-events-none" />
+                  
+                  <div className="relative z-10 space-y-4">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div>
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30">
+                          <MapPin className="w-3.5 h-3.5 text-amber-400" />
+                          <span>पवित्र आश्रम एवं गौशाला स्थल</span>
+                        </div>
+                        <h5 className="font-heading text-lg sm:text-xl font-bold text-amber-100 mt-2">
+                          प्रभु रामजी ट्रस्ट, ग्राम गलगाँव
+                        </h5>
+                        <p className="text-xs text-stone-300 mt-0.5">
+                          तहसील सनावद, जिला खरगोन (म.प्र.) · माँ नर्मदा परिक्रमा मार्ग
+                        </p>
+                      </div>
 
-                  <button
-                    type="button"
-                    onClick={() => setMapView('h')}
-                    className={`px-2.5 py-1 rounded-lg font-bold transition-all flex items-center gap-1.5 ${
-                      mapView === 'h'
-                        ? 'bg-[#0f4d3a] text-white shadow-sm'
-                        : 'text-stone-700 hover:bg-white/80'
-                    }`}
-                  >
-                    <span>🛰️🏷️ हाइब्रिड</span>
-                  </button>
+                      <div className="text-left sm:text-right shrink-0">
+                        <span className="text-xs font-mono text-emerald-300 font-bold block">
+                          5X5W+4JR
+                        </span>
+                        <span className="text-[10px] text-stone-400">
+                          Google Plus Code
+                        </span>
+                      </div>
+                    </div>
 
-                  <button
-                    type="button"
-                    onClick={() => setMapView('m')}
-                    className={`px-2.5 py-1 rounded-lg font-bold transition-all flex items-center gap-1.5 ${
-                      mapView === 'm'
-                        ? 'bg-[#0f4d3a] text-white shadow-sm'
-                        : 'text-stone-700 hover:bg-white/80'
-                    }`}
-                  >
-                    <span>🗺️ रोड मैप</span>
-                  </button>
+                    <div className="bg-black/35 border border-white/10 rounded-xl p-3 text-xs text-stone-200 space-y-1.5">
+                      <p className="flex items-center gap-1.5">
+                        <Navigation className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                        <span>सनावद बस स्टैंड / रेलवे स्टेशन से मात्र 10-12 किमी</span>
+                      </p>
+                      <p className="flex items-center gap-1.5 text-stone-300">
+                        <Globe className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <span>ओंकारेश्वर ज्योतिर्लिंग से दूरी: लगभग 22 किमी</span>
+                      </p>
+                    </div>
+
+                    {/* Quick Navigation and Load Map Actions */}
+                    <div className="flex flex-wrap items-center gap-2.5 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => setIsInteractiveMapActive(true)}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-[#08241b] bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 hover:from-amber-400 hover:to-amber-500 rounded-xl shadow-md transition-all cursor-pointer"
+                      >
+                        <Globe className="w-4 h-4 text-[#08241b]" />
+                        <span>🛰️ लाइव सैटेलाइट मैप लोड करें</span>
+                      </button>
+
+                      <a
+                        href="https://www.google.com/maps/dir/?api=1&destination=5X5W%2B4JR+Galgaon,+Madhya+Pradesh"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2.5 text-xs font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl transition-colors cursor-pointer"
+                      >
+                        <Navigation className="w-3.5 h-3.5 text-amber-300" />
+                        <span>Google Maps में दिशाएं देखें</span>
+                        <ExternalLink className="w-3 h-3 text-stone-300" />
+                      </a>
+                    </div>
+                  </div>
                 </div>
+              ) : (
+                /* Interactive Google Maps View */
+                <div className="space-y-3 animate-in fade-in duration-200">
+                  {/* View Controls & Back to Card View */}
+                  <div className="flex flex-wrap items-center justify-between gap-2 bg-stone-100/80 p-1.5 rounded-xl border border-stone-200 text-xs">
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => setMapView('k')}
+                        className={`px-2.5 py-1 rounded-lg font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                          mapView === 'k'
+                            ? 'bg-[#0f4d3a] text-white shadow-sm'
+                            : 'text-stone-700 hover:bg-white/80'
+                        }`}
+                      >
+                        <span>🛰️ सैटेलाइट</span>
+                      </button>
 
-                {/* Zoom level controls */}
-                <div className="flex items-center gap-1 text-stone-600">
-                  <span className="text-[11px] font-medium text-stone-500 mr-1 hidden sm:inline">ज़ूम:</span>
-                  <button
-                    type="button"
-                    onClick={() => setZoomLevel((z) => Math.min(z + 1, 19))}
-                    className="p-1 rounded bg-white hover:bg-stone-200 border border-stone-300 text-stone-700 transition-colors"
-                    title="ज़ूम इन करें (+)"
-                  >
-                    <ZoomIn className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setZoomLevel((z) => Math.max(z - 1, 13))}
-                    className="p-1 rounded bg-white hover:bg-stone-200 border border-stone-300 text-stone-700 transition-colors"
-                    title="ज़ूम आउट करें (-)"
-                  >
-                    <ZoomOut className="w-3.5 h-3.5" />
-                  </button>
+                      <button
+                        type="button"
+                        onClick={() => setMapView('h')}
+                        className={`px-2.5 py-1 rounded-lg font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                          mapView === 'h'
+                            ? 'bg-[#0f4d3a] text-white shadow-sm'
+                            : 'text-stone-700 hover:bg-white/80'
+                        }`}
+                      >
+                        <span>🛰️🏷️ हाइब्रिड</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setMapView('m')}
+                        className={`px-2.5 py-1 rounded-lg font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                          mapView === 'm'
+                            ? 'bg-[#0f4d3a] text-white shadow-sm'
+                            : 'text-stone-700 hover:bg-white/80'
+                        }`}
+                      >
+                        <span>🗺️ रोड मैप</span>
+                      </button>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      {/* Zoom Controls */}
+                      <div className="flex items-center gap-1 text-stone-600">
+                        <button
+                          type="button"
+                          onClick={() => setZoomLevel((z) => Math.min(z + 1, 19))}
+                          className="p-1 rounded bg-white hover:bg-stone-200 border border-stone-300 text-stone-700 transition-colors cursor-pointer"
+                          title="ज़ूम इन करें (+)"
+                        >
+                          <ZoomIn className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setZoomLevel((z) => Math.max(z - 1, 13))}
+                          className="p-1 rounded bg-white hover:bg-stone-200 border border-stone-300 text-stone-700 transition-colors cursor-pointer"
+                          title="ज़ूम आउट करें (-)"
+                        >
+                          <ZoomOut className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setIsInteractiveMapActive(false)}
+                        className="px-2.5 py-1 text-xs font-semibold text-stone-600 hover:text-stone-900 bg-white hover:bg-stone-100 rounded-lg border border-stone-300 transition-colors cursor-pointer"
+                      >
+                        ✕ बंद करें
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Satellite Map iframe */}
+                  <div className="rounded-2xl overflow-hidden border border-stone-200 shadow-inner relative bg-stone-900">
+                    <iframe
+                      title="Google Maps Location 5X5W+4JR Galgaon, Madhya Pradesh - प्रभु रामजी ट्रस्ट (सैटेलाइट दृश्य)"
+                      src={`https://maps.google.com/maps?q=5X5W%2B4JR+Galgaon,+Madhya+Pradesh&t=${mapView}&z=${zoomLevel}&ie=UTF8&iwloc=&output=embed`}
+                      width="100%"
+                      height="340"
+                      className="w-full border-0 block"
+                      loading="lazy"
+                      allowFullScreen
+                    />
+                  </div>
                 </div>
-              </div>
-
-              {/* Satellite Map iframe */}
-              <div className="rounded-2xl overflow-hidden border border-stone-200 shadow-inner relative bg-stone-900">
-                <iframe
-                  title="Google Maps Location 5X5W+4JR Galgaon, Madhya Pradesh - प्रभु रामजी ट्रस्ट (सैटेलाइट दृश्य)"
-                  src={`https://maps.google.com/maps?q=5X5W%2B4JR+Galgaon,+Madhya+Pradesh&t=${mapView}&z=${zoomLevel}&ie=UTF8&iwloc=&output=embed`}
-                  width="100%"
-                  height="320"
-                  className="w-full border-0 block"
-                  loading="lazy"
-                  allowFullScreen
-                />
-              </div>
+              )}
 
               <div className="text-[11px] text-stone-500 text-center flex items-center justify-center gap-1.5 pt-1">
                 <Navigation className="w-3.5 h-3.5 text-amber-600" />

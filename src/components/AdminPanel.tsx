@@ -24,9 +24,12 @@ import {
   Receipt,
   Printer,
   Search,
-  FileDown
+  FileDown,
+  Mail,
+  Send
 } from 'lucide-react';
 import { TRUST_INFO } from '../data/defaultData';
+import { sendReceiptEmail } from '../utils/emailService';
 
 interface AdminPanelProps {
   isOpen: boolean;
@@ -432,6 +435,45 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
     showStatus(`रसीद संख्या ${receiptNo} (${donorName}) सफलतापूर्वक हटा दी गई।`, 'success');
   };
 
+  const handleAdminSendReceiptEmail = async (receipt: DonationReceipt) => {
+    let email = receipt.email;
+    if (!email) {
+      const prompted = window.prompt(`दानदाता "${receipt.donorName}" को रसीद भेजने हेतु ईमेल पता दर्ज करें:`, '');
+      if (!prompted || !prompted.trim()) return;
+      email = prompted.trim();
+    }
+
+    showStatus(`रसीद (${receipt.receiptNo}) dineshbirla312@gmail.com से भेजी जा रही है...`, 'success');
+    const result = await sendReceiptEmail(receipt, email);
+    if (result.success) {
+      showStatus(`✓ रसीद dineshbirla312@gmail.com द्वारा ${email} पर सफलतापूर्वक भेज दी गई!`, 'success');
+    } else {
+      showStatus(`त्रुटि: ${result.message}`, 'error');
+    }
+  };
+
+  const handleTestAdminEmail = async () => {
+    const testReceipt: DonationReceipt = {
+      receiptNo: `TEST-${Date.now().toString().slice(-4)}`,
+      donorName: 'दिनेश बिड़ला जी (ट्रस्ट परीक्षण)',
+      mobile: '9575301233',
+      email: 'dineshbirla312@gmail.com',
+      amount: 1100,
+      cause: 'आश्रम एवं मंदिर निर्माण सहयोग (परीक्षण)',
+      date: new Date().toLocaleDateString('hi-IN', { year: 'numeric', month: 'long', day: 'numeric' }),
+      paymentMode: 'PhonePe QR / UPI',
+      transactionRef: 'TEST/EMAIL/VERIFY'
+    };
+
+    showStatus('dineshbirla312@gmail.com पर टेस्ट रसीद भेजी जा रही है...', 'success');
+    const result = await sendReceiptEmail(testReceipt, 'dineshbirla312@gmail.com');
+    if (result.success) {
+      showStatus('✓ टेस्ट रसीद dineshbirla312@gmail.com पर सफलतापूर्वक प्रेषित हुई!', 'success');
+    } else {
+      showStatus(`त्रुटि: ${result.message}`, 'error');
+    }
+  };
+
   const handleExportReceiptsCsv = () => {
     const receipts = StorageService.getReceipts();
     if (receipts.length === 0) {
@@ -767,6 +809,36 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
                       </div>
                     </div>
 
+                    {/* Official Gmail Automatic Dispatch Status Card */}
+                    <div className="bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border border-emerald-300 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2.5 text-xs shadow-xs">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-lg bg-emerald-700 text-white flex items-center justify-center shrink-0">
+                          <Mail className="w-4 h-4 text-amber-300" />
+                        </div>
+                        <div>
+                          <div className="font-bold text-emerald-950 flex flex-wrap items-center gap-2">
+                            <span>प्रेषक Gmail खाता: <strong className="font-mono text-emerald-900">dineshbirla312@gmail.com</strong></span>
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-200 text-emerald-900 border border-emerald-300">
+                              ✓ स्वतः ईमेल प्रेषण सक्रिय
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-stone-600 mt-0.5">
+                            वेबसाइट पर सफल दान दर्ज होते ही दानदाता के ईमेल पर रसीद स्वतः पहुंच जाती है।
+                          </p>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={handleTestAdminEmail}
+                        className="px-3.5 py-1.5 font-bold text-xs text-white bg-[#0f4d3a] hover:bg-[#125843] rounded-lg shadow-xs flex items-center gap-1.5 cursor-pointer shrink-0 transition-colors"
+                        title="dineshbirla312@gmail.com पर टेस्ट रसीद भेजकर जांचें"
+                      >
+                        <Send className="w-3.5 h-3.5 text-amber-300" />
+                        <span>टेस्ट ईमेल भेजें</span>
+                      </button>
+                    </div>
+
                     {/* Manual Receipt Form (when open) */}
                     {isAddManualReceiptOpen && (
                       <form onSubmit={handleAddManualReceipt} className="mt-3 pt-3 border-t border-stone-200 bg-white p-4 rounded-xl border border-emerald-300 space-y-3 animate-in fade-in">
@@ -970,6 +1042,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
                                         </button>
                                         <button
                                           type="button"
+                                          onClick={() => handleAdminSendReceiptEmail(r)}
+                                          className="p-1.5 text-blue-700 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 rounded-lg cursor-pointer transition-colors"
+                                          title="दानदाता को रसीद ईमेल भेजें (dineshbirla312@gmail.com से)"
+                                        >
+                                          <Mail className="w-3.5 h-3.5" />
+                                        </button>
+                                        <button
+                                          type="button"
                                           onClick={() => handleDeleteReceipt(r.receiptNo, r.donorName)}
                                           className="p-1.5 text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 rounded-lg cursor-pointer transition-colors"
                                           title="रसीद हटाएँ"
@@ -997,7 +1077,16 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
                                   <div className="text-stone-500 text-[11px]">मो: {r.mobile} · {r.date}</div>
                                   <div className="text-emerald-800 font-medium text-[11px] mt-0.5">{r.cause} ({r.paymentMode})</div>
                                 </div>
-                                <div className="flex items-center justify-end gap-2 pt-1 border-t border-stone-100">
+                                <div className="flex flex-wrap items-center justify-end gap-2 pt-1 border-t border-stone-100">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleAdminSendReceiptEmail(r)}
+                                    className="px-2.5 py-1 text-xs font-bold text-blue-800 bg-blue-50 border border-blue-200 rounded-lg flex items-center gap-1 cursor-pointer"
+                                    title="ईमेल पर रसीद भेजें (dineshbirla312@gmail.com)"
+                                  >
+                                    <Mail className="w-3 h-3" />
+                                    <span>ईमेल भेजें</span>
+                                  </button>
                                   <button
                                     type="button"
                                     onClick={() => setSelectedReceiptForPrint(r)}

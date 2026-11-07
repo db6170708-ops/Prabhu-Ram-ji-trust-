@@ -39,8 +39,8 @@ export const Footer: React.FC<FooterProps> = ({
           
           {/* Col 1: Official Logo, Trust Identity & Motto */}
           <div className="lg:col-span-4 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-amber-400 shadow-md bg-[#08241b] shrink-0">
+            <div className="flex items-center gap-3.5">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2.5 border-amber-400 shadow-lg bg-[#08241b] shrink-0 ring-2 ring-amber-400/30">
                 <img
                   src={TRUST_INFO.logoUrl}
                   alt="प्रभु रामजी ट्रस्ट लोगो"

@@ -17,7 +17,7 @@ export const TRUST_INFO = {
   websiteUrl: "https://prabhuramjitrustram.ai.studio/",
   
   // Real Assets provided by user
-  logoUrl: "/assets/aistudio/apple-touch-icon_8ef90e9a.png",
+  logoUrl: "/logo.png",
   phonePeQrUrl: "/assets/aistudio/IMG-20261103-WA0008_8bfff24a.jpg",
 
   // Core Daily & Weekly Routines

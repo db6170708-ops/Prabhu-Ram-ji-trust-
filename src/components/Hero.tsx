@@ -112,8 +112,8 @@ export const Hero: React.FC<HeroProps> = ({
         
         {/* Top Brand Lockup with Logo - Perfectly Centered */}
         <div className="flex flex-col items-center justify-center text-center space-y-3 mb-8 sm:mb-10 w-full max-w-full">
-          {/* Circular Glowing Logo in Center */}
-          <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-2 border-amber-400 shadow-2xl animate-sacred-glow bg-[#08241b] shrink-0">
+          {/* Circular Glowing Logo in Center (Bigger & High-Definition) */}
+          <div className="w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 rounded-full overflow-hidden border-3 border-amber-400 shadow-2xl animate-sacred-glow bg-[#08241b] shrink-0 ring-4 ring-amber-400/30 transition-transform hover:scale-105">
             <img
               src={TRUST_INFO.logoUrl}
               alt="प्रभु रामजी ट्रस्ट लोगो"
@@ -247,7 +247,7 @@ export const Hero: React.FC<HeroProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           
           {/* Left Column: Trust Identity, Routines & Actions */}
-          <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+          <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
 
             {/* Sacred Tagline & Routine Highlight */}
             <div className="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-sm space-y-3">
@@ -310,21 +310,32 @@ export const Hero: React.FC<HeroProps> = ({
                 <MessageCircle className="w-4 h-4 text-emerald-400" />
                 <span>{t.heroBtnWhatsApp}</span>
               </a>
+
+              <button
+                onClick={onOpenReceiptSearch}
+                className="inline-flex items-center gap-2 px-4 py-3.5 text-xs font-semibold text-amber-200 bg-amber-950/50 hover:bg-amber-900/70 rounded-xl border border-amber-400/40 transition-all cursor-pointer shadow-sm"
+                title="दान रसीद खोजें व डाउनलोड करें"
+              >
+                <FileText className="w-4 h-4 text-amber-300" />
+                <span>रसीद खोजें</span>
+              </button>
             </div>
 
           </div>
 
           {/* Right Column: Divine Frame of Bhagwan Shri Ram */}
-          <div className="lg:col-span-5 flex justify-center">
-            <div className="relative w-full max-w-md">
+          <div className="lg:col-span-6 flex justify-center items-center">
+            <div className="relative w-full max-w-lg sm:max-w-xl lg:max-w-2xl">
               
-              <div className="absolute -inset-1 bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 rounded-3xl blur-xs opacity-70"></div>
+              {/* Outer Golden Aura Glow */}
+              <div className="absolute -inset-1.5 sm:-inset-2 bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 rounded-3xl blur-md opacity-75"></div>
               
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl border-2 border-amber-300 bg-stone-900 group">
+              {/* Sacred Frame */}
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl border-2 sm:border-3 border-amber-400/90 bg-stone-950 group">
                 <img
                   src="/shri_ram_kodanda.jpg"
                   alt="कोदण्डधारी मर्यादा पुरुषोत्तम प्रभु श्री रामजी - प्रभु रामजी ट्रस्ट ग्राम गलगाँव"
-                  className="w-full h-auto object-cover max-h-[500px] group-hover:scale-105 transition-transform duration-700"
+                  className="w-full h-auto object-cover max-h-[580px] sm:max-h-[640px] group-hover:scale-102 transition-transform duration-700 block"
                   loading="eager"
                   onError={(e) => {
                     e.currentTarget.onerror = null;
@@ -332,26 +343,17 @@ export const Hero: React.FC<HeroProps> = ({
                   }}
                 />
 
-                <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/95 via-black/75 to-transparent p-4 sm:p-5 text-center">
-                  <div className="text-amber-300 font-heading text-lg sm:text-xl font-bold flex items-center justify-center gap-2">
-                    <Sparkles className="w-4 h-4 text-amber-400" />
+                <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/95 via-black/80 to-transparent p-4 sm:p-6 text-center">
+                  <div className="text-amber-300 font-heading text-lg sm:text-2xl font-bold flex items-center justify-center gap-2">
+                    <Sparkles className="w-5 h-5 text-amber-400" />
                     <span>॥ कोदण्डधारी प्रभु श्री राम ॥</span>
-                    <Sparkles className="w-4 h-4 text-amber-400" />
+                    <Sparkles className="w-5 h-5 text-amber-400" />
                   </div>
-                  <p className="text-xs text-stone-200 mt-1">
+                  <p className="text-xs sm:text-sm text-stone-200 mt-1 font-medium">
                     ग्राम गलगाँव (सनावद, खरगोन) · माँ नर्मदा के पावन प्रवाह व प्रभु रामजी के आदर्शों पर निष्काम जनसेवा
                   </p>
                 </div>
               </div>
-
-              {/* Receipt Quick Search Button */}
-              <button
-                onClick={onOpenReceiptSearch}
-                className="mt-3 w-full py-2.5 px-3 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 rounded-xl text-center text-xs font-semibold text-amber-200 hover:text-white transition-colors flex items-center justify-center gap-1.5"
-              >
-                <FileText className="w-3.5 h-3.5 text-amber-400" />
-                <span>{t.heroSearchReceiptNote}</span>
-              </button>
 
             </div>
           </div>

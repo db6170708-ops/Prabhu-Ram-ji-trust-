@@ -17,8 +17,12 @@ import {
   MessageCircle,
   ArrowRight,
   HelpCircle,
-  Sparkles
+  Sparkles,
+  Mail,
+  Send,
+  Loader2
 } from 'lucide-react';
+import { sendReceiptEmail, getReceiptMailtoLink } from '../utils/emailService';
 
 interface ReceiptSearchModalProps {
   isOpen: boolean;
@@ -31,6 +35,12 @@ export const ReceiptSearchModal: React.FC<ReceiptSearchModalProps> = ({ isOpen, 
   const [hasSearched, setHasSearched] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [receiptData, setReceiptData] = useState<DonationReceipt | null>(null);
+  const [emailStatus, setEmailStatus] = useState<{
+    status: 'idle' | 'sending' | 'sent' | 'error';
+    message: string;
+    recipient?: string;
+  }>({ status: 'idle', message: '' });
+  const [searchEmailInput, setSearchEmailInput] = useState<string>('');
 
   if (!isOpen) return null;
 
@@ -38,6 +48,7 @@ export const ReceiptSearchModal: React.FC<ReceiptSearchModalProps> = ({ isOpen, 
     e.preventDefault();
     setErrorMessage(null);
     setReceiptData(null);
+    setEmailStatus({ status: 'idle', message: '' });
 
     const cleanPhoneDigits = phone.trim().replace(/[^0-9]/g, '');
     const cleanReceiptId = receiptId.trim();
@@ -62,12 +73,45 @@ export const ReceiptSearchModal: React.FC<ReceiptSearchModalProps> = ({ isOpen, 
     setReceiptData(matchedEntry);
   };
 
+  const handleSendSearchReceiptEmail = async () => {
+    if (!receiptData) return;
+    const target = (searchEmailInput || receiptData.email || '').trim();
+    if (!target) {
+      setEmailStatus({ status: 'error', message: 'कृपया वैध ईमेल पता दर्ज करें।' });
+      return;
+    }
+
+    setEmailStatus({
+      status: 'sending',
+      message: `${target} पर आधिकारिक रसीद भेजी जा रही है...`,
+      recipient: target
+    });
+
+    const res = await sendReceiptEmail(receiptData, target);
+    if (res.success) {
+      setEmailStatus({
+        status: 'sent',
+        message: res.message,
+        recipient: target
+      });
+      setSearchEmailInput('');
+    } else {
+      setEmailStatus({
+        status: 'error',
+        message: res.message,
+        recipient: target
+      });
+    }
+  };
+
   const resetSearch = () => {
     setPhone('');
     setReceiptId('');
     setHasSearched(false);
     setErrorMessage(null);
     setReceiptData(null);
+    setEmailStatus({ status: 'idle', message: '' });
+    setSearchEmailInput('');
   };
 
   const handleGoToDonationForm = () => {
@@ -441,6 +485,104 @@ export const ReceiptSearchModal: React.FC<ReceiptSearchModalProps> = ({ isOpen, 
                   <div className="signatory-role text-[11px] font-semibold text-stone-900">अधिकृत हस्ताक्षरकर्ता / व्यवस्थापक</div>
                   <div className="signatory-org text-[10px] text-stone-500">प्रभु रामजी ट्रस्ट, गलगाँव (सनावद)</div>
                 </div>
+              </div>
+
+              {/* Official Email Receipt Delivery Card */}
+              <div className="mt-3.5 bg-gradient-to-br from-emerald-50 via-amber-50/30 to-emerald-50 border border-emerald-300 rounded-2xl p-3.5 shadow-xs no-print">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-2 pb-1.5 border-b border-emerald-200">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-emerald-700 text-white flex items-center justify-center">
+                      <Mail className="w-3.5 h-3.5 text-amber-300" />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-emerald-950">
+                        ईमेल पर यह रसीद प्राप्त करें
+                      </h4>
+                      <p className="text-[10px] text-emerald-800">
+                        डिजिटल रसीद सीधे अपने ईमेल इनबॉक्स में सुरक्षित रूप से मँगवाएँ
+                      </p>
+                    </div>
+                  </div>
+
+                  {emailStatus.status === 'sent' && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-600 text-white shadow-xs">
+                      <CheckCircle2 className="w-3 h-3" />
+                      ईमेल प्रेषित
+                    </span>
+                  )}
+                </div>
+
+                {emailStatus.status === 'sending' ? (
+                  <div className="p-2.5 bg-white rounded-xl border border-emerald-300 flex items-center gap-2 text-xs text-emerald-900 font-semibold shadow-xs">
+                    <Loader2 className="w-3.5 h-3.5 text-emerald-600 animate-spin" />
+                    <span>{emailStatus.message || 'ईमेल भेजा जा रहा है...'}</span>
+                  </div>
+                ) : emailStatus.status === 'sent' ? (
+                  <div className="space-y-2 bg-white p-2.5 rounded-xl border border-emerald-300 shadow-xs text-xs">
+                    <div className="flex items-start gap-2 text-emerald-950">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                      <div className="flex-1">
+                        <strong className="block font-bold text-emerald-900">
+                          {emailStatus.message}
+                        </strong>
+                        <span className="text-[10px] text-stone-600">
+                          ईमेल: <strong className="font-mono text-emerald-800">{emailStatus.recipient}</strong> (इनबॉक्स / स्पैम फ़ोल्डर देखें)
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between gap-2 pt-1 border-t border-stone-100 text-[11px]">
+                      <button
+                        type="button"
+                        onClick={() => setEmailStatus({ status: 'idle', message: '' })}
+                        className="text-emerald-800 hover:text-emerald-950 font-semibold underline cursor-pointer"
+                      >
+                        अन्य ईमेल पते पर भेजें
+                      </button>
+
+                      <a
+                        href={getReceiptMailtoLink(receiptData, emailStatus.recipient || '')}
+                        className="inline-flex items-center gap-1 text-stone-600 hover:text-stone-900 underline"
+                      >
+                        <Mail className="w-3 h-3" />
+                        <span>Email App में ड्राफ्ट खोलें</span>
+                      </a>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-1.5">
+                    {emailStatus.status === 'error' && (
+                      <div className="p-2 bg-red-50 border border-red-200 rounded-xl flex items-center gap-1.5 text-[11px] text-red-700">
+                        <AlertCircle className="w-3.5 h-3.5 shrink-0 text-red-600" />
+                        <span>{emailStatus.message}</span>
+                      </div>
+                    )}
+
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        handleSendSearchReceiptEmail();
+                      }}
+                      className="flex flex-wrap sm:flex-nowrap items-center gap-2"
+                    >
+                      <input
+                        type="email"
+                        required
+                        placeholder="अपना ईमेल दर्ज करें (उदा. donor@gmail.com)"
+                        value={searchEmailInput || (searchEmailInput === '' && receiptData.email ? receiptData.email : '')}
+                        onChange={(e) => setSearchEmailInput(e.target.value)}
+                        className="flex-1 min-w-[200px] px-3 py-2 bg-white border border-emerald-300 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#0f4d3a] shadow-xs"
+                      />
+                      <button
+                        type="submit"
+                        className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs font-bold text-white bg-[#0f4d3a] hover:bg-[#125a44] rounded-xl shadow transition-all cursor-pointer shrink-0"
+                      >
+                        <Send className="w-3 h-3 text-amber-300" />
+                        <span>ईमेल पर भेजें</span>
+                      </button>
+                    </form>
+                  </div>
+                )}
               </div>
 
             </div>

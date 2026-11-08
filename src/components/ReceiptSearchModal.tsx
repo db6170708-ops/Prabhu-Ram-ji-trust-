@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { StorageService } from '../utils/storage';
 import { DonationReceipt } from '../types';
 import { TRUST_INFO } from '../data/defaultData';
@@ -41,6 +41,27 @@ export const ReceiptSearchModal: React.FC<ReceiptSearchModalProps> = ({ isOpen, 
     recipient?: string;
   }>({ status: 'idle', message: '' });
   const [searchEmailInput, setSearchEmailInput] = useState<string>('');
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      const resetScroll = () => {
+        if (scrollContainerRef.current) {
+          scrollContainerRef.current.scrollTop = 0;
+        }
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      };
+      resetScroll();
+      const timer = setTimeout(resetScroll, 60);
+
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        clearTimeout(timer);
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -129,20 +150,25 @@ export const ReceiptSearchModal: React.FC<ReceiptSearchModalProps> = ({ isOpen, 
   )}`;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-xs overflow-y-auto">
-      <div className="bg-white rounded-3xl max-w-2xl w-full p-5 sm:p-8 shadow-2xl border border-stone-200 relative animate-in zoom-in-95 duration-150 my-6">
-        
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-stone-400 hover:text-stone-700 rounded-full hover:bg-stone-100 transition-colors cursor-pointer z-10"
-          title="बंद करें"
-        >
-          <X className="w-5 h-5" />
-        </button>
+    <div 
+      ref={scrollContainerRef}
+      className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-xs p-2 sm:p-4 md:p-6"
+    >
+      <div className="min-h-full flex items-start sm:items-center justify-center py-2 sm:py-6">
+        <div className="bg-white rounded-3xl max-w-2xl w-full p-4 sm:p-8 shadow-2xl border border-stone-200 relative animate-in zoom-in-95 duration-150 my-2 sm:my-auto">
+          
+          {/* Close Button - Prominent & Highly Accessible */}
+          <button
+            onClick={onClose}
+            className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 text-stone-500 hover:text-stone-800 bg-stone-100 hover:bg-stone-200 rounded-full transition-colors cursor-pointer z-30 shadow-xs"
+            title="बंद करें"
+            aria-label="रसीद खोज विंडो बंद करें"
+          >
+            <X className="w-5 h-5" />
+          </button>
 
-        {/* Modal Header */}
-        <div className="flex items-center gap-3 mb-2">
+          {/* Modal Header */}
+          <div className="flex items-center gap-3 mb-2 pr-10">
           <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-[#0f4d3a] shrink-0">
             <FileText className="w-5 h-5" />
           </div>
@@ -621,5 +647,6 @@ export const ReceiptSearchModal: React.FC<ReceiptSearchModalProps> = ({ isOpen, 
 
       </div>
     </div>
+  </div>
   );
 };

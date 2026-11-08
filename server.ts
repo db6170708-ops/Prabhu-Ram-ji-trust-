@@ -210,19 +210,36 @@ app.post('/api/send-receipt-email', async (req: Request, res: Response) => {
     const subject = `दान पावती रसीद (${receipt.receiptNo}) - प्रभु रामजी ट्रस्ट, ग्राम गलगाँव`;
 
     const smtpUser = process.env.SMTP_USER || 'dineshbirla312@gmail.com';
-    const smtpPass = process.env.SMTP_PASS;
+    const smtpPass = (process.env.SMTP_PASS || '').replace(/\s+/g, '');
     const fromAddress = process.env.SMTP_FROM || `"${process.env.SMTP_FROM_NAME || 'प्रभु रामजी ट्रस्ट'}" <${smtpUser}>`;
 
     if (smtpPass) {
-      const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST || 'smtp.gmail.com',
-        port: Number(process.env.SMTP_PORT) || 465,
-        secure: (process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) === 465 : true),
-        auth: {
-          user: smtpUser,
-          pass: smtpPass,
-        },
-      });
+      const port = Number(process.env.SMTP_PORT) || 465;
+      const host = (process.env.SMTP_HOST || 'smtp.gmail.com').trim();
+      const isSecure = port === 465;
+
+      const transporterConfig: any = host.includes('gmail')
+        ? {
+            service: 'gmail',
+            auth: {
+              user: smtpUser,
+              pass: smtpPass,
+            },
+          }
+        : {
+            host,
+            port,
+            secure: isSecure,
+            auth: {
+              user: smtpUser,
+              pass: smtpPass,
+            },
+            tls: {
+              rejectUnauthorized: false,
+            },
+          };
+
+      const transporter = nodemailer.createTransport(transporterConfig);
 
       await transporter.sendMail({
         from: fromAddress,
@@ -263,6 +280,47 @@ app.post('/api/send-receipt-email', async (req: Request, res: Response) => {
       error: error.message || 'ईमेल प्रेषण के दौरान तकनीकी त्रुटि हुई। कृपया पुनः प्रयास करें।',
     });
   }
+});
+
+// API: Get SMTP & DNS (SPF, DKIM, DMARC) configuration status
+app.get('/api/smtp-config', (_req: Request, res: Response) => {
+  const host = (process.env.SMTP_HOST || 'smtp.gmail.com').trim();
+  const port = Number(process.env.SMTP_PORT) || 465;
+  const user = process.env.SMTP_USER || 'dineshbirla312@gmail.com';
+  const hasPass = Boolean(process.env.SMTP_PASS && process.env.SMTP_PASS.trim());
+  const fromName = process.env.SMTP_FROM_NAME || 'प्रभु रामजी ट्रस्ट';
+  const isGmail = host.includes('gmail');
+
+  res.json({
+    success: true,
+    provider: isGmail ? 'Google Gmail (आधिकारिक)' : host.includes('turbo-smtp') ? 'TurboSMTP' : 'SMTP Relay',
+    host,
+    port,
+    user,
+    fromName,
+    hasPassword: hasPass,
+    isGmail,
+    dns: {
+      spf: 'v=spf1 a mx include:spf.turbo-smtp.com ?all',
+      spfInclude: 'include:spf.turbo-smtp.com',
+      dkim: {
+        selector: 'turbo-smtp._domainkey',
+        type: 'TXT',
+        value: 'k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDT3MWLni6so1q9eQggRYBCLHFjohZkCnYHH8gZNDBm6zRrodRVpWpJQW7x3cWWiuBhS1X0IfBB80l5tqFa+yc+mVgnk8tkUzOHFbPQPp4fi7egTpMtsQW/ZMrxw73SItNvPr72qvJTYZNPxarMx+ULjEWybcfEdXHPY8jslGcpCwIDAQAB'
+      },
+      dmarc: {
+        host: '_dmarc',
+        type: 'TXT',
+        value: 'v=DMARC1; p=none;'
+      }
+    },
+    relayStatus: hasPass ? 'live' : 'ready',
+    message: hasPass 
+      ? isGmail 
+        ? `Google Gmail अधिकृत सेवा सक्रिय है (${user})। रसीदें सीधे इनबॉक्स में प्रेषित हो रही हैं।`
+        : `TurboSMTP सक्रिय है (${user})। रसीदें सीधे प्रेषित हो रही हैं।`
+      : `रिले तैयार है (${user})। .env में SMTP_PASS दर्ज करते ही लाइव डिलीवरी शुरू हो जाएगी।`
+  });
 });
 
 // Health check endpoint

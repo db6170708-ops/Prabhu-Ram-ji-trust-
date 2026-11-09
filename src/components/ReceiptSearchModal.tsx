@@ -23,13 +23,17 @@ import {
   Loader2
 } from 'lucide-react';
 import { sendReceiptEmail, getReceiptMailtoLink } from '../utils/emailService';
+import { Language, TRANSLATIONS } from '../utils/translations';
 
 interface ReceiptSearchModalProps {
   isOpen: boolean;
   onClose: () => void;
+  language?: Language;
 }
 
-export const ReceiptSearchModal: React.FC<ReceiptSearchModalProps> = ({ isOpen, onClose }) => {
+export const ReceiptSearchModal: React.FC<ReceiptSearchModalProps> = ({ isOpen, onClose, language = 'hi' }) => {
+  const isEn = language === 'en';
+  const t = TRANSLATIONS[language];
   const [phone, setPhone] = useState('');
   const [receiptId, setReceiptId] = useState('');
   const [hasSearched, setHasSearched] = useState(false);

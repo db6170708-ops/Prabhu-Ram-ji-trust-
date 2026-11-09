@@ -18,11 +18,16 @@ import {
   FileText
 } from 'lucide-react';
 
+import { Language, TRANSLATIONS } from '../utils/translations';
+
 interface AshramNirmanSectionProps {
+  language?: Language;
   onDonateForAshram: (cause: string, amount: number) => void;
 }
 
-export const AshramNirmanSection: React.FC<AshramNirmanSectionProps> = ({ onDonateForAshram }) => {
+export const AshramNirmanSection: React.FC<AshramNirmanSectionProps> = ({ language = 'hi', onDonateForAshram }) => {
+  const isEn = language === 'en';
+  const t = TRANSLATIONS[language];
   const [isFolderOpen, setIsFolderOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'materials' | 'structure'>('all');

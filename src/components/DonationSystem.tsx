@@ -33,17 +33,20 @@ import {
 } from 'lucide-react';
 import QRCode from 'qrcode';
 import { sendReceiptEmail, getReceiptMailtoLink } from '../utils/emailService';
+import { TRANSLATIONS, Language } from '../utils/translations';
 
 interface DonationSystemProps {
   initialCause?: string;
   initialAmount?: number;
   onReceiptGenerated: (receipt: DonationReceipt) => void;
+  language?: Language;
 }
 
 export const DonationSystem: React.FC<DonationSystemProps> = ({ 
   initialCause, 
   initialAmount,
-  onReceiptGenerated 
+  onReceiptGenerated,
+  language = 'hi'
 }) => {
   const [selectedAmount, setSelectedAmount] = useState<number>(initialAmount || 1100);
   const [customAmount, setCustomAmount] = useState<string>('');
@@ -119,33 +122,10 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
   const cleanNote = (selectedCause || 'Donation to Prabhu Ramji Trust').replace(/[^a-zA-Z0-9 ]/g, ' ').slice(0, 40);
 
   const getUpiUrl = (app: 'universal' | 'phonepe' | 'gpay' | 'paytm' = 'universal') => {
-    const params = `pa=${encodeURIComponent(TRUST_INFO.upiId)}&pn=${encodeURIComponent(cleanPayeeName)}&am=${currentAmount}&cu=INR&tn=${encodeURIComponent(cleanNote)}`;
-    switch (app) {
-      case 'phonepe':
-        return `phonepe://pay?${params}`;
-      case 'gpay':
-        return `tez://upi/pay?${params}`;
-      case 'paytm':
-        return `paytmmp://pay?${params}`;
-      default:
-        return `upi://pay?${params}`;
-    }
+    // Use standard universal upi:// intent to avoid proprietary scheme security declines on Android
+    const params = `pa=${encodeURIComponent(TRUST_INFO.upiId)}&pn=${encodeURIComponent(cleanPayeeName)}&cu=INR&am=${currentAmount}&tn=${encodeURIComponent(cleanNote)}`;
+    return `upi://pay?${params}`;
   };
-
-  // Generate dynamic QR code for GPay / Paytm / Universal UPI
-  useEffect(() => {
-    const upiUrl = getUpiUrl('universal');
-    QRCode.toDataURL(upiUrl, {
-      width: 400,
-      margin: 2,
-      color: {
-        dark: '#0f241b',
-        light: '#ffffff',
-      },
-    })
-      .then((url) => setGeneratedQrUrl(url))
-      .catch((err) => console.error('Failed to generate UPI QR:', err));
-  }, [currentAmount, selectedCause]);
 
   const handleDirectUpiPayment = (app: 'universal' | 'phonepe' | 'gpay' | 'paytm' = 'universal') => {
     const url = getUpiUrl(app);
@@ -153,11 +133,11 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
     try {
       navigator.clipboard.writeText(TRUST_INFO.upiId);
       setCopiedField('upi');
-      setUpiToast('✓ UPI ID (dineshbirla312@ybl) क्लिपबोर्ड पर कॉपी हो गया है! यदि ऐप स्वतः न खुले तो किसी भी UPI ऐप में पेस्ट करें।');
+      setUpiToast('✓ UPI ID (dineshbirla312@ybl) कॉपी हो गई है! यदि ऐप में सुरक्षा कारण से सीधे भुगतान न हो, तो ऐप में "To UPI ID" पर पेस्ट करें या QR स्कैन करें।');
       setTimeout(() => {
         setCopiedField(null);
         setUpiToast(null);
-      }, 5000);
+      }, 7000);
     } catch {
       // ignore
     }
@@ -399,80 +379,138 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
             </div>
           </div>
 
-          {/* 2. Side-by-Side: Live Dynamic QR & Direct Mobile 1-Tap Pay */}
+          {/* 2. Side-by-Side: Official PhonePe QR Standee & Direct Mobile Pay */}
           <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
             
-            {/* Left Box: Live Dynamic UPI QR Code */}
+            {/* Left Box: Official PhonePe Standee Photo */}
             <div className="lg:col-span-5 bg-white text-stone-900 p-5 sm:p-6 rounded-2xl shadow-xl border-2 border-amber-400 text-center relative group">
               <div className="flex items-center justify-between pb-2 mb-3 border-b border-stone-200">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-[#0f4d3a]">
-                  <QrCode className="w-4 h-4 text-emerald-700" />
-                  <span>लाइव डायनामिक QR कोड</span>
+                  <QrCode className="w-4 h-4 text-purple-700" />
+                  <span>अधिकृत PhonePe QR कोड</span>
                 </div>
-                <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#0f4d3a] text-xs font-extrabold border border-emerald-300">
-                  ₹{currentAmount} प्री-लोडेड
+                <span className="px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-900 text-xs font-extrabold border border-purple-300">
+                  PhonePe ACCEPTED HERE
                 </span>
               </div>
 
-              <div className="relative mx-auto w-60 max-w-full aspect-square bg-white p-2.5 rounded-xl border border-stone-200 shadow-inner flex items-center justify-center">
-                {generatedQrUrl ? (
-                  <img
-                    src={generatedQrUrl}
-                    alt={`Dynamic UPI QR Code for ₹${currentAmount}`}
-                    className="w-full h-full object-contain"
-                  />
-                ) : (
-                  <img
-                    src={TRUST_INFO.phonePeQrUrl}
-                    alt="PhonePe QR Code"
-                    className="w-full h-full object-contain"
-                  />
-                )}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-2.5 py-1 rounded-md shadow-md border border-stone-200 pointer-events-none">
-                  <span className="text-xs font-extrabold tracking-wide text-[#0f4d3a]">
-                    ₹{currentAmount}
-                  </span>
-                </div>
+              {/* Exact authentic user uploaded QR standee photo */}
+              <div className="relative mx-auto max-w-[270px] bg-stone-50 p-2 rounded-2xl border-2 border-purple-200 shadow-inner flex flex-col items-center justify-center">
+                <img
+                  src={TRUST_INFO.phonePeQrUrl}
+                  alt="Official PhonePe QR Code - GULABCHAND S/O HIRALAL"
+                  className="w-full h-auto max-h-[360px] object-contain rounded-xl"
+                  loading="eager"
+                />
               </div>
 
-              <div className="mt-3.5 text-xs space-y-1">
-                <div className="font-bold text-stone-900 text-sm">
-                  {TRUST_INFO.accountHolder}
-                </div>
-                <div className="flex items-center justify-center gap-2 text-xs text-stone-600 font-mono">
-                  <span>UPI ID:</span>
-                  <strong className="text-emerald-800 font-bold">{TRUST_INFO.upiId}</strong>
+              {/* Action Buttons: Download QR & Full View */}
+              <div className="mt-3.5 space-y-2.5">
+                <div className="flex items-center justify-center gap-2">
+                  <a
+                    href={TRUST_INFO.phonePeQrUrl}
+                    download="Prabhu-Ramji-Trust-PhonePe-QR.jpg"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold rounded-xl shadow transition-all cursor-pointer border border-purple-500"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>QR डाउनलोड करें</span>
+                  </a>
+
                   <button
                     type="button"
-                    onClick={() => copyToClipboard(TRUST_INFO.upiId, 'upi_custom')}
-                    className="p-1 hover:bg-stone-100 rounded text-stone-500 hover:text-stone-800 cursor-pointer"
-                    title="UPI ID कॉपी करें"
+                    onClick={() => setIsQrModalOpen(true)}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer border border-stone-300"
                   >
-                    {copiedField === 'upi_custom' ? (
-                      <Check className="w-3.5 h-3.5 text-emerald-600" />
-                    ) : (
-                      <Copy className="w-3.5 h-3.5" />
-                    )}
+                    <Maximize2 className="w-3.5 h-3.5 text-stone-600" />
+                    <span>बड़ा देखें</span>
                   </button>
                 </div>
-                <p className="text-[11px] text-stone-500 pt-1 font-medium">
-                  PhonePe, Google Pay, Paytm अथवा BHIM से स्कैन करके ₹{currentAmount} सीधे समर्पित करें।
-                </p>
+
+                <div className="pt-2 text-xs border-t border-stone-100">
+                  <div className="font-bold text-stone-900 text-sm">
+                    {TRUST_INFO.accountHolder}
+                  </div>
+                  <div className="flex items-center justify-center gap-1.5 text-xs text-stone-600 font-mono mt-0.5">
+                    <span>UPI ID:</span>
+                    <strong className="text-emerald-800 font-bold">{TRUST_INFO.upiId}</strong>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        copyToClipboard(TRUST_INFO.upiId, 'upi_custom');
+                        setUpiToast('✓ UPI ID (dineshbirla312@ybl) क्लिपबोर्ड पर कॉपी हो गई है!');
+                      }}
+                      className="p-1 hover:bg-stone-100 rounded text-stone-500 hover:text-stone-800 cursor-pointer"
+                      title="UPI ID कॉपी करें"
+                    >
+                      {copiedField === 'upi_custom' ? (
+                        <Check className="w-3.5 h-3.5 text-emerald-600" />
+                      ) : (
+                        <Copy className="w-3.5 h-3.5" />
+                      )}
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-stone-500 pt-1 font-medium">
+                    PhonePe, Google Pay, Paytm अथवा BHIM से स्कैन करके राशि समर्पित करें।
+                  </p>
+                </div>
               </div>
             </div>
 
-            {/* Right Box: Direct 1-Click Pay Buttons & Transition to Receipt */}
-            <div className="lg:col-span-7 space-y-5">
+            {/* Right Box: Direct 1-Click Pay Buttons & Security Guidance */}
+            <div className="lg:col-span-7 space-y-4">
+              
+              {/* Quick 1-Tap UPI ID Copy Card */}
+              <div className="bg-emerald-950/90 border border-amber-400/60 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-3 shadow-md">
+                <div className="space-y-0.5">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-amber-300 block">
+                    आधिकारिक UPI ID:
+                  </span>
+                  <div className="font-mono text-base font-bold text-white tracking-wide">
+                    {TRUST_INFO.upiId}
+                  </div>
+                  <div className="text-[11px] text-emerald-200">
+                    खाता धारक: {TRUST_INFO.accountHolder}
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    copyToClipboard(TRUST_INFO.upiId, 'upi_top_banner');
+                    setUpiToast('✓ UPI ID (dineshbirla312@ybl) क्लिपबोर्ड पर कॉपी हो गई है!');
+                  }}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-[#08241b] font-bold text-xs shadow-md transition-all cursor-pointer shrink-0"
+                >
+                  {copiedField === 'upi_top_banner' ? (
+                    <>
+                      <Check className="w-4 h-4 text-emerald-900" />
+                      <span>कॉपी हो गई!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-4 h-4" />
+                      <span>UPI ID कॉपी करें</span>
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Security Advisory for PhonePe / GPay */}
+              <div className="bg-amber-500/15 border border-amber-400/40 p-3.5 rounded-xl text-xs text-amber-100 flex items-start gap-2.5">
+                <Info className="w-4 h-4 text-amber-300 shrink-0 mt-0.5" />
+                <div className="leading-relaxed">
+                  <strong className="text-amber-200 font-bold block mb-0.5">सुरक्षित भुगतान मार्गदर्शन (NPCI सुरक्षा):</strong>
+                  यदि आपके PhonePe ऐप में <em>"declined for security reasons"</em> का संदेश दिखे, तो यह बैंक द्वारा ब्राउज़र लिंक पर लगाई गई सुरक्षा है। ऐसी स्थिति में बाएँ दिया गया <strong>QR कोड सीधे स्कैन करें</strong> (या डाउनलोड कर गैलरी से चुनें), अथवा PhonePe के <strong>"To UPI ID"</strong> विकल्प में जाकर <strong>{TRUST_INFO.upiId}</strong> पेस्ट करके भुगतान करें।
+                </div>
+              </div>
+
+              {/* Direct App Trigger Buttons */}
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-amber-300 block mb-2">
-                  2. मोबाइल से 1-क्लिक में सीधा भुगतान करें:
+                  2. मोबाइल से 1-क्लिक में ऐप खोलें:
                 </span>
-                <p className="text-xs sm:text-sm text-emerald-100/90 mb-3.5">
-                  नीचे अपने पसंदीदा UPI ऐप पर क्लिक करें। ऐप स्वतः <strong>₹{currentAmount}</strong> की राशि के साथ तुरंत खुल जाएगा:
-                </p>
 
-                {/* 4 Direct 1-Click Mobile Buttons */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   <button
                     type="button"
                     onClick={() => handleDirectUpiPayment('phonepe')}
@@ -481,8 +519,8 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
                     <div className="flex items-center gap-2.5">
                       <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center font-bold text-xs">पे</div>
                       <div className="text-left">
-                        <div className="leading-tight">PhonePe से पे करें</div>
-                        <div className="text-[10px] text-purple-200">₹{currentAmount} ऑटो-फिल होगा</div>
+                        <div className="leading-tight">PhonePe खोलें</div>
+                        <div className="text-[10px] text-purple-200">UPI ID कॉपी होगी</div>
                       </div>
                     </div>
                     <Zap className="w-4 h-4 text-yellow-300" />
@@ -496,8 +534,8 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
                     <div className="flex items-center gap-2.5">
                       <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center font-bold text-xs">G</div>
                       <div className="text-left">
-                        <div className="leading-tight">Google Pay से पे करें</div>
-                        <div className="text-[10px] text-blue-100">₹{currentAmount} ऑटो-फिल होगा</div>
+                        <div className="leading-tight">Google Pay खोलें</div>
+                        <div className="text-[10px] text-blue-100">UPI ID कॉपी होगी</div>
                       </div>
                     </div>
                     <Zap className="w-4 h-4 text-yellow-300" />
@@ -511,8 +549,8 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
                     <div className="flex items-center gap-2.5">
                       <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center font-bold text-xs">P</div>
                       <div className="text-left">
-                        <div className="leading-tight">Paytm से पे करें</div>
-                        <div className="text-[10px] text-sky-100">₹{currentAmount} ऑटो-फिल होगा</div>
+                        <div className="leading-tight">Paytm खोलें</div>
+                        <div className="text-[10px] text-sky-100">UPI ID कॉपी होगी</div>
                       </div>
                     </div>
                     <Zap className="w-4 h-4 text-yellow-300" />
@@ -526,7 +564,7 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
                     <div className="flex items-center gap-2.5">
                       <Smartphone className="w-5 h-5 text-amber-300" />
                       <div className="text-left">
-                        <div className="leading-tight">अन्य किसी भी UPI से पे करें</div>
+                        <div className="leading-tight">अन्य कोई भी UPI ऐप</div>
                         <div className="text-[10px] text-emerald-200">BHIM / Cred / Amazon</div>
                       </div>
                     </div>
@@ -536,10 +574,10 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
               </div>
 
               {/* Transition to Official Receipt */}
-              <div className="pt-4 border-t border-emerald-700/60 bg-emerald-950/70 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-3">
+              <div className="pt-3 border-t border-emerald-700/60 bg-emerald-950/70 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-3">
                 <div className="text-xs text-emerald-100">
                   <span className="font-bold text-amber-300 block mb-0.5">भुगतान पूर्ण कर लिया है?</span>
-                  <span>अपनी आधिकारिक डिजिटल पावती रसीद व 12 अंकों का UTR दर्ज करने के लिए नीचे फॉर्म भरें।</span>
+                  <span>अपनी आधिकारिक डिजिटल पावती रसीद प्राप्त करने के लिए 12 अंकों का UTR नीचे दर्ज करें।</span>
                 </div>
                 <button
                   type="button"
@@ -547,7 +585,7 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-[#08241b] font-bold text-xs shadow-md transition-all cursor-pointer shrink-0"
                 >
                   <FileText className="w-4 h-4" />
-                  <span>आधिकारिक रसीद प्राप्त करें</span>
+                  <span>रसीद फॉर्म पर जाएं</span>
                   <ArrowDown className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -559,324 +597,8 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* Left Column: Official PhonePe QR Image & Bank Details */}
+          {/* Left Column: Direct Bank Account Option (सीधा अधिकृत बैंक खाता) */}
           <div className="lg:col-span-5 space-y-6">
-            
-            {/* Interactive Payment Modes Selection Tabs */}
-            <div className="bg-stone-100/80 p-1.5 rounded-2xl border border-stone-300 shadow-2xs grid grid-cols-4 gap-1">
-              <button
-                type="button"
-                onClick={() => {
-                  setActivePaymentTab('phonepe');
-                  setPaymentMode('PhonePe QR / UPI');
-                }}
-                className={`py-2 px-1 text-center rounded-xl transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5 ${
-                  activePaymentTab === 'phonepe'
-                    ? 'bg-purple-700 text-white shadow-sm font-bold'
-                    : 'text-stone-700 hover:bg-white/80 font-semibold'
-                }`}
-              >
-                <div className="text-[12px] sm:text-xs leading-tight">PhonePe</div>
-                <div className={`text-[9px] ${activePaymentTab === 'phonepe' ? 'text-purple-200' : 'text-stone-500'}`}>QR कोड</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setActivePaymentTab('gpay');
-                  setPaymentMode('Google Pay (GPay)');
-                }}
-                className={`py-2 px-1 text-center rounded-xl transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5 ${
-                  activePaymentTab === 'gpay'
-                    ? 'bg-blue-600 text-white shadow-sm font-bold'
-                    : 'text-stone-700 hover:bg-white/80 font-semibold'
-                }`}
-              >
-                <div className="text-[12px] sm:text-xs leading-tight">Google Pay</div>
-                <div className={`text-[9px] ${activePaymentTab === 'gpay' ? 'text-blue-100' : 'text-stone-500'}`}>GPay QR</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setActivePaymentTab('paytm');
-                  setPaymentMode('Paytm / अन्य UPI');
-                }}
-                className={`py-2 px-1 text-center rounded-xl transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5 ${
-                  activePaymentTab === 'paytm'
-                    ? 'bg-sky-600 text-white shadow-sm font-bold'
-                    : 'text-stone-700 hover:bg-white/80 font-semibold'
-                }`}
-              >
-                <div className="text-[12px] sm:text-xs leading-tight">Paytm</div>
-                <div className={`text-[9px] ${activePaymentTab === 'paytm' ? 'text-sky-100' : 'text-stone-500'}`}>BHIM/UPI</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setActivePaymentTab('bank');
-                  setPaymentMode('सीधे बैंक ट्रांसफर (IDBI)');
-                }}
-                className={`py-2 px-1 text-center rounded-xl transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5 ${
-                  activePaymentTab === 'bank'
-                    ? 'bg-[#0f4d3a] text-white shadow-sm font-bold'
-                    : 'text-stone-700 hover:bg-white/80 font-semibold'
-                }`}
-              >
-                <div className="text-[12px] sm:text-xs leading-tight">बैंक खाता</div>
-                <div className={`text-[9px] ${activePaymentTab === 'bank' ? 'text-emerald-200' : 'text-stone-500'}`}>NEFT/IMPS</div>
-              </button>
-            </div>
-
-            {/* TAB 1: PHONEPE QR CARD */}
-            {activePaymentTab === 'phonepe' && (
-              <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-md border-2 border-purple-400 text-center relative overflow-hidden animate-in fade-in">
-                <div className="flex items-center justify-between pb-3 border-b border-stone-100 mb-4">
-                  <div className="flex items-center gap-2">
-                    <QrCode className="w-5 h-5 text-purple-700" />
-                    <span className="font-heading font-bold text-purple-900 text-base">
-                      आधिकारिक PhonePe QR कोड
-                    </span>
-                  </div>
-                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-900 border border-purple-200">
-                    PhonePe Verified
-                  </span>
-                </div>
-
-                <div className="relative mx-auto w-64 max-w-full bg-white p-2 rounded-2xl shadow-inner border border-purple-200 group">
-                  <img
-                    src={TRUST_INFO.phonePeQrUrl}
-                    alt="PhonePe QR Code - Gulabchand S/O Hiralal - Prabhu Ramji Trust"
-                    className="w-full h-auto rounded-xl object-contain mx-auto"
-                  />
-                  <button
-                    onClick={() => setIsQrModalOpen(true)}
-                    className="absolute bottom-3 right-3 p-2 bg-purple-900/80 hover:bg-purple-950 text-white rounded-lg opacity-85 group-hover:opacity-100 transition-opacity"
-                    title="बड़ा देखें"
-                  >
-                    <Maximize2 className="w-4 h-4" />
-                  </button>
-                </div>
-
-                <div className="mt-4 pt-3 border-t border-stone-100 text-xs">
-                  <div className="font-bold text-stone-900 text-sm">
-                    {TRUST_INFO.accountHolder}
-                  </div>
-                  <div className="text-stone-600 font-mono mt-0.5">
-                    UPI ID: <strong className="text-purple-800">{TRUST_INFO.upiId}</strong>
-                  </div>
-                  <p className="text-[11px] text-stone-500 mt-1">
-                    PhonePe ऐप खोलें और इस QR को स्कैन करें अथवा नीचे बटन दबाएं।
-                  </p>
-                </div>
-
-                <div className="mt-4 pt-3 space-y-2">
-                  <button
-                    type="button"
-                    onClick={() => handleDirectUpiPayment('phonepe')}
-                    className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 text-xs sm:text-sm font-bold text-white bg-purple-700 hover:bg-purple-800 rounded-xl shadow-md transition-all cursor-pointer"
-                  >
-                    <Smartphone className="w-4 h-4 text-amber-300" />
-                    <span>PhonePe ऐप में सीधे खोलें (₹{currentAmount})</span>
-                    <Zap className="w-3.5 h-3.5 text-yellow-300" />
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* TAB 2: GOOGLE PAY (GPAY) QR CARD */}
-            {activePaymentTab === 'gpay' && (
-              <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-md border-2 border-blue-400 text-center relative overflow-hidden animate-in fade-in">
-                <div className="flex items-center justify-between pb-3 border-b border-stone-100 mb-4">
-                  <div className="flex items-center gap-2">
-                    <QrCode className="w-5 h-5 text-blue-600" />
-                    <span className="font-heading font-bold text-blue-900 text-base">
-                      Google Pay (GPay) आधिकारिक QR कोड
-                    </span>
-                  </div>
-                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-900 border border-blue-200 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
-                    Google Pay Verified
-                  </span>
-                </div>
-
-                <div className="relative mx-auto w-64 max-w-full bg-white p-3 rounded-2xl shadow-inner border border-blue-200 group">
-                  {generatedQrUrl ? (
-                    <img
-                      src={generatedQrUrl}
-                      alt="Google Pay QR Code - Prabhu Ramji Trust"
-                      className="w-full h-auto rounded-xl object-contain mx-auto"
-                    />
-                  ) : (
-                    <img
-                      src={TRUST_INFO.phonePeQrUrl}
-                      alt="UPI QR Code"
-                      className="w-full h-auto rounded-xl object-contain mx-auto"
-                    />
-                  )}
-
-                  {/* Google Pay Center Badge */}
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-2 py-1 rounded-md shadow-md border border-stone-200 pointer-events-none">
-                    <span className="text-[10px] font-extrabold tracking-wide text-blue-600">GPay</span>
-                  </div>
-
-                  <button
-                    onClick={() => setIsQrModalOpen(true)}
-                    className="absolute bottom-3 right-3 p-2 bg-blue-900/80 hover:bg-blue-950 text-white rounded-lg opacity-85 group-hover:opacity-100 transition-opacity"
-                    title="बड़ा देखें"
-                  >
-                    <Maximize2 className="w-4 h-4" />
-                  </button>
-                </div>
-
-                <div className="mt-4 pt-3 border-t border-stone-100 text-xs space-y-1">
-                  <div className="font-bold text-stone-900 text-sm">
-                    {TRUST_INFO.accountHolder}
-                  </div>
-                  <div className="text-stone-600 font-mono">
-                    UPI ID: <strong className="text-blue-700">{TRUST_INFO.upiId}</strong>
-                  </div>
-                  <div className="inline-block px-3 py-1 bg-blue-50 text-blue-900 font-bold rounded-lg border border-blue-200 text-xs mt-1">
-                    निर्धारित सहयोग राशि: ₹{currentAmount} /-
-                  </div>
-                  <p className="text-[11px] text-stone-500 mt-1">
-                    Google Pay स्कैनर से इस QR को स्कैन करें अथवा नीचे दिए गए बटन पर टैप करें।
-                  </p>
-                </div>
-
-                <div className="mt-4 pt-3 space-y-2">
-                  <button
-                    type="button"
-                    onClick={() => handleDirectUpiPayment('gpay')}
-                    className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:to-indigo-700 rounded-xl shadow-md transition-all cursor-pointer"
-                  >
-                    <Smartphone className="w-4 h-4 text-amber-300" />
-                    <span>Google Pay ऐप में सीधे खोलें (₹{currentAmount})</span>
-                    <Zap className="w-3.5 h-3.5 text-yellow-300" />
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* TAB 3: PAYTM / BHIM UPI QR CARD */}
-            {activePaymentTab === 'paytm' && (
-              <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-md border-2 border-sky-400 text-center relative overflow-hidden animate-in fade-in">
-                <div className="flex items-center justify-between pb-3 border-b border-stone-100 mb-4">
-                  <div className="flex items-center gap-2">
-                    <QrCode className="w-5 h-5 text-sky-600" />
-                    <span className="font-heading font-bold text-sky-900 text-base">
-                      Paytm / BHIM UPI QR कोड
-                    </span>
-                  </div>
-                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-900 border border-sky-200">
-                    Paytm Verified
-                  </span>
-                </div>
-
-                <div className="relative mx-auto w-64 max-w-full bg-white p-3 rounded-2xl shadow-inner border border-sky-200 group">
-                  {generatedQrUrl ? (
-                    <img
-                      src={generatedQrUrl}
-                      alt="Paytm UPI QR Code"
-                      className="w-full h-auto rounded-xl object-contain mx-auto"
-                    />
-                  ) : (
-                    <img
-                      src={TRUST_INFO.phonePeQrUrl}
-                      alt="UPI QR Code"
-                      className="w-full h-auto rounded-xl object-contain mx-auto"
-                    />
-                  )}
-                  <button
-                    onClick={() => setIsQrModalOpen(true)}
-                    className="absolute bottom-3 right-3 p-2 bg-sky-900/80 hover:bg-sky-950 text-white rounded-lg opacity-85 group-hover:opacity-100 transition-opacity"
-                    title="बड़ा देखें"
-                  >
-                    <Maximize2 className="w-4 h-4" />
-                  </button>
-                </div>
-
-                <div className="mt-4 pt-3 border-t border-stone-100 text-xs space-y-1">
-                  <div className="font-bold text-stone-900 text-sm">
-                    {TRUST_INFO.accountHolder}
-                  </div>
-                  <div className="text-stone-600 font-mono">
-                    UPI ID: <strong className="text-sky-700">{TRUST_INFO.upiId}</strong>
-                  </div>
-                  <div className="inline-block px-3 py-1 bg-sky-50 text-sky-900 font-bold rounded-lg border border-sky-200 text-xs mt-1">
-                    सहयोग राशि: ₹{currentAmount} /-
-                  </div>
-                </div>
-
-                <div className="mt-4 pt-3 space-y-2">
-                  <button
-                    type="button"
-                    onClick={() => handleDirectUpiPayment('paytm')}
-                    className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 text-xs sm:text-sm font-bold text-white bg-sky-600 hover:bg-sky-700 rounded-xl shadow-md transition-all cursor-pointer"
-                  >
-                    <Smartphone className="w-4 h-4 text-amber-300" />
-                    <span>Paytm ऐप में सीधे खोलें (₹{currentAmount})</span>
-                    <Zap className="w-3.5 h-3.5 text-yellow-300" />
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Quick 1-Tap App Launchers for all apps */}
-            {activePaymentTab !== 'bank' && (
-              <div className="space-y-2">
-                <div className="grid grid-cols-3 gap-2 text-center">
-                  <button
-                    type="button"
-                    onClick={() => handleDirectUpiPayment('phonepe')}
-                    className={`py-2 px-1.5 rounded-xl border transition-all flex flex-col items-center justify-center cursor-pointer shadow-xs active:scale-95 ${
-                      activePaymentTab === 'phonepe'
-                        ? 'bg-purple-100 border-purple-400 text-purple-900 font-bold ring-2 ring-purple-300/40'
-                        : 'bg-white hover:bg-purple-50 border-purple-200 text-purple-900'
-                    }`}
-                    title="PhonePe में खोलें"
-                  >
-                    <span className="text-xs font-bold text-purple-700">PhonePe</span>
-                    <span className="text-[10px] text-purple-600 font-medium">सीधे खोलें</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleDirectUpiPayment('gpay')}
-                    className={`py-2 px-1.5 rounded-xl border transition-all flex flex-col items-center justify-center cursor-pointer shadow-xs active:scale-95 ${
-                      activePaymentTab === 'gpay'
-                        ? 'bg-blue-100 border-blue-400 text-blue-900 font-bold ring-2 ring-blue-300/40'
-                        : 'bg-white hover:bg-blue-50 border-blue-200 text-blue-900'
-                    }`}
-                    title="Google Pay में खोलें"
-                  >
-                    <span className="text-xs font-bold text-blue-700">Google Pay</span>
-                    <span className="text-[10px] text-blue-600 font-medium">सीधे खोलें</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleDirectUpiPayment('paytm')}
-                    className={`py-2 px-1.5 rounded-xl border transition-all flex flex-col items-center justify-center cursor-pointer shadow-xs active:scale-95 ${
-                      activePaymentTab === 'paytm'
-                        ? 'bg-sky-100 border-sky-400 text-sky-900 font-bold ring-2 ring-sky-300/40'
-                        : 'bg-white hover:bg-sky-50 border-sky-200 text-sky-900'
-                    }`}
-                    title="Paytm में खोलें"
-                  >
-                    <span className="text-xs font-bold text-sky-700">Paytm</span>
-                    <span className="text-[10px] text-sky-600 font-medium">सीधे खोलें</span>
-                  </button>
-                </div>
-
-                {upiToast && (
-                  <div className="p-2.5 bg-emerald-50 border border-emerald-300 rounded-xl text-emerald-900 text-xs font-medium text-center animate-fadeIn shadow-xs">
-                    {upiToast}
-                  </div>
-                )}
-              </div>
-            )}
 
             {/* Bank Transfer Card */}
             <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-stone-200 space-y-4">
@@ -1260,20 +982,38 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
 
                   <div>
                     <label className="block text-xs font-semibold text-stone-700 mb-1">
-                      UTR / UPI संदर्भ संख्या (12 अंकों का UTR / Transaction No - वैकल्पिक)
+                      {!paymentMode.includes('नकद')
+                        ? 'UTR / UPI संदर्भ संख्या (12 अंकों का UTR / Transaction No) *'
+                        : 'संदर्भ संख्या (वैकल्पिक)'}
                     </label>
                     <input
                       type="text"
                       placeholder="उदा. 423489123011 (PhonePe, GPay या बैंक UTR)"
                       value={transactionRef}
                       onChange={(e) => setTransactionRef(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0f4d3a] focus:bg-white"
+                      className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0f4d3a] focus:bg-white font-mono"
                     />
                     <p className="text-[11px] text-stone-500 mt-1">
-                      💡 PhonePe, Google Pay या Paytm में सफल भुगतान के बाद दिखने वाला 12 अंकों का UTR नंबर यहाँ दर्ज कर सकते हैं।
+                      💡 PhonePe, Google Pay या Paytm में सफल भुगतान के बाद प्राप्त 12 अंकों का UTR नंबर यहाँ दर्ज करें ताकि आपकी रसीद सत्यापित हो सके।
                     </p>
                   </div>
                 </div>
+
+                {/* Actual Payment Confirmation Checkbox to prevent premature slip downloads */}
+                {!paymentMode.includes('नकद') && (
+                  <div className="p-3.5 bg-emerald-50 border border-emerald-300 rounded-xl flex items-start gap-2.5">
+                    <input
+                      type="checkbox"
+                      id="hasPaidConfirmation"
+                      checked={hasPaidConfirmation}
+                      onChange={(e) => setHasPaidConfirmation(e.target.checked)}
+                      className="mt-0.5 w-4 h-4 text-emerald-800 rounded border-stone-300 focus:ring-emerald-600 cursor-pointer"
+                    />
+                    <label htmlFor="hasPaidConfirmation" className="text-xs text-emerald-950 font-medium cursor-pointer leading-relaxed">
+                      मैं प्रमाणित करता/करती हूँ कि मैंने प्रभु रामजी ट्रस्ट (dineshbirla312@ybl) को <strong>₹{currentAmount}</strong> का भुगतान PhonePe, Google Pay, Paytm या बैंक से पूर्ण कर दिया है।
+                    </label>
+                  </div>
+                )}
 
                 {/* Submit / Generate Receipt Action */}
                 <div className="pt-4 space-y-2">
@@ -1555,50 +1295,52 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
           <div className="bg-white rounded-3xl max-w-sm w-full p-6 text-center space-y-4 animate-in fade-in">
             <div className="flex items-center justify-between pb-2 border-b border-stone-200">
               <h3 className="font-heading font-bold text-[#0f4d3a] text-base sm:text-lg">
-                {activePaymentTab === 'gpay'
-                  ? 'Google Pay (GPay) अधिकृत QR'
-                  : activePaymentTab === 'paytm'
-                  ? 'Paytm / BHIM UPI अधिकृत QR'
-                  : 'PhonePe अधिकृत QR कोड'}
+                अधिकृत PhonePe QR कोड
               </h3>
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                activePaymentTab === 'gpay'
-                  ? 'bg-blue-100 text-blue-900 border border-blue-200'
-                  : activePaymentTab === 'paytm'
-                  ? 'bg-sky-100 text-sky-900 border border-sky-200'
-                  : 'bg-purple-100 text-purple-900 border border-purple-200'
-              }`}>
-                {activePaymentTab === 'gpay' ? 'Google Pay' : activePaymentTab === 'paytm' ? 'Paytm' : 'PhonePe'}
-              </span>
+              <button
+                onClick={() => setIsQrModalOpen(false)}
+                className="p-1.5 rounded-full hover:bg-stone-100 text-stone-500 hover:text-stone-800 transition-colors"
+                title="बंद करें"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
-            <div className="w-full aspect-square p-2 border border-stone-200 rounded-2xl bg-white flex items-center justify-center relative">
+            <div className="w-full p-2 border border-stone-200 rounded-2xl bg-[#FAF7F2] flex items-center justify-center">
               <img
-                src={activePaymentTab === 'gpay' || activePaymentTab === 'paytm' ? (generatedQrUrl || TRUST_INFO.phonePeQrUrl) : TRUST_INFO.phonePeQrUrl}
-                alt="Payment QR"
-                className="w-full h-full object-contain"
+                src={TRUST_INFO.phonePeQrUrl}
+                alt="PhonePe QR Standee - GULABCHAND S/O HIRALAL"
+                className="w-full h-auto max-h-[380px] object-contain rounded-xl"
               />
-              {activePaymentTab === 'gpay' && (
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-2 py-1 rounded-md shadow-md border border-stone-200 pointer-events-none">
-                  <span className="text-[11px] font-extrabold tracking-wide text-blue-600">GPay</span>
-                </div>
-              )}
             </div>
 
-            <div className="space-y-1 text-xs">
-              <p className="font-mono font-bold text-stone-800">{TRUST_INFO.accountHolder}</p>
-              <p className="font-mono text-emerald-800">UPI ID: <strong>{TRUST_INFO.upiId}</strong></p>
-              <div className="inline-block px-3 py-1 bg-amber-50 text-amber-900 font-bold rounded-lg border border-amber-200 text-xs">
-                सहयोग राशि: ₹{currentAmount} /-
+            <div className="space-y-1.5 text-xs">
+              <p className="font-bold text-stone-900 text-sm">{TRUST_INFO.accountHolder}</p>
+              <div className="flex items-center justify-center gap-1.5 font-mono text-emerald-800">
+                <span>UPI ID:</span>
+                <strong>{TRUST_INFO.upiId}</strong>
               </div>
+              <p className="text-[11px] text-stone-500">
+                PhonePe, Google Pay, Paytm अथवा BHIM से स्कैन करें
+              </p>
             </div>
 
-            <button
-              onClick={() => setIsQrModalOpen(false)}
-              className="w-full py-2.5 bg-stone-200 hover:bg-stone-300 rounded-xl text-xs font-bold text-stone-800 transition-colors cursor-pointer"
-            >
-              बंद करें
-            </button>
+            <div className="flex items-center gap-2 pt-1">
+              <a
+                href={TRUST_INFO.phonePeQrUrl}
+                download="Prabhu-Ramji-Trust-Official-QR.jpg"
+                className="flex-1 py-2.5 bg-purple-700 hover:bg-purple-800 text-white rounded-xl text-xs font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>QR डाउनलोड करें</span>
+              </a>
+              <button
+                onClick={() => setIsQrModalOpen(false)}
+                className="flex-1 py-2.5 bg-stone-200 hover:bg-stone-300 rounded-xl text-xs font-bold text-stone-800 transition-colors cursor-pointer"
+              >
+                बंद करें
+              </button>
+            </div>
           </div>
         </div>
       )}

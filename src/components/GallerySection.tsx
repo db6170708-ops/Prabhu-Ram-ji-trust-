@@ -14,12 +14,17 @@ import {
   Sparkles
 } from 'lucide-react';
 
+import { Language, TRANSLATIONS } from '../utils/translations';
+
 interface GallerySectionProps {
+  language?: Language;
   photos: GalleryPhoto[];
   videos: GalleryVideo[];
 }
 
-export const GallerySection: React.FC<GallerySectionProps> = ({ photos, videos }) => {
+export const GallerySection: React.FC<GallerySectionProps> = ({ language = 'hi', photos, videos }) => {
+  const isEn = language === 'en';
+  const t = TRANSLATIONS[language];
   const [activeTab, setActiveTab] = useState<'photos' | 'videos'>('photos');
   const [selectedCategory, setSelectedCategory] = useState<SevaCategory>('all');
   

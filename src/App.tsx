@@ -19,7 +19,7 @@ import { StorageService } from './utils/storage';
 import { TRUST_INFO } from './data/defaultData';
 import { Language } from './utils/translations';
 import { NewsItem, GalleryPhoto, GalleryVideo, TransparencyRecord, Official, DonationReceipt } from './types';
-import { MessageCircle, Heart, Phone, ArrowUp } from 'lucide-react';
+import { MessageCircle, Heart, Phone, ArrowUp, Languages } from 'lucide-react';
 
 export default function App() {
   const [activeSection, setActiveSection] = useState('home');
@@ -137,22 +137,23 @@ export default function App() {
         </div>
 
         {/* Section 2: Dedicated Ashram & Mandir Nirman Campaign Folder */}
-        <AshramNirmanSection onDonateForAshram={handleDonateForCause} />
+        <AshramNirmanSection language={language} onDonateForAshram={handleDonateForCause} />
 
         {/* Section 3: About Prabhu Ramji Trust */}
-        <AboutSection />
+        <AboutSection language={language} />
 
         {/* Section 4: The 8 Objectives */}
-        <ObjectivesSection />
+        <ObjectivesSection language={language} />
 
         {/* Section 5: Key Seva Services (Daily Tea Seva, Saturday Evening Bhandara, Gaushala) */}
-        <KeyServices onDonateForCause={(cause) => handleDonateForCause(cause)} />
+        <KeyServices language={language} onDonateForCause={(cause) => handleDonateForCause(cause)} />
 
         {/* Section 6: Trust Officials */}
-        <OfficialsSection officials={officials} />
+        <OfficialsSection language={language} officials={officials} />
 
         {/* Section 7: Online Donation & Digital Receipt Generator */}
         <DonationSystem
+          language={language}
           initialCause={donationCausePreselect}
           initialAmount={donationAmountPreselect}
           onReceiptGenerated={(receipt: DonationReceipt) => {
@@ -161,24 +162,26 @@ export default function App() {
         />
 
         {/* Section 8: Financial Transparency & Open Ledger */}
-        <TransparencySection records={transparency} />
+        <TransparencySection language={language} records={transparency} />
 
         {/* Section 9: Photo & Video Gallery */}
-        <GallerySection photos={photos} videos={videos} />
+        <GallerySection language={language} photos={photos} videos={videos} />
 
         {/* Section 10: News, Updates & Saturday Bhandara */}
         <NewsSection
+          language={language}
           news={news}
           onDonateClick={() => handleDonateForCause('शनिवार शाम भंडारा महाप्रसाद')}
         />
 
         {/* Section 11: Contact & Directions */}
-        <ContactSection />
+        <ContactSection language={language} />
 
       </main>
 
       {/* Official Footer */}
       <Footer
+        language={language}
         onNavigate={scrollToSection}
         onOpenPrivacy={() => setLegalModalType('privacy')}
         onOpenTerms={() => setLegalModalType('terms')}
@@ -186,7 +189,20 @@ export default function App() {
         onOpenReceiptSearch={() => setIsReceiptSearchOpen(true)}
       />
 
-      {/* Floating Quick Action Widget for Mobile/Desktop */}
+      {/* Floating Bilingual Language Switcher (Left Side) */}
+      <div className="fixed bottom-4 left-3 sm:bottom-6 sm:left-6 z-40 no-print">
+        <button
+          onClick={toggleLanguage}
+          className="flex items-center gap-2 px-3.5 py-2.5 rounded-full bg-white/95 backdrop-blur-md shadow-xl border-2 border-emerald-700/60 text-[#0f4d3a] hover:bg-emerald-50 transition-all font-bold text-xs sm:text-sm cursor-pointer hover:scale-105 active:scale-95"
+          title="भाषा बदलें / Switch Language"
+          aria-label="Toggle Language"
+        >
+          <Languages className="w-4 h-4 text-amber-600" />
+          <span className="font-bold">{language === 'hi' ? '🌐 Switch to English' : '🌐 हिंदी में देखें'}</span>
+        </button>
+      </div>
+
+      {/* Floating Quick Action Widget for Mobile/Desktop (Right Side) */}
       <div className="fixed bottom-4 right-3 sm:bottom-6 sm:right-6 z-40 flex flex-col items-end gap-2.5 no-print pointer-events-none">
         
         {/* Scroll To Top Button */}
@@ -222,6 +238,7 @@ export default function App() {
       <ReceiptSearchModal
         isOpen={isReceiptSearchOpen}
         onClose={() => setIsReceiptSearchOpen(false)}
+        language={language}
       />
 
       <AdminPanel

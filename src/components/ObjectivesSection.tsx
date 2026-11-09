@@ -17,7 +17,15 @@ import {
   Clock
 } from 'lucide-react';
 
-export const ObjectivesSection: React.FC = () => {
+import { Language, TRANSLATIONS } from '../utils/translations';
+
+interface ObjectivesSectionProps {
+  language?: Language;
+}
+
+export const ObjectivesSection: React.FC<ObjectivesSectionProps> = ({ language = 'hi' }) => {
+  const isEn = language === 'en';
+  const t = TRANSLATIONS[language];
   const [filter, setFilter] = useState<'all' | 'active' | 'proposed'>('all');
 
   const icons = [

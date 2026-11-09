@@ -1,5 +1,6 @@
 import React from 'react';
 import { TRUST_INFO, ABOUT_DECLARATION } from '../data/defaultData';
+import { Language } from '../utils/translations';
 import { 
   Heart, 
   ShieldCheck, 
@@ -12,7 +13,13 @@ import {
   Building
 } from 'lucide-react';
 
-export const AboutSection: React.FC = () => {
+interface AboutSectionProps {
+  language?: Language;
+}
+
+export const AboutSection: React.FC<AboutSectionProps> = ({ language = 'hi' }) => {
+  const isEn = language === 'en';
+
   return (
     <section id="about" className="py-16 md:py-24 bg-white border-b border-stone-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -20,15 +27,15 @@ export const AboutSection: React.FC = () => {
         {/* Section Header */}
         <div className="text-center max-w-4xl mx-auto mb-16">
           <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 bg-emerald-50 px-3.5 py-1 rounded-full border border-emerald-200">
-            हमारा परिचय एवं संकल्प
+            {isEn ? 'About Us & Sacred Mission' : 'हमारा परिचय एवं संकल्प'}
           </span>
           <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-[#0f4d3a] mt-3">
-            प्रभु रामजी ट्रस्ट — परिचय एवं उद्देश्य
+            {isEn ? 'Prabhu Ramji Trust — Introduction & Mission' : 'प्रभु रामजी ट्रस्ट — परिचय एवं उद्देश्य'}
           </h2>
           <div className="w-24 h-1.5 bg-amber-500 mx-auto mt-4 rounded-full"></div>
           
           <p className="text-stone-700 mt-5 text-base sm:text-lg font-medium leading-relaxed italic text-amber-950 bg-amber-50/70 p-4 rounded-2xl border border-amber-200">
-            “{ABOUT_DECLARATION.mainHeader}”
+            “{isEn ? 'Prabhu Ramji Trust, Gram Galgaon (Sanawad, Khargone, M.P.) is committed to cow welfare, daily free tea for Maa Narmada pilgrims, Saturday grand community feast, and rural spiritual upliftment.' : ABOUT_DECLARATION.mainHeader}”
           </p>
 
           {/* Natural SEO On-Page Introduction */}
@@ -46,16 +53,16 @@ export const AboutSection: React.FC = () => {
             <div className="border-b border-stone-200 pb-3">
               <h3 className="font-heading text-2xl font-bold text-[#0f4d3a] flex items-center gap-2">
                 <Heart className="w-6 h-6 text-amber-600" />
-                <span>धार्मिक एवं सामाजिक सेवा का संकल्प</span>
+                <span>{isEn ? 'Pledge of Devotional & Humanitarian Service' : 'धार्मिक एवं सामाजिक सेवा का संकल्प'}</span>
               </h3>
             </div>
 
             <p className="first-letter:text-5xl first-letter:font-heading first-letter:font-bold first-letter:text-[#0f4d3a] first-letter:float-left first-letter:mr-3 first-letter:mt-1">
-              {ABOUT_DECLARATION.pledge}
+              {isEn ? 'Prabhu Ramji Trust was formed with the sacred resolve of selfless service to living beings. In Sanatan tradition, cow welfare and benevolence towards pilgrims and the underprivileged are considered the highest form of worship.' : ABOUT_DECLARATION.pledge}
             </p>
 
             <p>
-              {ABOUT_DECLARATION.belief}
+              {isEn ? 'We firmly believe that devotion to Bhagwan Shri Ram is truly fulfilled when we stand with the needy, nourish holy cows, and provide shelter and warm tea to barefoot Narmada pilgrims.' : ABOUT_DECLARATION.belief}
             </p>
 
             {/* Mission & Vision Cards */}
@@ -63,20 +70,20 @@ export const AboutSection: React.FC = () => {
               <div className="bg-[#FAF7F2] p-5 rounded-2xl border border-stone-200">
                 <div className="flex items-center gap-2 text-emerald-800 font-bold text-sm mb-1.5">
                   <Target className="w-4 h-4 text-emerald-700" />
-                  <span>हमारा मिशन (Mission)</span>
+                  <span>{isEn ? 'Our Mission' : 'हमारा मिशन (Mission)'}</span>
                 </div>
                 <p className="text-xs text-stone-600 leading-relaxed">
-                  ग्रामीण स्तर पर गौशाला संचालन, नर्मदा परिक्रमा में निरंतर अन्न-जल सेवा, कमजोर परिवारों के बच्चों की शिक्षा में संबल तथा समाज में आध्यात्मिक संस्कारों का विस्तार करना।
+                  {isEn ? 'Operating rural gaushalas, continuous tea and food prasad for Narmada parikrama pilgrims, supporting education for underprivileged children, and promoting spiritual values.' : 'ग्रामीण स्तर पर गौशाला संचालन, नर्मदा परिक्रमा में निरंतर अन्न-जल सेवा, कमजोर परिवारों के बच्चों की शिक्षा में संबल तथा समाज में आध्यात्मिक संस्कारों का विस्तार करना।'}
                 </p>
               </div>
 
               <div className="bg-[#FAF7F2] p-5 rounded-2xl border border-stone-200">
                 <div className="flex items-center gap-2 text-amber-800 font-bold text-sm mb-1.5">
                   <Compass className="w-4 h-4 text-amber-700" />
-                  <span>हमारा विज़न (Vision)</span>
+                  <span>{isEn ? 'Our Vision' : 'हमारा विज़न (Vision)'}</span>
                 </div>
                 <p className="text-xs text-stone-600 leading-relaxed">
-                  एक ऐसे आत्मनिर्भर, संस्कारित और संवेदनशील समाज की रचना, जहाँ कोई भी गौवंश निराश्रित न भटके, कोई परिक्रमावासी भूखा-प्यासा न रहे और हर जरूरतमंद को समय पर सहारा मिले।
+                  {isEn ? 'Building a compassionate society where no cow wanders destitute, no pilgrim goes hungry, and every deserving family receives timely benevolent support.' : 'एक ऐसे आत्मनिर्भर, संस्कारित और संवेदनशील समाज की रचना, जहाँ कोई भी गौवंश निराश्रित न भटके, कोई परिक्रमावासी भूखा-प्यासा न रहे और हर जरूरतमंद को समय पर सहारा मिले।'}
                 </p>
               </div>
             </div>
@@ -86,16 +93,16 @@ export const AboutSection: React.FC = () => {
               <div className="p-3.5 bg-emerald-50 rounded-xl border border-emerald-200 flex items-start gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="text-xs font-bold text-[#0f4d3a]">निष्काम सेवा भाव</h4>
-                  <p className="text-[11px] text-stone-600 mt-0.5">बिना किसी स्वार्थ के केवल पीड़ित व जरूरतमंद की सहायता।</p>
+                  <h4 className="text-xs font-bold text-[#0f4d3a]">{isEn ? 'Selfless Devotion' : 'निष्काम सेवा भाव'}</h4>
+                  <p className="text-[11px] text-stone-600 mt-0.5">{isEn ? 'Dedicated purely to humanitarian relief without selfish interest.' : 'बिना किसी स्वार्थ के केवल पीड़ित व जरूरतमंद की सहायता।'}</p>
                 </div>
               </div>
 
               <div className="p-3.5 bg-emerald-50 rounded-xl border border-emerald-200 flex items-start gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="text-xs font-bold text-[#0f4d3a]">पारदर्शी प्रबंधन</h4>
-                  <p className="text-[11px] text-stone-600 mt-0.5">स्थानीय समाज एवं न्यासियों के प्रत्यक्ष देखरेख में कार्य।</p>
+                  <h4 className="text-xs font-bold text-[#0f4d3a]">{isEn ? 'Transparent Management' : 'पारदर्शी प्रबंधन'}</h4>
+                  <p className="text-[11px] text-stone-600 mt-0.5">{isEn ? 'Supervised directly by trustees with open public ledger.' : 'स्थानीय समाज एवं न्यासियों के प्रत्यक्ष देखरेख में कार्य।'}</p>
                 </div>
               </div>
             </div>

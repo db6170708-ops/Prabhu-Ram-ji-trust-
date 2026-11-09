@@ -12,11 +12,16 @@ import {
   Building
 } from 'lucide-react';
 
+import { Language, TRANSLATIONS } from '../utils/translations';
+
 interface TransparencySectionProps {
+  language?: Language;
   records: TransparencyRecord[];
 }
 
-export const TransparencySection: React.FC<TransparencySectionProps> = ({ records }) => {
+export const TransparencySection: React.FC<TransparencySectionProps> = ({ language = 'hi', records }) => {
+  const isEn = language === 'en';
+  const t = TRANSLATIONS[language];
   const [selectedRecord, setSelectedRecord] = useState<TransparencyRecord>(records[0] || {} as TransparencyRecord);
 
   const totalDonationSum = records.reduce((acc, curr) => acc + curr.totalDonation, 0);
@@ -29,14 +34,16 @@ export const TransparencySection: React.FC<TransparencySectionProps> = ({ record
         {/* Section Heading */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-            सत्य एवं शुचिता
+            {t.transparencyTag}
           </span>
           <h2 className="font-heading text-3xl sm:text-4xl font-bold text-[#0f4d3a] mt-3">
-            वित्तीय पारदर्शिता एवं आय-व्यय विवरण
+            {t.transparencyTitle}
           </h2>
           <div className="w-20 h-1 bg-amber-500 mx-auto mt-4 rounded-full"></div>
           <p className="text-stone-600 mt-4 text-base sm:text-lg">
-            प्रभु रामजी ट्रस्ट में दानदाताओं द्वारा दी गई एक-एक पाई का हिसाब पूरी शुचिता और ईमानदारी के साथ दर्ज किया जाता है।
+            {isEn
+              ? 'Complete public disclosure and financial accountability for every rupee received and disbursed for sacred welfare activities.'
+              : 'प्रभु रामजी ट्रस्ट में दानदाताओं द्वारा दी गई एक-एक पाई का हिसाब पूरी शुचिता और ईमानदारी के साथ दर्ज किया जाता है।'}
           </p>
         </div>
 

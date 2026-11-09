@@ -15,8 +15,15 @@ import {
   ZoomIn,
   ZoomOut
 } from 'lucide-react';
+import { Language, TRANSLATIONS } from '../utils/translations';
 
-export const ContactSection: React.FC = () => {
+interface ContactSectionProps {
+  language?: Language;
+}
+
+export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' }) => {
+  const isEn = language === 'en';
+  const t = TRANSLATIONS[language];
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
   const [subject, setSubject] = useState('गौसेवा हेतु चारा सहयोग');

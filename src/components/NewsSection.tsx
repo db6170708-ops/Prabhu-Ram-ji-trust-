@@ -1,13 +1,17 @@
 import React from 'react';
 import { NewsItem } from '../types';
 import { Bell, Calendar, Sparkles, AlertCircle, ArrowRight } from 'lucide-react';
+import { Language, TRANSLATIONS } from '../utils/translations';
 
 interface NewsSectionProps {
+  language?: Language;
   news: NewsItem[];
   onDonateClick: () => void;
 }
 
-export const NewsSection: React.FC<NewsSectionProps> = ({ news, onDonateClick }) => {
+export const NewsSection: React.FC<NewsSectionProps> = ({ language = 'hi', news, onDonateClick }) => {
+  const isEn = language === 'en';
+  const t = TRANSLATIONS[language];
   return (
     <section id="news" className="py-16 md:py-24 bg-white border-b border-stone-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -15,14 +19,16 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ news, onDonateClick })
         {/* Section Heading */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-            ताजा अपडेट्स व सूचनाएँ
+            {t.newsTag}
           </span>
           <h2 className="font-heading text-3xl sm:text-4xl font-bold text-[#0f4d3a] mt-3">
-            समाचार एवं आगामी कार्यक्रम
+            {t.newsTitle}
           </h2>
           <div className="w-20 h-1 bg-amber-500 mx-auto mt-4 rounded-full"></div>
           <p className="text-stone-600 mt-4 text-base sm:text-lg">
-            प्रत्येक शनिवार भंडारे का समय, गौसेवा अभियान एवं आगामी धार्मिक आयोजनों की अधिकृत जानकारी।
+            {isEn
+              ? 'Authorized announcements regarding weekly Saturday community bhandara, gaushala activities, and upcoming spiritual programs.'
+              : 'प्रत्येक शनिवार भंडारे का समय, गौसेवा अभियान एवं आगामी धार्मिक आयोजनों की अधिकृत जानकारी।'}
           </p>
         </div>
 

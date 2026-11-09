@@ -15,7 +15,10 @@ import {
   Globe
 } from 'lucide-react';
 
+import { Language, TRANSLATIONS } from '../utils/translations';
+
 interface FooterProps {
+  language?: Language;
   onNavigate: (sectionId: string) => void;
   onOpenPrivacy: () => void;
   onOpenTerms: () => void;
@@ -24,12 +27,15 @@ interface FooterProps {
 }
 
 export const Footer: React.FC<FooterProps> = ({
+  language = 'hi',
   onNavigate,
   onOpenPrivacy,
   onOpenTerms,
   onOpenAdmin,
   onOpenReceiptSearch
 }) => {
+  const isEn = language === 'en';
+  const t = TRANSLATIONS[language];
   return (
     <footer className="bg-[#08241b] text-stone-300 pt-16 pb-8 border-t-4 border-amber-500">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

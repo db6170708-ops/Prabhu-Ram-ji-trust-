@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TRUST_INFO } from '../data/defaultData';
 import { TRANSLATIONS, Language } from '../utils/translations';
+import { PWAInstallButton } from './PWAInstallButton';
 import { 
   HeartHandshake, 
   MapPin, 
@@ -16,7 +17,13 @@ import {
   Languages,
   Youtube,
   Instagram,
-  Facebook
+  Facebook,
+  Globe,
+  Users,
+  Award,
+  MessageSquare,
+  Building2,
+  Download
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -26,6 +33,11 @@ interface HeaderProps {
   activeSection: string;
   onOpenAdmin: () => void;
   onOpenReceiptSearch: () => void;
+  onOpenLanguageModal?: () => void;
+  onOpenVolunteerModal?: () => void;
+  onOpenCertificateModal?: () => void;
+  onOpenComplaintModal?: () => void;
+  onOpenConstructionProgress?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({ 
@@ -34,7 +46,12 @@ export const Header: React.FC<HeaderProps> = ({
   onNavigate, 
   activeSection, 
   onOpenAdmin,
-  onOpenReceiptSearch
+  onOpenReceiptSearch,
+  onOpenLanguageModal,
+  onOpenVolunteerModal,
+  onOpenCertificateModal,
+  onOpenComplaintModal,
+  onOpenConstructionProgress
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const t = TRANSLATIONS[language];
@@ -141,7 +158,19 @@ export const Header: React.FC<HeaderProps> = ({
 
             </div>
 
-            {/* Language Switcher Pill */}
+            {/* 17 Languages Modal Trigger */}
+            {onOpenLanguageModal && (
+              <button
+                onClick={onOpenLanguageModal}
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-400/25 hover:bg-amber-400/40 text-amber-200 border border-amber-400/50 text-[11px] font-bold transition-all cursor-pointer"
+                title="17 भाषाएं चुनें / 17 Indian & World Languages"
+              >
+                <Globe className="w-3 h-3 text-amber-300" />
+                <span>17 भाषाएं (Languages)</span>
+              </button>
+            )}
+
+            {/* Quick 2-Language Switcher Pill */}
             <button
               onClick={onToggleLanguage}
               className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-400/20 hover:bg-amber-400/30 text-amber-300 border border-amber-400/40 text-[11px] font-bold transition-all cursor-pointer"
@@ -220,10 +249,25 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Header Action Buttons */}
           <div className="hidden sm:flex items-center gap-2 shrink-0">
             
+            {/* PWA Install Button */}
+            <PWAInstallButton className="hidden lg:inline-flex" />
+
+            {/* Volunteer Button */}
+            {onOpenVolunteerModal && (
+              <button
+                onClick={onOpenVolunteerModal}
+                className="hidden xl:inline-flex items-center gap-1 px-3 py-2 text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors border border-emerald-300 cursor-pointer"
+                title="स्वयंसेवक बनें / Join as Volunteer"
+              >
+                <Users className="w-3.5 h-3.5 text-emerald-700" />
+                <span>स्वयंसेवक</span>
+              </button>
+            )}
+
             {/* Language switch button */}
             <button
               onClick={onToggleLanguage}
-              className="px-2.5 py-1.5 text-xs font-bold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg transition-colors border border-stone-300 flex items-center gap-1"
+              className="px-2.5 py-1.5 text-xs font-bold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg transition-colors border border-stone-300 flex items-center gap-1 cursor-pointer"
               title="भाषा बदलें (Hindi / English)"
             >
               <Languages className="w-3.5 h-3.5 text-amber-600" />
@@ -232,7 +276,7 @@ export const Header: React.FC<HeaderProps> = ({
 
             <button
               onClick={onOpenReceiptSearch}
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg transition-colors border border-stone-300"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg transition-colors border border-stone-300 cursor-pointer"
               title="दान रसीद खोजें व डाउनलोड करें"
             >
               <Search className="w-3.5 h-3.5 text-stone-600" />
@@ -249,7 +293,7 @@ export const Header: React.FC<HeaderProps> = ({
 
             <button
               onClick={onOpenAdmin}
-              className="p-2 text-stone-500 hover:text-stone-800 hover:bg-stone-100 rounded-lg transition-colors"
+              className="p-2 text-stone-500 hover:text-stone-800 hover:bg-stone-100 rounded-lg transition-colors cursor-pointer"
               title={t.adminLogin}
               aria-label="Admin Login"
             >
@@ -309,20 +353,91 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           <div className="space-y-2 pt-2 border-t border-stone-100">
-            <button
-              onClick={onToggleLanguage}
-              className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-bold text-stone-700 bg-amber-50 rounded-lg border border-amber-200"
-            >
-              <Languages className="w-4 h-4 text-amber-600" />
-              <span>भाषा बदलें: {language === 'hi' ? 'Switch to English' : 'हिंदी में बदलें'}</span>
-            </button>
+            {/* PWA Mobile App Install Banner */}
+            <div className="p-2.5 bg-gradient-to-r from-emerald-50 to-amber-50 rounded-xl border border-emerald-200/80 flex items-center justify-between gap-2">
+              <div className="text-left">
+                <span className="font-bold text-xs text-[#0f4d3a] block">📲 मोबाइल ऐप डाउनलोड करें</span>
+                <span className="text-[10px] text-stone-500">HD लोगो व ऑफलाइन सपोर्ट के साथ</span>
+              </div>
+              <PWAInstallButton />
+            </div>
+
+            {/* 17 Languages Modal Button */}
+            {onOpenLanguageModal && (
+              <button
+                onClick={() => {
+                  onOpenLanguageModal();
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-bold text-amber-950 bg-amber-100/70 hover:bg-amber-100 rounded-lg border border-amber-300"
+              >
+                <Globe className="w-4 h-4 text-amber-700" />
+                <span>🌐 17 भाषाएं चुनें (Select from 17 Languages)</span>
+              </button>
+            )}
+
+            {/* Volunteer Registration */}
+            {onOpenVolunteerModal && (
+              <button
+                onClick={() => {
+                  onOpenVolunteerModal();
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-semibold text-emerald-900 bg-emerald-50 hover:bg-emerald-100 rounded-lg border border-emerald-200"
+              >
+                <Users className="w-4 h-4 text-emerald-700" />
+                <span>🤝 स्वयंसेवक सेवा पंजीकरण (Volunteer)</span>
+              </button>
+            )}
+
+            {/* Digital Certificate */}
+            {onOpenCertificateModal && (
+              <button
+                onClick={() => {
+                  onOpenCertificateModal();
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-semibold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg border border-stone-300"
+              >
+                <Award className="w-4 h-4 text-amber-600" />
+                <span>🏆 सेवा सम्मान प्रमाण-पत्र (Certificate)</span>
+              </button>
+            )}
+
+            {/* Feedback & Grievance */}
+            {onOpenComplaintModal && (
+              <button
+                onClick={() => {
+                  onOpenComplaintModal();
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-semibold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg border border-stone-300"
+              >
+                <MessageSquare className="w-4 h-4 text-blue-600" />
+                <span>💬 सुझाव, शिकायत व सहायता केंद्र</span>
+              </button>
+            )}
+
+            {/* Construction Progress Report */}
+            {onOpenConstructionProgress && (
+              <button
+                onClick={() => {
+                  onOpenConstructionProgress();
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-semibold text-amber-900 bg-amber-50 hover:bg-amber-100 rounded-lg border border-amber-200"
+              >
+                <Building2 className="w-4 h-4 text-amber-700" />
+                <span>🏗️ निर्माण प्रगति व बजट रिपोर्ट</span>
+              </button>
+            )}
 
             <button
               onClick={() => {
                 onOpenReceiptSearch();
                 setMobileMenuOpen(false);
               }}
-              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-medium text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg border border-stone-300"
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-medium text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg border border-stone-300 cursor-pointer"
             >
               <Search className="w-4 h-4" />
               <span>{t.searchReceiptBtn}</span>

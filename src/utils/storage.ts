@@ -1,5 +1,25 @@
-import { NewsItem, GalleryPhoto, GalleryVideo, TransparencyRecord, Official, DonationReceipt } from '../types';
-import { DEFAULT_NEWS, DEFAULT_PHOTOS, DEFAULT_VIDEOS, DEFAULT_TRANSPARENCY_RECORDS, DEFAULT_OFFICIALS, INITIAL_RECEIPTS } from '../data/defaultData';
+import { 
+  NewsItem, 
+  GalleryPhoto, 
+  GalleryVideo, 
+  TransparencyRecord, 
+  Official, 
+  DonationReceipt, 
+  VolunteerApplication, 
+  SevaCertificate, 
+  ComplaintFeedback, 
+  ConstructionProgress, 
+  PaymentGatewayConfig 
+} from '../types';
+import { 
+  DEFAULT_NEWS, 
+  DEFAULT_PHOTOS, 
+  DEFAULT_VIDEOS, 
+  DEFAULT_TRANSPARENCY_RECORDS, 
+  DEFAULT_OFFICIALS, 
+  INITIAL_RECEIPTS,
+  DEFAULT_CONSTRUCTION_PROGRESS
+} from '../data/defaultData';
 
 const KEYS = {
   NEWS: 'prt_news_data',
@@ -254,6 +274,188 @@ export const StorageService = {
       return true;
     } catch {
       return false;
+    }
+  },
+
+  // 1. Donation Verification & Admin Audit
+  updateReceiptStatus: (receiptNo: string, status: 'verified' | 'rejected' | 'pending', notes?: string) => {
+    try {
+      const receipts = StorageService.getReceipts();
+      const updated = receipts.map((r) => {
+        if (r.receiptNo === receiptNo) {
+          return {
+            ...r,
+            status,
+            verifiedDate: new Date().toISOString().split('T')[0],
+            verifiedBy: 'ट्रस्ट कोषाध्यक्ष / सचिव',
+            adminNotes: notes || (status === 'verified' ? 'बैंक खाते में पुष्टि पूर्ण' : status === 'rejected' ? 'अमान्य UTR' : 'समीक्षाधीन')
+          };
+        }
+        return r;
+      });
+      StorageService.saveAllReceipts(updated);
+      return updated;
+    } catch {
+      return StorageService.getReceipts();
+    }
+  },
+
+  // 2. Volunteers Management
+  getVolunteers: (): VolunteerApplication[] => {
+    try {
+      const data = localStorage.getItem('prt_volunteers_data');
+      return data ? JSON.parse(data) : [];
+    } catch {
+      return [];
+    }
+  },
+  saveVolunteer: (vol: VolunteerApplication) => {
+    try {
+      const existing = StorageService.getVolunteers();
+      localStorage.setItem('prt_volunteers_data', JSON.stringify([vol, ...existing]));
+    } catch (e) {
+      console.error(e);
+    }
+  },
+  updateVolunteerStatus: (id: string, status: 'approved' | 'rejected', notes?: string) => {
+    try {
+      const existing = StorageService.getVolunteers();
+      const updated = existing.map(v => v.id === id ? { ...v, status, adminNotes: notes } : v);
+      localStorage.setItem('prt_volunteers_data', JSON.stringify(updated));
+      return updated;
+    } catch {
+      return StorageService.getVolunteers();
+    }
+  },
+
+  // 3. Certificates
+  getCertificates: (): SevaCertificate[] => {
+    try {
+      const data = localStorage.getItem('prt_certificates_data');
+      return data ? JSON.parse(data) : [];
+    } catch {
+      return [];
+    }
+  },
+  saveCertificate: (cert: SevaCertificate) => {
+    try {
+      const existing = StorageService.getCertificates();
+      localStorage.setItem('prt_certificates_data', JSON.stringify([cert, ...existing]));
+    } catch (e) {
+      console.error(e);
+    }
+  },
+  findCertificate: (certNo: string): SevaCertificate | null => {
+    try {
+      const certs = StorageService.getCertificates();
+      const clean = certNo.trim().toUpperCase();
+      return certs.find(c => 
+        (c.certificateNo && c.certificateNo.toUpperCase() === clean) || 
+        (c.id && c.id.toUpperCase() === clean)
+      ) || null;
+    } catch {
+      return null;
+    }
+  },
+
+  // 4. Complaints & Feedback
+  getComplaints: (): ComplaintFeedback[] => {
+    try {
+      const data = localStorage.getItem('prt_complaints_data');
+      return data ? JSON.parse(data) : [];
+    } catch {
+      return [];
+    }
+  },
+  saveComplaint: (cf: ComplaintFeedback) => {
+    try {
+      const existing = StorageService.getComplaints();
+      localStorage.setItem('prt_complaints_data', JSON.stringify([cf, ...existing]));
+    } catch (e) {
+      console.error(e);
+    }
+  },
+  findComplaint: (refNo: string): ComplaintFeedback | null => {
+    try {
+      const list = StorageService.getComplaints();
+      const clean = refNo.trim().toUpperCase();
+      return list.find(item => 
+        (item.refNo && item.refNo.toUpperCase() === clean) || 
+        (item.id && item.id.toUpperCase() === clean)
+      ) || null;
+    } catch {
+      return null;
+    }
+  },
+  updateComplaintStatus: (refNo: string, status: 'under_review' | 'resolved' | 'in_progress' | 'submitted' | 'pending', reply?: string) => {
+    try {
+      const list = StorageService.getComplaints();
+      const clean = refNo.trim().toUpperCase();
+      const updated = list.map(item => {
+        const match = 
+          (item.refNo && item.refNo.toUpperCase() === clean) || 
+          (item.id && item.id.toUpperCase() === clean);
+        if (match) {
+          return {
+            ...item,
+            status,
+            adminReply: reply || item.adminReply,
+            adminResponse: reply || item.adminResponse,
+            resolvedDate: status === 'resolved' ? new Date().toISOString().split('T')[0] : item.resolvedDate
+          };
+        }
+        return item;
+      });
+      localStorage.setItem('prt_complaints_data', JSON.stringify(updated));
+      return updated;
+    } catch {
+      return StorageService.getComplaints();
+    }
+  },
+
+  // 5. Construction Progress
+  getConstructionProgress: (): ConstructionProgress => {
+    try {
+      const data = localStorage.getItem('prt_construction_data');
+      return data ? JSON.parse(data) : DEFAULT_CONSTRUCTION_PROGRESS;
+    } catch {
+      return DEFAULT_CONSTRUCTION_PROGRESS;
+    }
+  },
+  saveConstructionProgress: (cp: ConstructionProgress) => {
+    try {
+      localStorage.setItem('prt_construction_data', JSON.stringify(cp));
+    } catch (e) {
+      console.error(e);
+    }
+  },
+
+  // 6. Payment Gateway Config
+  getGatewayConfig: (): PaymentGatewayConfig => {
+    try {
+      const data = localStorage.getItem('prt_gateway_config');
+      return data ? JSON.parse(data) : {
+        enabled: false,
+        provider: 'manual',
+        testMode: true,
+        updatedAt: '2026-11-10'
+      };
+    } catch {
+      return {
+        enabled: false,
+        provider: 'manual',
+        testMode: true
+      };
+    }
+  },
+  saveGatewayConfig: (cfg: PaymentGatewayConfig) => {
+    try {
+      localStorage.setItem('prt_gateway_config', JSON.stringify({
+        ...cfg,
+        updatedAt: new Date().toISOString().split('T')[0]
+      }));
+    } catch (e) {
+      console.error(e);
     }
   }
 };

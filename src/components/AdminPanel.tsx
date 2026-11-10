@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { StorageService } from '../utils/storage';
-import { NewsItem, GalleryPhoto, GalleryVideo, TransparencyRecord, Official, DonationReceipt } from '../types';
+import { 
+  NewsItem, 
+  GalleryPhoto, 
+  GalleryVideo, 
+  TransparencyRecord, 
+  Official, 
+  DonationReceipt,
+  VolunteerApplication,
+  ComplaintFeedback,
+  ConstructionProgress,
+  PaymentGatewayConfig
+} from '../types';
 import { 
   Lock, 
   Unlock, 
@@ -31,7 +42,14 @@ import {
   Check,
   ChevronDown,
   ChevronUp,
-  Globe
+  Globe,
+  Users,
+  MessageSquare,
+  Building2,
+  CreditCard,
+  CheckCircle2,
+  XCircle,
+  Clock
 } from 'lucide-react';
 import { TRUST_INFO } from '../data/defaultData';
 import { sendReceiptEmail } from '../utils/emailService';
@@ -46,7 +64,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [activeTab, setActiveTab] = useState<'news' | 'photos' | 'videos' | 'transparency' | 'receipts' | 'backup'>('receipts');
+  const [activeTab, setActiveTab] = useState<
+    'receipts' | 'volunteers' | 'complaints' | 'construction' | 'gateway' | 'photos' | 'videos' | 'news' | 'transparency' | 'backup'
+  >('receipts');
   const [statusMessage, setStatusMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
 
   // Active in-memory state synced with storage
@@ -55,10 +75,16 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
   const [newsList, setNewsList] = useState<NewsItem[]>([]);
   const [transparencyList, setTransparencyList] = useState<TransparencyRecord[]>([]);
   const [receiptsList, setReceiptsList] = useState<DonationReceipt[]>([]);
+  const [volunteersList, setVolunteersList] = useState<VolunteerApplication[]>([]);
+  const [complaintsList, setComplaintsList] = useState<ComplaintFeedback[]>([]);
+  const [constructionState, setConstructionState] = useState<ConstructionProgress>(() => StorageService.getConstructionProgress());
+  const [gatewayConfig, setGatewayConfig] = useState<PaymentGatewayConfig>(() => StorageService.getGatewayConfig());
+  const [complaintReplies, setComplaintReplies] = useState<{ [id: string]: string }>({});
 
   // Donation Receipts Admin state
   const [adminReceiptSearch, setAdminReceiptSearch] = useState('');
   const [adminReceiptCauseFilter, setAdminReceiptCauseFilter] = useState('all');
+  const [adminReceiptStatusFilter, setAdminReceiptStatusFilter] = useState<'all' | 'verified' | 'pending' | 'rejected'>('all');
   const [isAddManualReceiptOpen, setIsAddManualReceiptOpen] = useState(false);
   const [selectedReceiptForPrint, setSelectedReceiptForPrint] = useState<DonationReceipt | null>(null);
   const [showDnsDetails, setShowDnsDetails] = useState(false);
@@ -116,8 +142,48 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
       setNewsList(StorageService.getNews());
       setTransparencyList(StorageService.getTransparency());
       setReceiptsList(StorageService.getReceipts());
+      setVolunteersList(StorageService.getVolunteers());
+      setComplaintsList(StorageService.getComplaints());
+      setConstructionState(StorageService.getConstructionProgress());
+      setGatewayConfig(StorageService.getGatewayConfig());
     }
   }, [isOpen, isAuthenticated]);
+
+  const handleUpdateReceiptStatus = (receiptNo: string, newStatus: 'verified' | 'rejected' | 'pending') => {
+    StorageService.updateReceiptStatus(receiptNo, newStatus, 'व्यवस्थापक / Dinesh Birla');
+    setReceiptsList(StorageService.getReceipts());
+    showStatus(
+      `रसीद ${receiptNo} को '${newStatus === 'verified' ? 'सत्यापित' : newStatus === 'rejected' ? 'अस्वीकृत' : 'लंबित'}' चिह्नित किया गया।`,
+      'success'
+    );
+    onDataUpdated();
+  };
+
+  const handleUpdateVolunteerStatus = (id: string, newStatus: 'approved' | 'rejected') => {
+    StorageService.updateVolunteerStatus(id, newStatus);
+    setVolunteersList(StorageService.getVolunteers());
+    showStatus(`स्वयंसेवक आवेदन ${id} ${newStatus === 'approved' ? 'स्वीकृत' : 'अस्वीकृत'} किया गया।`, 'success');
+  };
+
+  const handleUpdateComplaint = (id: string, newStatus: 'resolved' | 'in_progress') => {
+    const reply = complaintReplies[id] || '';
+    StorageService.updateComplaintStatus(id, newStatus, reply);
+    setComplaintsList(StorageService.getComplaints());
+    showStatus(`टिकट ${id} स्थिति अद्यतन कर दी गई।`, 'success');
+  };
+
+  const handleSaveConstruction = (e: React.FormEvent) => {
+    e.preventDefault();
+    StorageService.saveConstructionProgress(constructionState);
+    showStatus('निर्माण प्रगति एवं बजट सफलतापूर्वक सहेजा गया।', 'success');
+    onDataUpdated();
+  };
+
+  const handleSaveGateway = (e: React.FormEvent) => {
+    e.preventDefault();
+    StorageService.saveGatewayConfig(gatewayConfig);
+    showStatus('पेमेंट गेटवे सेटिंग्स सुरक्षित सहेजी गईं।', 'success');
+  };
 
   if (!isOpen) return null;
 
@@ -683,7 +749,47 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
                 }`}
               >
                 <Receipt className="w-3.5 h-3.5 text-amber-500" />
-                <span>दान रिकॉर्ड ({receiptsList.length})</span>
+                <span>दान रिकॉर्ड व सत्यापन ({receiptsList.length})</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab('volunteers')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer ${
+                  activeTab === 'volunteers' ? 'bg-[#0f4d3a] text-white shadow-xs ring-1 ring-amber-400' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                }`}
+              >
+                <Users className="w-3.5 h-3.5 text-amber-500" />
+                <span>स्वयंसेवक ({volunteersList.length})</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab('complaints')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer ${
+                  activeTab === 'complaints' ? 'bg-[#0f4d3a] text-white shadow-xs ring-1 ring-amber-400' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                }`}
+              >
+                <MessageSquare className="w-3.5 h-3.5 text-amber-500" />
+                <span>शिकायत व सुझाव ({complaintsList.length})</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab('construction')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer ${
+                  activeTab === 'construction' ? 'bg-[#0f4d3a] text-white shadow-xs ring-1 ring-amber-400' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                }`}
+              >
+                <Building2 className="w-3.5 h-3.5 text-amber-500" />
+                <span>निर्माण प्रगति</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab('gateway')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer ${
+                  activeTab === 'gateway' ? 'bg-[#0f4d3a] text-white shadow-xs ring-1 ring-amber-400' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                }`}
+              >
+                <CreditCard className="w-3.5 h-3.5 text-amber-500" />
+                <span>पेमेंट गेटवे</span>
               </button>
 
               <button
@@ -800,6 +906,17 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
                           <option value="भंडारा">शनिवार भंडारा महाप्रसाद</option>
                           <option value="चाय">प्रतिदिन चाय सेवा</option>
                           <option value="गौसेवा">गौसेवा व चारा</option>
+                        </select>
+
+                        <select
+                          value={adminReceiptStatusFilter}
+                          onChange={(e) => setAdminReceiptStatusFilter(e.target.value as any)}
+                          className="px-3 py-2 bg-white border border-stone-300 rounded-xl text-xs font-semibold"
+                        >
+                          <option value="all">सभी स्थितियाँ (All Status)</option>
+                          <option value="verified">✅ सत्यापित (Verified)</option>
+                          <option value="pending">⏳ लंबित (Pending Verification)</option>
+                          <option value="rejected">❌ अस्वीकृत (Rejected)</option>
                         </select>
 
                         <button
@@ -1094,7 +1211,11 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
                           (r.transactionRef && r.transactionRef.toLowerCase().includes(term))
                         );
                         const matchesCause = adminReceiptCauseFilter === 'all' || r.cause.includes(adminReceiptCauseFilter);
-                        return matchesTerm && matchesCause;
+                        const matchesStatus =
+                          adminReceiptStatusFilter === 'all' ||
+                          r.status === adminReceiptStatusFilter ||
+                          (!r.status && adminReceiptStatusFilter === 'pending');
+                        return matchesTerm && matchesCause && matchesStatus;
                       });
 
                       if (filtered.length === 0) {
@@ -1119,6 +1240,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
                                   <th className="py-2.5 px-3">सहयोग प्रकल्प</th>
                                   <th className="py-2.5 px-3 text-right">राशि (₹)</th>
                                   <th className="py-2.5 px-3">माध्यम</th>
+                                  <th className="py-2.5 px-3 text-center">स्थिति</th>
                                   <th className="py-2.5 px-3 text-center">कार्रवाई</th>
                                 </tr>
                               </thead>
@@ -1146,10 +1268,50 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
                                       ₹{Number(r.amount).toLocaleString('en-IN')}
                                     </td>
                                     <td className="py-2.5 px-3 text-stone-500 text-[11px]">
-                                      {r.paymentMode}
+                                      <div>{r.paymentMode}</div>
+                                      {r.transactionRef && (
+                                        <div className="font-mono text-[10px] text-stone-400">UTR: {r.transactionRef}</div>
+                                      )}
+                                    </td>
+                                    <td className="py-2.5 px-3 text-center whitespace-nowrap">
+                                      <span
+                                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                                          r.status === 'verified'
+                                            ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                                            : r.status === 'rejected'
+                                            ? 'bg-red-100 text-red-800 border border-red-300'
+                                            : 'bg-amber-100 text-amber-900 border border-amber-300'
+                                        }`}
+                                      >
+                                        {r.status === 'verified'
+                                          ? '✅ सत्यापित'
+                                          : r.status === 'rejected'
+                                          ? '❌ अस्वीकृत'
+                                          : '⏳ लंबित (Verify)'}
+                                      </span>
                                     </td>
                                     <td className="py-2.5 px-3 text-center whitespace-nowrap">
                                       <div className="inline-flex items-center gap-1.5">
+                                        {r.status !== 'verified' && (
+                                          <button
+                                            type="button"
+                                            onClick={() => handleUpdateReceiptStatus(r.receiptNo, 'verified')}
+                                            className="p-1.5 text-emerald-700 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 rounded-lg cursor-pointer transition-colors"
+                                            title="दान सत्यापित करें (Approve / Verified)"
+                                          >
+                                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                                          </button>
+                                        )}
+                                        {r.status !== 'rejected' && (
+                                          <button
+                                            type="button"
+                                            onClick={() => handleUpdateReceiptStatus(r.receiptNo, 'rejected')}
+                                            className="p-1.5 text-amber-700 hover:text-amber-900 bg-amber-50 hover:bg-amber-100 rounded-lg cursor-pointer transition-colors"
+                                            title="अस्वीकृत चिह्नित करें"
+                                          >
+                                            <XCircle className="w-3.5 h-3.5 text-amber-600" />
+                                          </button>
+                                        )}
                                         <button
                                           type="button"
                                           onClick={() => setSelectedReceiptForPrint(r)}
@@ -1191,35 +1353,61 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
                                   <span className="font-mono font-bold text-sm text-emerald-900">₹{Number(r.amount).toLocaleString('en-IN')}</span>
                                 </div>
                                 <div className="text-xs">
-                                  <div className="font-bold text-stone-900">{r.donorName}</div>
+                                  <div className="font-bold text-stone-900 flex items-center justify-between">
+                                    <span>{r.donorName}</span>
+                                    <span
+                                      className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                                        r.status === 'verified'
+                                          ? 'bg-emerald-100 text-emerald-800'
+                                          : r.status === 'rejected'
+                                          ? 'bg-red-100 text-red-800'
+                                          : 'bg-amber-100 text-amber-900'
+                                      }`}
+                                    >
+                                      {r.status === 'verified' ? '✅ सत्यापित' : r.status === 'rejected' ? '❌ अस्वीकृत' : '⏳ लंबित'}
+                                    </span>
+                                  </div>
                                   <div className="text-stone-500 text-[11px]">मो: {r.mobile} · {r.date}</div>
-                                  <div className="text-emerald-800 font-medium text-[11px] mt-0.5">{r.cause} ({r.paymentMode})</div>
+                                  <div className="text-emerald-800 font-medium text-[11px] mt-0.5">
+                                    {r.cause} ({r.paymentMode})
+                                    {r.transactionRef && <span className="block font-mono text-stone-500">UTR: {r.transactionRef}</span>}
+                                  </div>
                                 </div>
-                                <div className="flex flex-wrap items-center justify-end gap-2 pt-1 border-t border-stone-100">
+                                <div className="flex flex-wrap items-center justify-end gap-1.5 pt-1 border-t border-stone-100">
+                                  {r.status !== 'verified' && (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleUpdateReceiptStatus(r.receiptNo, 'verified')}
+                                      className="px-2 py-1 text-xs font-bold text-emerald-800 bg-emerald-100 border border-emerald-300 rounded-lg flex items-center gap-1 cursor-pointer"
+                                      title="सत्यापित करें"
+                                    >
+                                      <CheckCircle2 className="w-3 h-3 text-emerald-700" />
+                                      <span>सत्यापित</span>
+                                    </button>
+                                  )}
                                   <button
                                     type="button"
                                     onClick={() => handleAdminSendReceiptEmail(r)}
-                                    className="px-2.5 py-1 text-xs font-bold text-blue-800 bg-blue-50 border border-blue-200 rounded-lg flex items-center gap-1 cursor-pointer"
+                                    className="px-2 py-1 text-xs font-bold text-blue-800 bg-blue-50 border border-blue-200 rounded-lg flex items-center gap-1 cursor-pointer"
                                     title="ईमेल पर रसीद भेजें (dineshbirla312@gmail.com)"
                                   >
                                     <Mail className="w-3 h-3" />
-                                    <span>ईमेल भेजें</span>
+                                    <span>ईमेल</span>
                                   </button>
                                   <button
                                     type="button"
                                     onClick={() => setSelectedReceiptForPrint(r)}
-                                    className="px-2.5 py-1 text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-lg flex items-center gap-1 cursor-pointer"
+                                    className="px-2 py-1 text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-lg flex items-center gap-1 cursor-pointer"
                                   >
                                     <Printer className="w-3 h-3" />
-                                    <span>प्रिंट रसीद</span>
+                                    <span>प्रिंट</span>
                                   </button>
                                   <button
                                     type="button"
                                     onClick={() => handleDeleteReceipt(r.receiptNo, r.donorName)}
-                                    className="px-2.5 py-1 text-xs font-bold text-red-700 bg-red-50 border border-red-200 rounded-lg flex items-center gap-1 cursor-pointer"
+                                    className="px-2 py-1 text-xs font-bold text-red-700 bg-red-50 border border-red-200 rounded-lg flex items-center gap-1 cursor-pointer"
                                   >
                                     <Trash2 className="w-3 h-3" />
-                                    <span>हटाएँ</span>
                                   </button>
                                 </div>
                               </div>
@@ -1231,6 +1419,454 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
                     })()}
                   </div>
 
+                </div>
+              )}
+
+              {/* TAB: VOLUNTEERS MANAGEMENT */}
+              {activeTab === 'volunteers' && (
+                <div className="space-y-6">
+                  {/* Top Summary */}
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="bg-stone-50 p-3.5 rounded-2xl border border-stone-200">
+                      <span className="text-[11px] text-stone-500 font-semibold block">कुल स्वयंसेवक</span>
+                      <span className="text-xl font-bold font-mono text-stone-900">{volunteersList.length}</span>
+                    </div>
+                    <div className="bg-emerald-50 p-3.5 rounded-2xl border border-emerald-200">
+                      <span className="text-[11px] text-emerald-800 font-semibold block">स्वीकृत</span>
+                      <span className="text-xl font-bold font-mono text-emerald-900">
+                        {volunteersList.filter((v) => v.status === 'approved').length}
+                      </span>
+                    </div>
+                    <div className="bg-amber-50 p-3.5 rounded-2xl border border-amber-200">
+                      <span className="text-[11px] text-amber-900 font-semibold block">समीक्षाधीन</span>
+                      <span className="text-xl font-bold font-mono text-amber-900">
+                        {volunteersList.filter((v) => v.status === 'pending').length}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Volunteers List */}
+                  {volunteersList.length === 0 ? (
+                    <div className="text-center py-10 bg-stone-50 rounded-2xl border border-stone-200">
+                      <p className="text-xs text-stone-500">अभी तक कोई स्वयंसेवक आवेदन प्राप्त नहीं हुआ है।</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {volunteersList.map((vol) => (
+                        <div key={vol.id} className="bg-white p-4 rounded-xl border border-stone-200 space-y-2">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-bold text-stone-900">{vol.fullName}</span>
+                                <span className="font-mono text-xs text-stone-400">({vol.id})</span>
+                              </div>
+                              <div className="text-xs text-stone-500">
+                                मो: <strong className="text-stone-700">{vol.mobile}</strong> · {vol.city}
+                                {vol.email && <span> · {vol.email}</span>}
+                              </div>
+                            </div>
+                            <span
+                              className={`text-xs px-2.5 py-1 rounded-full font-bold border self-start ${
+                                vol.status === 'approved'
+                                  ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                                  : vol.status === 'rejected'
+                                  ? 'bg-red-100 text-red-800 border-red-300'
+                                  : 'bg-amber-100 text-amber-900 border-amber-300'
+                              }`}
+                            >
+                              {vol.status === 'approved' ? '✅ स्वीकृत' : vol.status === 'rejected' ? '❌ अस्वीकृत' : '⏳ समीक्षाधीन'}
+                            </span>
+                          </div>
+
+                          <div className="bg-stone-50 p-2.5 rounded-lg text-xs space-y-1 text-stone-700">
+                            <div><span className="text-stone-500">पसंदीदा सेवा:</span> <strong>{vol.preferredArea}</strong></div>
+                            <div><span className="text-stone-500">समय उपलब्धता:</span> {vol.availability}</div>
+                            {vol.notes && <div><span className="text-stone-500">विशेष नोट:</span> {vol.notes}</div>}
+                          </div>
+
+                          <div className="flex flex-wrap items-center justify-end gap-2 pt-1 border-t border-stone-100">
+                            <a
+                              href={`https://wa.me/91${vol.mobile.replace(/\D/g, '')}?text=${encodeURIComponent(
+                                `जय श्री राम ${vol.fullName} जी! प्रभु रामजी ट्रस्ट, गलगाँव में स्वयंसेवक सेवा हेतु आपका स्वागत है।`
+                              )}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-2.5 py-1 text-xs font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-lg flex items-center gap-1"
+                            >
+                              <span>WhatsApp</span>
+                            </a>
+                            {vol.status !== 'approved' && (
+                              <button
+                                type="button"
+                                onClick={() => handleUpdateVolunteerStatus(vol.id, 'approved')}
+                                className="px-2.5 py-1 text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 rounded-lg cursor-pointer"
+                              >
+                                स्वीकृत करें
+                              </button>
+                            )}
+                            {vol.status !== 'rejected' && (
+                              <button
+                                type="button"
+                                onClick={() => handleUpdateVolunteerStatus(vol.id, 'rejected')}
+                                className="px-2.5 py-1 text-xs font-bold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg cursor-pointer"
+                              >
+                                अस्वीकृत करें
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* TAB: COMPLAINTS & FEEDBACK */}
+              {activeTab === 'complaints' && (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="bg-stone-50 p-3.5 rounded-2xl border border-stone-200">
+                      <span className="text-[11px] text-stone-500 font-semibold block">कुल टिकट</span>
+                      <span className="text-xl font-bold font-mono text-stone-900">{complaintsList.length}</span>
+                    </div>
+                    <div className="bg-emerald-50 p-3.5 rounded-2xl border border-emerald-200">
+                      <span className="text-[11px] text-emerald-800 font-semibold block">समाधान पूर्ण</span>
+                      <span className="text-xl font-bold font-mono text-emerald-900">
+                        {complaintsList.filter((c) => c.status === 'resolved').length}
+                      </span>
+                    </div>
+                    <div className="bg-amber-50 p-3.5 rounded-2xl border border-amber-200">
+                      <span className="text-[11px] text-amber-900 font-semibold block">प्रक्रियाधीन</span>
+                      <span className="text-xl font-bold font-mono text-amber-900">
+                        {complaintsList.filter((c) => c.status !== 'resolved').length}
+                      </span>
+                    </div>
+                  </div>
+
+                  {complaintsList.length === 0 ? (
+                    <div className="text-center py-10 bg-stone-50 rounded-2xl border border-stone-200">
+                      <p className="text-xs text-stone-500">कोई शिकायत अथवा सुझाव दर्ज नहीं है।</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {complaintsList.map((comp) => (
+                        <div key={comp.id} className="bg-white p-4 rounded-xl border border-stone-200 space-y-3">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-bold text-stone-900">{comp.subject}</span>
+                                <span className="font-mono text-xs text-stone-400">({comp.id})</span>
+                              </div>
+                              <div className="text-xs text-stone-500">
+                                प्रेषक: <strong className="text-stone-800">{comp.name}</strong> · मो: {comp.phone} · {comp.category}
+                              </div>
+                            </div>
+                            <span
+                              className={`text-xs px-2.5 py-1 rounded-full font-bold border self-start ${
+                                comp.status === 'resolved'
+                                  ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                                  : comp.status === 'in_progress'
+                                  ? 'bg-blue-100 text-blue-800 border-blue-300'
+                                  : 'bg-amber-100 text-amber-900 border-amber-300'
+                              }`}
+                            >
+                              {comp.status === 'resolved'
+                                ? '✅ समाधान पूर्ण'
+                                : comp.status === 'in_progress'
+                                ? '⏳ कार्यवाही जारी'
+                                : '⏱️ लंबित'}
+                            </span>
+                          </div>
+
+                          <p className="text-xs text-stone-700 bg-stone-50 p-3 rounded-lg border border-stone-200">
+                            {comp.description}
+                          </p>
+
+                          {/* Admin Response Box */}
+                          {(() => {
+                            const ticketId = comp.id || comp.refNo || '';
+                            return (
+                              <div className="space-y-2 pt-2 border-t border-stone-100">
+                                <label className="block text-[11px] font-bold text-stone-700">
+                                  ट्रस्ट प्रबंधन का उत्तर / कार्यवाही विवरण:
+                                </label>
+                                <input
+                                  type="text"
+                                  placeholder="कार्यवाही विवरण लिखें..."
+                                  defaultValue={comp.adminResponse || ''}
+                                  onChange={(e) =>
+                                    setComplaintReplies((prev) => ({ ...prev, [ticketId]: e.target.value }))
+                                  }
+                                  className="w-full px-3 py-1.5 text-xs border border-stone-300 rounded-lg focus:ring-1 focus:ring-[#0f4d3a]"
+                                />
+                                <div className="flex justify-end gap-2">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdateComplaint(ticketId, 'in_progress')}
+                                    className="px-3 py-1 text-xs font-semibold text-blue-800 bg-blue-50 border border-blue-200 rounded-lg cursor-pointer"
+                                  >
+                                    कार्यवाही जारी चिह्नित करें
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdateComplaint(ticketId, 'resolved')}
+                                    className="px-3 py-1 text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 rounded-lg cursor-pointer"
+                                  >
+                                    समाधान पूर्ण (Resolve)
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })()}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* TAB: CONSTRUCTION PROGRESS & BUDGET */}
+              {activeTab === 'construction' && (
+                <div className="space-y-6">
+                  <form onSubmit={handleSaveConstruction} className="bg-white p-5 rounded-2xl border border-stone-200 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-heading font-bold text-base text-[#0f4d3a] flex items-center gap-2">
+                        <Building2 className="w-5 h-5 text-amber-600" />
+                        <span>आश्रम एवं मंदिर निर्माण प्रगति व बजट संपादन</span>
+                      </h4>
+                      <span className="text-xs text-stone-500">वेबसाइट पर लाइव प्रदर्शित होगा</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div>
+                        <label className="block text-xs font-bold text-stone-700 mb-1">
+                          वर्तमान निर्माण चरण (Phase Title)
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={constructionState.phaseTitle}
+                          onChange={(e) =>
+                            setConstructionState((prev) => ({ ...prev, phaseTitle: e.target.value }))
+                          }
+                          className="w-full px-3 py-2 text-xs border border-stone-300 rounded-lg"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-stone-700 mb-1">
+                          संपन्नता प्रतिशत (% Completed)
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          max="100"
+                          required
+                          value={constructionState.completionPercentage}
+                          onChange={(e) =>
+                            setConstructionState((prev) => ({
+                              ...prev,
+                              completionPercentage: Number(e.target.value),
+                            }))
+                          }
+                          className="w-full px-3 py-2 text-xs border border-stone-300 rounded-lg font-mono font-bold"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-stone-700 mb-1">
+                          लक्ष्य पूर्ति अनुमानित दिनांक
+                        </label>
+                        <input
+                          type="text"
+                          value={constructionState.targetDate}
+                          onChange={(e) =>
+                            setConstructionState((prev) => ({ ...prev, targetDate: e.target.value }))
+                          }
+                          className="w-full px-3 py-2 text-xs border border-stone-300 rounded-lg"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div>
+                        <label className="block text-xs font-bold text-stone-700 mb-1">
+                          कुल प्राक्कलित बजट (₹)
+                        </label>
+                        <input
+                          type="number"
+                          required
+                          value={constructionState.estimatedBudget}
+                          onChange={(e) =>
+                            setConstructionState((prev) => ({
+                              ...prev,
+                              estimatedBudget: Number(e.target.value),
+                            }))
+                          }
+                          className="w-full px-3 py-2 text-xs border border-stone-300 rounded-lg font-mono"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-stone-700 mb-1">
+                          प्राप्त सहयोग निधि (₹)
+                        </label>
+                        <input
+                          type="number"
+                          required
+                          value={constructionState.fundsRaised}
+                          onChange={(e) =>
+                            setConstructionState((prev) => ({
+                              ...prev,
+                              fundsRaised: Number(e.target.value),
+                            }))
+                          }
+                          className="w-full px-3 py-2 text-xs border border-stone-300 rounded-lg font-mono text-emerald-900"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-stone-700 mb-1">
+                          अब तक हुआ व्यय (₹)
+                        </label>
+                        <input
+                          type="number"
+                          required
+                          value={constructionState.fundsSpent}
+                          onChange={(e) =>
+                            setConstructionState((prev) => ({
+                              ...prev,
+                              fundsSpent: Number(e.target.value),
+                            }))
+                          }
+                          className="w-full px-3 py-2 text-xs border border-stone-300 rounded-lg font-mono text-amber-900"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="pt-2 flex justify-end">
+                      <button
+                        type="submit"
+                        className="px-5 py-2.5 bg-[#0f4d3a] hover:bg-[#135541] text-white font-bold text-xs sm:text-sm rounded-xl shadow cursor-pointer flex items-center gap-2"
+                      >
+                        <Check className="w-4 h-4 text-amber-300" />
+                        <span>निर्माण प्रगति विवरण सहेजें</span>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
+
+              {/* TAB: PAYMENT GATEWAY CONFIGURATION */}
+              {activeTab === 'gateway' && (
+                <div className="space-y-6">
+                  <form onSubmit={handleSaveGateway} className="bg-white p-5 rounded-2xl border border-stone-200 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-heading font-bold text-base text-[#0f4d3a] flex items-center gap-2">
+                        <CreditCard className="w-5 h-5 text-amber-600" />
+                        <span>ऑनलाइन पेमेंट गेटवे व UPI विन्यास (Gateway Architecture)</span>
+                      </h4>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">
+                        {gatewayConfig.mode === 'live' ? '🟢 Live Production' : '🟡 Test Mode'}
+                      </span>
+                    </div>
+
+                    <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl text-xs space-y-1.5 text-stone-700">
+                      <div className="font-bold text-amber-950 flex items-center gap-1.5">
+                        <ShieldCheck className="w-4 h-4 text-amber-700" />
+                        <span>वर्तमान सक्रिय भुगतान प्रणाली (Direct Trust Account):</span>
+                      </div>
+                      <div>• UPI ID: <code className="font-mono font-bold text-stone-900">dineshbirla312@ybl</code></div>
+                      <div>• बैंक खाता: <strong className="font-mono">IDBI Bank (1285104000034520)</strong> · IFSC: <strong className="font-mono">IBKL0001285</strong></div>
+                      <div>• PhonePe Standee QR Code सक्रिय है (0% बैंक ट्रांजेक्शन शुल्क)।</div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-bold text-stone-700 mb-1">
+                          गेटवे प्रदाता (Payment Provider)
+                        </label>
+                        <select
+                          value={gatewayConfig.provider}
+                          onChange={(e) =>
+                            setGatewayConfig((prev) => ({
+                              ...prev,
+                              provider: e.target.value as any,
+                            }))
+                          }
+                          className="w-full px-3 py-2 text-xs border border-stone-300 rounded-lg bg-white"
+                        >
+                          <option value="direct_upi">सीधा UPI एवं बैंक ट्रांसफर (Direct Standee QR - 0% Fee)</option>
+                          <option value="razorpay">Razorpay Gateway (Cards, NetBanking, Auto-Reconciliation)</option>
+                          <option value="cashfree">Cashfree Payments (UPI Intent & Auto Settlement)</option>
+                          <option value="payu">PayU India (Full-Suite Payment Gateway)</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-stone-700 mb-1">
+                          वातावरण मोड (Environment)
+                        </label>
+                        <select
+                          value={gatewayConfig.mode}
+                          onChange={(e) =>
+                            setGatewayConfig((prev) => ({
+                              ...prev,
+                              mode: e.target.value as any,
+                            }))
+                          }
+                          className="w-full px-3 py-2 text-xs border border-stone-300 rounded-lg bg-white"
+                        >
+                          <option value="live">Live Production (वास्तविक भुगतान)</option>
+                          <option value="test">Test Sandbox Mode</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {gatewayConfig.provider !== 'direct_upi' && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                        <div>
+                          <label className="block text-xs font-bold text-stone-700 mb-1">
+                            Key ID / Merchant ID
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="rzp_live_..."
+                            value={gatewayConfig.keyId || ''}
+                            onChange={(e) =>
+                              setGatewayConfig((prev) => ({ ...prev, keyId: e.target.value }))
+                            }
+                            className="w-full px-3 py-2 text-xs border border-stone-300 rounded-lg font-mono"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-bold text-stone-700 mb-1">
+                            Key Secret
+                          </label>
+                          <input
+                            type="password"
+                            placeholder="••••••••••••••••"
+                            value={gatewayConfig.keySecret || ''}
+                            onChange={(e) =>
+                              setGatewayConfig((prev) => ({ ...prev, keySecret: e.target.value }))
+                            }
+                            className="w-full px-3 py-2 text-xs border border-stone-300 rounded-lg font-mono"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="pt-2 flex justify-end">
+                      <button
+                        type="submit"
+                        className="px-5 py-2.5 bg-[#0f4d3a] hover:bg-[#135541] text-white font-bold text-xs sm:text-sm rounded-xl shadow cursor-pointer flex items-center gap-2"
+                      >
+                        <Check className="w-4 h-4 text-amber-300" />
+                        <span>गेटवे सेटिंग्स सहेजें</span>
+                      </button>
+                    </div>
+                  </form>
                 </div>
               )}
 

@@ -1,4 +1,13 @@
-import { Official, NewsItem, GalleryPhoto, GalleryVideo, TransparencyRecord, DonationReceipt } from '../types';
+import { 
+  Official, 
+  NewsItem, 
+  GalleryPhoto, 
+  GalleryVideo, 
+  TransparencyRecord, 
+  DonationReceipt, 
+  ConstructionProgress, 
+  SevaProject 
+} from '../types';
 
 export const TRUST_INFO = {
   name: "प्रभु रामजी ट्रस्ट",
@@ -375,7 +384,10 @@ export const INITIAL_RECEIPTS: DonationReceipt[] = [
     cause: "आश्रम एवं मंदिर निर्माण सहयोग",
     date: "2026-11-02",
     paymentMode: "PhonePe QR",
-    transactionRef: "UPI/6312481920/IDBI"
+    transactionRef: "UPI/6312481920/IDBI",
+    status: "verified",
+    verifiedDate: "2026-11-02",
+    verifiedBy: "ट्रस्ट कार्यालय"
   },
   {
     receiptNo: "PRT-2026-1092",
@@ -385,6 +397,176 @@ export const INITIAL_RECEIPTS: DonationReceipt[] = [
     cause: "शनिवार शाम भंडारा प्रसादी",
     date: "2026-11-03",
     paymentMode: "UPI (PhonePe)",
-    transactionRef: "UPI/8941203912/AXIS"
+    transactionRef: "UPI/8941203912/AXIS",
+    status: "verified",
+    verifiedDate: "2026-11-03",
+    verifiedBy: "ट्रस्ट कार्यालय"
   }
 ];
+
+export const DEFAULT_CONSTRUCTION_PROGRESS: ConstructionProgress = {
+  projectTitle: "प्रभु रामजी आश्रम एवं परिक्रमा विश्राम भवन",
+  location: "ग्राम गलगाँव, सनावद, खरगोन (म.प्र.)",
+  totalBudget: 3500000,
+  receivedDonations: 1450000,
+  totalSpent: 1280000,
+  status: "नींव व आरसीसी स्तंभ (Pillars) निर्माण कार्य प्रगति पर",
+  targetCompletion: "वर्ष 2026-27",
+  description: "माँ नर्मदा परिक्रमा पथिकों, साधु-संतों एवं भक्तों के सुरक्षित रात्रि विश्राम, भोजन प्रसादी और श्री राम-हनुमान मंदिर के पक्के निर्माण का महायज्ञ।",
+  milestones: [
+    { name: "पावन भूमि पूजन एवं समतलीकरण", percent: 100, done: true },
+    { name: "गहरी आरसीसी नींव ढलाई", percent: 100, done: true },
+    { name: "मुख्य आधार स्तंभ (Pillars) निर्माण", percent: 75, done: false },
+    { name: "विश्राम भवन छत एवं शेड ढलाई", percent: 20, done: false },
+    { name: "संत कक्ष, शौचालय एवं जल व्यवस्था", percent: 10, done: false }
+  ],
+  photos: [
+    "/assets/aistudio/ashram-mandir-nirman-1_7dccf72b.jpg",
+    "/assets/aistudio/ashram-mandir-nirman-2_e977cf9f.jpg",
+    "/assets/aistudio/IMG-20261102-WA0005_12d23c89.jpg"
+  ]
+};
+
+export const DEFAULT_SEVA_PROJECTS: SevaProject[] = [
+  {
+    id: "gauseva",
+    number: "01",
+    title: "गौसेवा एवं निराश्रित गोवंश संरक्षण",
+    englishTitle: "Cow Protection & Gaushala Seva",
+    subtitle: "निराश्रित एवं अशक्त गोवंश को चारा, सुरक्षित आश्रय व चिकित्सा",
+    description: "ग्राम गलगाँव में बेसहारा गोवंश को प्रतिदिन प्रातः एवं सायं ताजा हरा चारा, कुट्टी, दलिया, गुड़ एवं पशु चिकित्सक द्वारा निःशुल्क दवाइयां उपलब्ध कराई जाती हैं।",
+    iconName: "Heart",
+    imageUrl: "/assets/aistudio/img_real_gaushala_31c848c1.jpg",
+    dailyRoutine: "प्रतिदिन प्रातः 6:30 बजे से नित्य गोमाता की सेवा व चारा वितरण",
+    keyStats: "नित्य 50+ गोवंश की देखरेख",
+    status: "active" as const,
+    donationTargetCause: "गौसेवा एवं गौशाला संचालन"
+  },
+  {
+    id: "narmada",
+    number: "02",
+    title: "नर्मदा परिक्रमा साधु-संत व पदयात्री सेवा",
+    englishTitle: "Narmada Parikrama Pilgrim Support",
+    subtitle: "परिक्रमा पथिकों हेतु जल, फलाहार, विश्राम एवं प्राथमिक उपचार",
+    description: "पावन माँ नर्मदा परिक्रमा मार्ग पर स्थित गलगाँव आश्रम में आने वाले सभी पदयात्री संतों एवं श्रद्धालुओं को शीतल जल, चाय, फलाहार और विश्राम की निःशुल्क व्यवस्था दी जाती है।",
+    iconName: "Waves",
+    imageUrl: "/assets/aistudio/1793586446047_5029f454.jpg",
+    dailyRoutine: "24 घंटे परिक्रमा यात्रियों हेतु द्वार खुले हैं",
+    keyStats: "प्रतिवर्ष हजारों परिक्रमावासियों की सेवा",
+    status: "active" as const,
+    donationTargetCause: "नर्मदा परिक्रमा सेवा"
+  },
+  {
+    id: "bhandara",
+    number: "03",
+    title: "हर शनिवार शाम भव्य महाभंडारा व प्रसादी",
+    englishTitle: "Saturday Grand Community Feast (Bhandara)",
+    subtitle: "प्रत्येक शनिवार शाम सैकड़ों भक्तों व ग्रामीणों हेतु पावन पंगत",
+    description: "प्रत्येक शनिवार शाम को शुद्ध देशी सामग्री से निर्मित स्वादिष्ट महाप्रसाद पंगत का आयोजन होता है, जिसमें बिना किसी भेदभाव के सभी श्रद्धालु बैठकर भोजन ग्रहण करते हैं।",
+    iconName: "UtensilsCrossed",
+    imageUrl: "/assets/aistudio/IMG-20261030-WA0000_4e2396e1_4e2396e1_4e2396e1.jpg",
+    dailyRoutine: "हर शनिवार शाम 6:00 बजे से निरंतर महाप्रसाद वितरण",
+    keyStats: "हर शनिवार 300+ श्रद्धालु महाप्रसाद पाते हैं",
+    status: "active" as const,
+    donationTargetCause: "शनिवार शाम भंडारा प्रसादी"
+  },
+  {
+    id: "chaiseva",
+    number: "04",
+    title: "प्रतिदिन नित्य निःशुल्क चाय व जल सेवा",
+    englishTitle: "Daily Free Morning Tea & Water Seva",
+    subtitle: "प्रातः 6 बजे से नित्य परिक्रमा पथिकों एवं श्रमजीवियों हेतु सेवा",
+    description: "ग्राम गलगाँव मार्ग पर प्रतिदिन प्रातःकाल से ही ताजा दूध की गर्मागर्म चाय एवं शुद्ध जल की अविरल सेवा प्रदान की जाती है।",
+    iconName: "Coffee",
+    imageUrl: "/assets/aistudio/1793586446047_5029f454.jpg",
+    dailyRoutine: "प्रतिदिन प्रातः 06:00 बजे से प्रातः 10:00 बजे तक",
+    keyStats: "प्रतिदिन 200+ कप निःशुल्क चाय सेवा",
+    status: "active" as const,
+    donationTargetCause: "प्रतिदिन चाय सेवा"
+  },
+  {
+    id: "ashram",
+    number: "05",
+    title: "प्रभु रामजी आश्रम एवं मंदिर निर्माण",
+    englishTitle: "Ashram & Mandir Construction",
+    subtitle: "परिक्रमा विश्राम भवन, मंदिर व अन्नक्षेत्र का पक्का निर्माण",
+    description: "परिक्रमा पथिकों के सुरक्षित रात्रि विश्राम, संतों के सत्संग भवन और संकटमोचन श्री हनुमानजी मंदिर के विशाल परिसर का निर्माण कार्य प्रगति पर है।",
+    iconName: "Building",
+    imageUrl: "/assets/aistudio/ashram-mandir-nirman-1_7dccf72b.jpg",
+    dailyRoutine: "नींव व स्तंभ निर्माण कार्य निरंतर चालू है",
+    keyStats: "3500 वर्गफीट का विशाल सेवा परिसर",
+    status: "active" as const,
+    donationTargetCause: "आश्रम एवं मंदिर निर्माण सहयोग"
+  },
+  {
+    id: "poorhelp",
+    number: "06",
+    title: "निर्धन एवं असहाय परिवार सहायता",
+    englishTitle: "Aid for Poor & Needy Families",
+    subtitle: "राशन, वस्त्र, आकस्मिक सहायता एवं ठंड में कंबल वितरण",
+    description: "ग्रामीण क्षेत्र के अत्यंत कमजोर व निराश्रित परिवारों को खाद्यान्न किट, शीतकाल में गर्म कंबल और आवश्यकता पड़ने पर सामाजिक संबल प्रदान किया जाता है।",
+    iconName: "Users",
+    imageUrl: "/assets/aistudio/IMG-20261030-WA0000_4e2396e1_4e2396e1_4e2396e1.jpg",
+    dailyRoutine: "आवश्यकतानुसार समय-समय पर अभियान",
+    keyStats: "100+ परिवारों को समय पर सहायता",
+    status: "active" as const,
+    donationTargetCause: "गरीब एवं जरूरतमंद सहायता"
+  },
+  {
+    id: "childedu",
+    number: "07",
+    title: "बाल संस्कार एवं निर्धन बाल शिक्षा सहयोग",
+    englishTitle: "Child Values & Education Support",
+    subtitle: "पाठ्य सामग्री, नैतिक संस्कार एवं प्राथमिक शिक्षा प्रोत्साहन",
+    description: "गाँव के निर्धन बच्चों को स्कूल बैग, कापियाँ, पुस्तकें और सनातन नैतिक संस्कारों की प्रेरणा देकर शिक्षा से जोड़े रखने का प्रयास किया जाता है।",
+    iconName: "GraduationCap",
+    imageUrl: "/assets/aistudio/1793586446047_5029f454.jpg",
+    dailyRoutine: "शैक्षणिक सत्रारंभ पर पुस्तक व सामग्री वितरण",
+    keyStats: "बच्चों में नैतिक शिक्षा एवं संस्कार",
+    status: "active" as const,
+    donationTargetCause: "अनाथ व निर्धन बाल शिक्षा"
+  },
+  {
+    id: "health",
+    number: "08",
+    title: "निःशुल्क स्वास्थ्य एवं प्राथमिक चिकित्सा शिविर",
+    englishTitle: "Free Health Checkups & First Aid",
+    subtitle: "परिक्रमा पदयात्रियों के पैरों की मरहम-पट्टी व ग्रामीण स्वास्थ्य",
+    description: "पैदल चलने वाले परिक्रमावासियों के छालों का प्राथमिक उपचार, मरहम-पट्टी, ओआरएस एवं समय-समय पर निःशुल्क स्वास्थ्य परीक्षण शिविर आयोजित किए जाते हैं।",
+    iconName: "Activity",
+    imageUrl: "/assets/aistudio/1793586446047_5029f454.jpg",
+    dailyRoutine: "प्राथमिक चिकित्सा किट आश्रम में सदैव उपलब्ध",
+    keyStats: "परिक्रमावासियों को निःशुल्क प्राथमिक चिकित्सा",
+    status: "active" as const,
+    donationTargetCause: "स्वास्थ्य एवं चिकित्सा सेवा"
+  },
+  {
+    id: "environment",
+    number: "09",
+    title: "वृक्षारोपण एवं पावन नर्मदा पर्यावरण संरक्षण",
+    englishTitle: "Tree Plantation & Environment Protection",
+    subtitle: "नर्मदा तट एवं आश्रम परिसर में छायादार व औषधीय पौधे",
+    description: "बरगद, पीपल, नीम, बेलपत्र एवं तुलसी के पौधों का रोपण व संरक्षण कर पर्यावरण को स्वच्छ और हरा-भरा रखने का संकल्प।",
+    iconName: "Trees",
+    imageUrl: "/assets/aistudio/ashram-mandir-nirman-2_e977cf9f.jpg",
+    dailyRoutine: "प्रतिवर्ष वर्षाऋतु में सघन वृक्षारोपण",
+    keyStats: "500+ पौधों का रोपण व संरक्षण",
+    status: "active" as const,
+    donationTargetCause: "वृक्षारोपण एवं पर्यावरण"
+  },
+  {
+    id: "cultural",
+    number: "10",
+    title: "धार्मिक, सांस्कृतिक एवं आध्यात्मिक उत्सव",
+    englishTitle: "Spiritual, Cultural & Festive Programs",
+    subtitle: "रामनवमी, हनुमान जयंती, शिवरात्रि व सुंदरकांड पाठ",
+    description: "ग्रामीण समाज में भक्ति, सद्भावना और सनातन संस्कृति के प्रसार हेतु अखंड रामायण, सामूहिक सुंदरकांड पाठ एवं धार्मिक पर्वों का भव्य आयोजन।",
+    iconName: "Flame",
+    imageUrl: "/assets/aistudio/IMG-20261102-WA0005_12d23c89.jpg",
+    dailyRoutine: "नित्य सांध्य आरती एवं प्रत्येक मंगलवार-शनिवार सुंदरकांड",
+    keyStats: "वर्षभर पावन आध्यात्मिक उत्सव",
+    status: "active" as const,
+    donationTargetCause: "धार्मिक व सांस्कृतिक कार्यक्रम"
+  }
+];
+

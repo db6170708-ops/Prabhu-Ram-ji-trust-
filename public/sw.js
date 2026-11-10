@@ -1,8 +1,9 @@
 // Service Worker for Prabhu Ram Ji Trust PWA
-const CACHE_NAME = 'prt-pwa-v3';
+const CACHE_NAME = 'prt-pwa-v4-hd';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
+  '/logo.svg',
   '/site.webmanifest',
   '/manifest.json',
   '/pwa-1024x1024.png',

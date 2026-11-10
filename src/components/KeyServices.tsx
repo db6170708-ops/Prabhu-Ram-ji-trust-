@@ -1,13 +1,20 @@
-import React from 'react';
-import { Heart, Waves, UtensilsCrossed, Users, CheckCircle2, ArrowRight, Coffee, Building } from 'lucide-react';
+import React, { useState } from 'react';
+import { Heart, Waves, UtensilsCrossed, Users, CheckCircle2, ArrowRight, Coffee, Building, Sparkles, ChevronRight } from 'lucide-react';
 import { Language, TRANSLATIONS } from '../utils/translations';
+import { DEFAULT_SEVA_PROJECTS } from '../data/defaultData';
+import { SevaProject } from '../types';
 
 interface KeyServicesProps {
   language?: Language;
   onDonateForCause: (cause: string) => void;
+  onSelectProject?: (project: SevaProject) => void;
 }
 
-export const KeyServices: React.FC<KeyServicesProps> = ({ language = 'hi', onDonateForCause }) => {
+export const KeyServices: React.FC<KeyServicesProps> = ({ 
+  language = 'hi', 
+  onDonateForCause,
+  onSelectProject
+}) => {
   const isEn = language === 'en';
   const t = TRANSLATIONS[language];
   return (
@@ -168,6 +175,69 @@ export const KeyServices: React.FC<KeyServicesProps> = ({ language = 'hi', onDon
             </div>
           </div>
 
+        </div>
+
+        {/* All 10 Seva Projects Showcase */}
+        <div className="mt-20 pt-12 border-t border-stone-200">
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <span className="text-xs font-bold uppercase tracking-widest text-amber-800 bg-amber-100 px-3 py-1 rounded-full border border-amber-300">
+              संपूर्ण सेवा दर्शन
+            </span>
+            <h3 className="font-heading text-2xl sm:text-3xl font-bold text-[#0f4d3a] mt-2">
+              प्रभु रामजी ट्रस्ट के सभी 10 सेवा प्रकल्प
+            </h3>
+            <p className="text-xs sm:text-sm text-stone-600 mt-2">
+              प्रत्येक प्रकल्प पर क्लिक करके विस्तृत विवरण देखें एवं सीधे पुण्य सहयोग समर्पित करें।
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {DEFAULT_SEVA_PROJECTS.map((proj) => (
+              <div
+                key={proj.id}
+                className="bg-[#FAF7F2] hover:bg-white p-5 rounded-2xl border border-stone-200 hover:border-amber-400 hover:shadow-md transition-all flex flex-col justify-between group"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                      प्रकल्प #{proj.order || proj.number}
+                    </span>
+                    {(proj.impactStat || proj.keyStats) && (
+                      <span className="text-[11px] font-semibold text-amber-900 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                        {proj.impactStat || proj.keyStats}
+                      </span>
+                    )}
+                  </div>
+                  <h4 className="font-heading font-bold text-base text-[#0f4d3a] group-hover:text-amber-800 transition-colors">
+                    {proj.title}
+                  </h4>
+                  <p className="text-xs text-stone-500 font-medium mt-0.5">{proj.subtitle}</p>
+                  <p className="text-xs text-stone-600 mt-2 line-clamp-2 leading-relaxed">
+                    {proj.fullDescription || proj.description}
+                  </p>
+                </div>
+
+                <div className="pt-4 mt-3 border-t border-stone-200/60 flex items-center justify-between gap-2">
+                  <button
+                    type="button"
+                    onClick={() => onSelectProject && onSelectProject(proj)}
+                    className="text-xs font-bold text-[#0f4d3a] hover:text-amber-800 flex items-center gap-1 cursor-pointer"
+                  >
+                    <span>विस्तार से जानें</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => onDonateForCause(proj.title)}
+                    className="px-3 py-1.5 text-xs font-bold text-white bg-[#0f4d3a] hover:bg-[#125843] rounded-lg shadow-xs transition-colors cursor-pointer"
+                  >
+                    सहयोग दें
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
       </div>

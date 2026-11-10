@@ -15,11 +15,17 @@ import { Footer } from './components/Footer';
 import { ReceiptSearchModal } from './components/ReceiptSearchModal';
 import { AdminPanel } from './components/AdminPanel';
 import { LegalModal } from './components/LegalModals';
+import { LanguageModal } from './components/LanguageModal';
+import { VolunteerModal } from './components/VolunteerModal';
+import { CertificateModal } from './components/CertificateModal';
+import { ComplaintFeedbackModal } from './components/ComplaintFeedbackModal';
+import { ConstructionProgressModal } from './components/ConstructionProgressModal';
+import { ServicesDetailModal } from './components/ServicesDetailModal';
 import { StorageService } from './utils/storage';
-import { TRUST_INFO } from './data/defaultData';
+import { TRUST_INFO, DEFAULT_SEVA_PROJECTS } from './data/defaultData';
 import { Language } from './utils/translations';
-import { NewsItem, GalleryPhoto, GalleryVideo, TransparencyRecord, Official, DonationReceipt } from './types';
-import { MessageCircle, Heart, Phone, ArrowUp, Languages } from 'lucide-react';
+import { NewsItem, GalleryPhoto, GalleryVideo, TransparencyRecord, Official, DonationReceipt, SevaProject } from './types';
+import { MessageCircle, Heart, Phone, ArrowUp, Languages, Globe } from 'lucide-react';
 
 export default function App() {
   const [activeSection, setActiveSection] = useState('home');
@@ -36,16 +42,32 @@ export default function App() {
   // Modals & Panels
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isReceiptSearchOpen, setIsReceiptSearchOpen] = useState(false);
+  const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false);
+  const [isVolunteerOpen, setIsVolunteerOpen] = useState(false);
+  const [isCertificateOpen, setIsCertificateOpen] = useState(false);
+  const [isComplaintOpen, setIsComplaintOpen] = useState(false);
+  const [isConstructionProgressOpen, setIsConstructionProgressOpen] = useState(false);
+  const [selectedProjectForDetail, setSelectedProjectForDetail] = useState<SevaProject | null>(null);
   const [legalModalType, setLegalModalType] = useState<'privacy' | 'terms' | null>(null);
   const [donationCausePreselect, setDonationCausePreselect] = useState<string>('आश्रम एवं मंदिर निर्माण सहयोग');
   const [donationAmountPreselect, setDonationAmountPreselect] = useState<number>(1100);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
-  // Toggle Language
+  // Toggle Language (Quick Hi <-> En)
   const toggleLanguage = () => {
     const nextLang: Language = language === 'hi' ? 'en' : 'hi';
+    handleSelectLanguage(nextLang);
+  };
+
+  // Switch to any of the 17 languages
+  const handleSelectLanguage = (nextLang: Language) => {
     setLanguage(nextLang);
     localStorage.setItem('prt_language', nextLang);
+    if (nextLang === 'ur') {
+      document.documentElement.dir = 'rtl';
+    } else {
+      document.documentElement.dir = 'ltr';
+    }
   };
 
   // Load latest state from StorageService
@@ -121,6 +143,11 @@ export default function App() {
         onNavigate={scrollToSection}
         onOpenAdmin={() => setIsAdminOpen(true)}
         onOpenReceiptSearch={() => setIsReceiptSearchOpen(true)}
+        onOpenLanguageModal={() => setIsLanguageModalOpen(true)}
+        onOpenVolunteerModal={() => setIsVolunteerOpen(true)}
+        onOpenCertificateModal={() => setIsCertificateOpen(true)}
+        onOpenComplaintModal={() => setIsComplaintOpen(true)}
+        onOpenConstructionProgress={() => setIsConstructionProgressOpen(true)}
       />
 
       <main className="flex-1 w-full max-w-full overflow-x-hidden">
@@ -137,7 +164,11 @@ export default function App() {
         </div>
 
         {/* Section 2: Dedicated Ashram & Mandir Nirman Campaign Folder */}
-        <AshramNirmanSection language={language} onDonateForAshram={handleDonateForCause} />
+        <AshramNirmanSection 
+          language={language} 
+          onDonateForAshram={handleDonateForCause}
+          onOpenProgressReport={() => setIsConstructionProgressOpen(true)}
+        />
 
         {/* Section 3: About Prabhu Ramji Trust */}
         <AboutSection language={language} />
@@ -145,8 +176,12 @@ export default function App() {
         {/* Section 4: The 8 Objectives */}
         <ObjectivesSection language={language} />
 
-        {/* Section 5: Key Seva Services (Daily Tea Seva, Saturday Evening Bhandara, Gaushala) */}
-        <KeyServices language={language} onDonateForCause={(cause) => handleDonateForCause(cause)} />
+        {/* Section 5: Key Seva Services (Daily Tea Seva, Saturday Evening Bhandara, Gaushala + 10 Projects) */}
+        <KeyServices 
+          language={language} 
+          onDonateForCause={(cause) => handleDonateForCause(cause)}
+          onSelectProject={(proj) => setSelectedProjectForDetail(proj)}
+        />
 
         {/* Section 6: Trust Officials */}
         <OfficialsSection language={language} officials={officials} />
@@ -187,18 +222,23 @@ export default function App() {
         onOpenTerms={() => setLegalModalType('terms')}
         onOpenAdmin={() => setIsAdminOpen(true)}
         onOpenReceiptSearch={() => setIsReceiptSearchOpen(true)}
+        onOpenVolunteerModal={() => setIsVolunteerOpen(true)}
+        onOpenCertificateModal={() => setIsCertificateOpen(true)}
+        onOpenComplaintModal={() => setIsComplaintOpen(true)}
+        onOpenConstructionProgress={() => setIsConstructionProgressOpen(true)}
+        onOpenLanguageModal={() => setIsLanguageModalOpen(true)}
       />
 
       {/* Floating Bilingual Language Switcher (Left Side) */}
-      <div className="fixed bottom-4 left-3 sm:bottom-6 sm:left-6 z-40 no-print">
+      <div className="fixed bottom-4 left-3 sm:bottom-6 sm:left-6 z-40 no-print flex flex-col gap-2">
         <button
-          onClick={toggleLanguage}
+          onClick={() => setIsLanguageModalOpen(true)}
           className="flex items-center gap-2 px-3.5 py-2.5 rounded-full bg-white/95 backdrop-blur-md shadow-xl border-2 border-emerald-700/60 text-[#0f4d3a] hover:bg-emerald-50 transition-all font-bold text-xs sm:text-sm cursor-pointer hover:scale-105 active:scale-95"
-          title="भाषा बदलें / Switch Language"
-          aria-label="Toggle Language"
+          title="17 भाषाएं चुनें / Select from 17 Languages"
+          aria-label="Choose Language"
         >
           <Languages className="w-4 h-4 text-amber-600" />
-          <span className="font-bold">{language === 'hi' ? '🌐 Switch to English' : '🌐 हिंदी में देखें'}</span>
+          <span className="font-bold">🌐 17 भाषाएं (Languages)</span>
         </button>
       </div>
 
@@ -250,6 +290,46 @@ export default function App() {
       <LegalModal
         type={legalModalType}
         onClose={() => setLegalModalType(null)}
+      />
+
+      <LanguageModal
+        isOpen={isLanguageModalOpen}
+        currentLanguage={language}
+        onSelectLanguage={handleSelectLanguage}
+        onClose={() => setIsLanguageModalOpen(false)}
+      />
+
+      <VolunteerModal
+        isOpen={isVolunteerOpen}
+        onClose={() => setIsVolunteerOpen(false)}
+        language={language}
+      />
+
+      <CertificateModal
+        isOpen={isCertificateOpen}
+        onClose={() => setIsCertificateOpen(false)}
+        language={language}
+      />
+
+      <ComplaintFeedbackModal
+        isOpen={isComplaintOpen}
+        onClose={() => setIsComplaintOpen(false)}
+        language={language}
+      />
+
+      <ConstructionProgressModal
+        isOpen={isConstructionProgressOpen}
+        onClose={() => setIsConstructionProgressOpen(false)}
+        language={language}
+        onDonateForConstruction={() => handleDonateForCause('आश्रम एवं मंदिर निर्माण सहयोग')}
+      />
+
+      <ServicesDetailModal
+        isOpen={!!selectedProjectForDetail}
+        project={selectedProjectForDetail}
+        onClose={() => setSelectedProjectForDetail(null)}
+        language={language}
+        onDonateForProject={(title) => handleDonateForCause(title)}
       />
 
     </div>

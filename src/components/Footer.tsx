@@ -24,6 +24,11 @@ interface FooterProps {
   onOpenTerms: () => void;
   onOpenAdmin: () => void;
   onOpenReceiptSearch: () => void;
+  onOpenVolunteerModal?: () => void;
+  onOpenCertificateModal?: () => void;
+  onOpenComplaintModal?: () => void;
+  onOpenConstructionProgress?: () => void;
+  onOpenLanguageModal?: () => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({
@@ -32,7 +37,12 @@ export const Footer: React.FC<FooterProps> = ({
   onOpenPrivacy,
   onOpenTerms,
   onOpenAdmin,
-  onOpenReceiptSearch
+  onOpenReceiptSearch,
+  onOpenVolunteerModal,
+  onOpenCertificateModal,
+  onOpenComplaintModal,
+  onOpenConstructionProgress,
+  onOpenLanguageModal,
 }) => {
   const isEn = language === 'en';
   const t = TRANSLATIONS[language];
@@ -179,15 +189,50 @@ export const Footer: React.FC<FooterProps> = ({
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('donate')} className="text-amber-300 font-bold hover:underline">
+                <button onClick={() => onNavigate('donate')} className="text-amber-300 font-bold hover:underline cursor-pointer">
                   • PhonePe QR / बैंक विवरण
                 </button>
               </li>
               <li>
-                <button onClick={onOpenReceiptSearch} className="text-emerald-300 font-semibold hover:underline">
+                <button onClick={onOpenReceiptSearch} className="text-emerald-300 font-semibold hover:underline cursor-pointer">
                   • डिजिटल दान रसीद खोजें
                 </button>
               </li>
+              {onOpenVolunteerModal && (
+                <li>
+                  <button onClick={onOpenVolunteerModal} className="text-amber-200 hover:underline cursor-pointer">
+                    • स्वयंसेवक सेवा पंजीकरण (Volunteer)
+                  </button>
+                </li>
+              )}
+              {onOpenCertificateModal && (
+                <li>
+                  <button onClick={onOpenCertificateModal} className="text-amber-200 hover:underline cursor-pointer">
+                    • सेवा सम्मान प्रमाण-पत्र (Certificate)
+                  </button>
+                </li>
+              )}
+              {onOpenConstructionProgress && (
+                <li>
+                  <button onClick={onOpenConstructionProgress} className="text-amber-300 hover:underline cursor-pointer">
+                    • निर्माण प्रगति व बजट रिपोर्ट
+                  </button>
+                </li>
+              )}
+              {onOpenComplaintModal && (
+                <li>
+                  <button onClick={onOpenComplaintModal} className="text-stone-300 hover:underline cursor-pointer">
+                    • सुझाव, शिकायत व सहायता केंद्र
+                  </button>
+                </li>
+              )}
+              {onOpenLanguageModal && (
+                <li>
+                  <button onClick={onOpenLanguageModal} className="text-amber-400 font-semibold hover:underline cursor-pointer">
+                    🌐 17 भाषाएं चुनें (Select Language)
+                  </button>
+                </li>
+              )}
             </ul>
 
             <div className="pt-2">

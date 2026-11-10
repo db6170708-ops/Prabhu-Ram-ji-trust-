@@ -15,7 +15,8 @@ import {
   Layers,
   HeartHandshake,
   ShieldCheck,
-  FileText
+  FileText,
+  Building2
 } from 'lucide-react';
 
 import { Language, TRANSLATIONS } from '../utils/translations';
@@ -23,9 +24,14 @@ import { Language, TRANSLATIONS } from '../utils/translations';
 interface AshramNirmanSectionProps {
   language?: Language;
   onDonateForAshram: (cause: string, amount: number) => void;
+  onOpenProgressReport?: () => void;
 }
 
-export const AshramNirmanSection: React.FC<AshramNirmanSectionProps> = ({ language = 'hi', onDonateForAshram }) => {
+export const AshramNirmanSection: React.FC<AshramNirmanSectionProps> = ({ 
+  language = 'hi', 
+  onDonateForAshram,
+  onOpenProgressReport
+}) => {
   const isEn = language === 'en';
   const t = TRANSLATIONS[language];
   const [isFolderOpen, setIsFolderOpen] = useState(false);
@@ -79,6 +85,18 @@ export const AshramNirmanSection: React.FC<AshramNirmanSectionProps> = ({ langua
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
               <span>लक्ष्य पूर्णता: {ASHRAM_NIRMAN_INFO.targetCompletion}</span>
             </div>
+            {onOpenProgressReport && (
+              <>
+                <span className="text-stone-500">|</span>
+                <button
+                  onClick={onOpenProgressReport}
+                  className="inline-flex items-center gap-1 px-3 py-1 bg-amber-400 hover:bg-amber-300 text-stone-900 font-bold text-xs rounded-full shadow cursor-pointer transition-transform hover:scale-105"
+                >
+                  <Building2 className="w-3.5 h-3.5 text-stone-900" />
+                  <span>प्रगति व बजट रिपोर्ट</span>
+                </button>
+              </>
+            )}
           </div>
         </div>
 

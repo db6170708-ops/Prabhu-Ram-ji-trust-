@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <!-- Background Radial Gradient -->
+    <radialGradient id="bgGradM" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+      <stop offset="0%" stop-color="#0e3f30" />
+      <stop offset="70%" stop-color="#07241b" />
+      <stop offset="100%" stop-color="#041610" />
+    </radialGradient>
+
+    <!-- Metallic Gold Outer Ring Gradient -->
+    <linearGradient id="goldRingGradM" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f5d061" />
+      <stop offset="25%" stop-color="#e5a93b" />
+      <stop offset="50%" stop-color="#fff1b0" />
+      <stop offset="75%" stop-color="#d49428" />
+      <stop offset="100%" stop-color="#996515" />
+    </linearGradient>
+
+    <!-- Metallic Gold Text Gradient -->
+    <linearGradient id="goldTextGradM" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fff0a8" />
+      <stop offset="35%" stop-color="#f5ba42" />
+      <stop offset="70%" stop-color="#e09924" />
+      <stop offset="100%" stop-color="#a66a11" />
+    </linearGradient>
+
+    <!-- Cream Gold for Ram -->
+    <linearGradient id="creamGoldGradM" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="60%" stop-color="#fff5c7" />
+      <stop offset="100%" stop-color="#f2d279" />
+    </linearGradient>
+
+    <!-- Soft Gold Halo Glow Filter -->
+    <filter id="haloGlowM" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <!-- Bottom Arc Path for Circular Text (scaled for maskable safe zone) -->
+    <path id="bottomTextArcM" d="M 195 512 A 317 317 0 0 0 829 512" fill="none" />
+  </defs>
+
+  <!-- Full-bleed background for Android Adaptive Masking -->
+  <rect width="1024" height="1024" fill="#041610" />
+
+  <!-- Inner Safe Zone Circle (radius 385 keeps everything inside 80% safe circle) -->
+  <circle cx="512" cy="512" r="385" fill="url(#bgGradM)" />
+
+  <!-- Outer Thick Gold Border -->
+  <circle cx="512" cy="512" r="372" fill="none" stroke="url(#goldRingGradM)" stroke-width="20" />
+  <circle cx="512" cy="512" r="382" fill="none" stroke="#664614" stroke-width="2" />
+  <circle cx="512" cy="512" r="361" fill="none" stroke="#664614" stroke-width="2.5" />
+
+  <!-- Dashed Stitch Circular Ring -->
+  <circle cx="512" cy="512" r="338" fill="none" stroke="#fce588" stroke-width="5" stroke-dasharray="11 8" opacity="0.95" />
+
+  <!-- Inner Concentric Solid Thin Gold Ring -->
+  <circle cx="512" cy="512" r="317" fill="none" stroke="url(#goldRingGradM)" stroke-width="6.5" />
+
+  <!-- Center Golden Circular Aura / Halo -->
+  <circle cx="512" cy="506" r="118" fill="none" stroke="#d49428" stroke-width="6" opacity="0.45" filter="url(#haloGlowM)" />
+  <circle cx="512" cy="506" r="118" fill="none" stroke="#fce588" stroke-width="2.5" opacity="0.65" />
+
+  <!-- Central Sacred "श्री" (Top Center) -->
+  <text 
+    x="512" 
+    y="458" 
+    font-family="'Noto Sans Devanagari', 'Noto Serif Devanagari', 'Mangal', 'Poppins', sans-serif" 
+    font-size="130" 
+    font-weight="900" 
+    fill="url(#goldTextGradM)" 
+    text-anchor="middle"
+    filter="drop-shadow(0px 6px 12px rgba(0,0,0,0.7))"
+  >श्री</text>
+
+  <!-- Central Sacred "राम" (Middle Center) -->
+  <text 
+    x="512" 
+    y="612" 
+    font-family="'Noto Sans Devanagari', 'Noto Serif Devanagari', 'Mangal', 'Poppins', sans-serif" 
+    font-size="145" 
+    font-weight="900" 
+    fill="url(#creamGoldGradM)" 
+    text-anchor="middle"
+    filter="drop-shadow(0px 6px 16px rgba(0,0,0,0.8))"
+    letter-spacing="2"
+  >राम</text>
+
+  <!-- "प्रभु रामजी ट्रस्ट" -->
+  <text 
+    x="512" 
+    y="730" 
+    font-family="'Noto Sans Devanagari', 'Noto Serif Devanagari', 'Mangal', 'Poppins', sans-serif" 
+    font-size="38" 
+    font-weight="700" 
+    fill="#fff2b3" 
+    text-anchor="middle"
+    letter-spacing="3"
+    filter="drop-shadow(0px 3px 6px rgba(0,0,0,0.8))"
+  >प्रभु रामजी ट्रस्ट</text>
+
+  <!-- Circular Bottom Arc Text "ग्राम गलगाँव (सनावद, खरगोन, म.प्र.)" -->
+  <text 
+    font-family="'Noto Sans Devanagari', 'Noto Serif Devanagari', 'Mangal', sans-serif" 
+    font-size="28" 
+    font-weight="600" 
+    fill="#e6be65" 
+    letter-spacing="2.5"
+    opacity="0.95"
+  >
+    <textPath href="#bottomTextArcM" startOffset="50%" text-anchor="middle">
+      ग्राम गलगाँव (सनावद, खरगोन, म.प्र.)
+    </textPath>
+  </text>
+</svg>

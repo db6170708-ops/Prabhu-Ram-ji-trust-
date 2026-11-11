@@ -29,15 +29,15 @@ export const ServicesDetailModal: React.FC<ServicesDetailModalProps> = ({
           <div className="flex items-start justify-between gap-4">
             <div>
               <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-400 text-stone-900 mb-2">
-                सेवा प्रकल्प {project.order || project.number || '1'} / 10
+                {language === 'en' ? `Seva Project ${project.order || project.number || '1'} / 10` : `सेवा प्रकल्प ${project.order || project.number || '1'} / 10`}
               </span>
               <h3 className="text-lg sm:text-xl font-bold">{project.title}</h3>
               <p className="text-xs text-amber-200/90 mt-0.5">{project.subtitle}</p>
             </div>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-colors shrink-0"
-              aria-label="Close"
+              className="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-colors shrink-0 cursor-pointer"
+              aria-label={language === 'en' ? "Close" : "बंद करें"}
             >
               <X className="w-5 h-5" />
             </button>
@@ -61,7 +61,9 @@ export const ServicesDetailModal: React.FC<ServicesDetailModalProps> = ({
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
             {(project.impactStat || project.keyStats) && (
               <div className="bg-emerald-50 border border-emerald-200 p-3 rounded-xl text-center">
-                <span className="text-[11px] text-emerald-800 font-semibold block">सेवा प्रभाव</span>
+                <span className="text-[11px] text-emerald-800 font-semibold block">
+                  {language === 'en' ? "Service Impact" : "सेवा प्रभाव"}
+                </span>
                 <span className="text-sm sm:text-base font-bold text-[#0f4d3a]">
                   {project.impactStat || project.keyStats}
                 </span>
@@ -69,16 +71,20 @@ export const ServicesDetailModal: React.FC<ServicesDetailModalProps> = ({
             )}
             {(project.schedule || project.dailyRoutine) && (
               <div className="bg-amber-50 border border-amber-200 p-3 rounded-xl text-center">
-                <span className="text-[11px] text-amber-900 font-semibold block">समय / दिन</span>
+                <span className="text-[11px] text-amber-900 font-semibold block">
+                  {language === 'en' ? "Timing & Days" : "समय / दिन"}
+                </span>
                 <span className="text-xs sm:text-sm font-bold text-amber-950">
                   {project.schedule || project.dailyRoutine}
                 </span>
               </div>
             )}
             <div className="bg-stone-50 border border-stone-200 p-3 rounded-xl text-center col-span-2 sm:col-span-1">
-              <span className="text-[11px] text-stone-600 font-semibold block">स्थान</span>
+              <span className="text-[11px] text-stone-600 font-semibold block">
+                {language === 'en' ? "Location" : "स्थान"}
+              </span>
               <span className="text-xs sm:text-sm font-bold text-stone-800">
-                {project.location || 'ग्राम गलगाँव'}
+                {language === 'en' ? (project.location ? "Gram Galgaon (Sanawad)" : "Gram Galgaon") : (project.location || 'ग्राम गलगाँव')}
               </span>
             </div>
           </div>
@@ -86,7 +92,7 @@ export const ServicesDetailModal: React.FC<ServicesDetailModalProps> = ({
           {/* Description */}
           <div>
             <h4 className="text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">
-              प्रकल्प का उद्देश्य एवं विस्तृत विवरण
+              {language === 'en' ? "Project Objective & Detailed Scope" : "प्रकल्प का उद्देश्य एवं विस्तृत विवरण"}
             </h4>
             <p className="text-sm text-stone-700 leading-relaxed bg-stone-50 p-4 rounded-xl border border-stone-200">
               {project.fullDescription || project.description}
@@ -97,7 +103,7 @@ export const ServicesDetailModal: React.FC<ServicesDetailModalProps> = ({
           {project.highlights && project.highlights.length > 0 && (
             <div>
               <h4 className="text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">
-                प्रमुख विशेषताएं एवं कार्य
+                {language === 'en' ? "Key Features & Activities" : "प्रमुख विशेषताएं एवं कार्य"}
               </h4>
               <div className="space-y-2">
                 {project.highlights.map((h: string, idx: number) => (
@@ -115,9 +121,9 @@ export const ServicesDetailModal: React.FC<ServicesDetailModalProps> = ({
         <div className="p-3 sm:p-4 bg-stone-100 border-t border-stone-200 flex justify-between items-center gap-3 shrink-0">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-stone-200 hover:bg-stone-300 font-medium rounded-xl text-stone-700 text-xs sm:text-sm transition-colors"
+            className="px-4 py-2 bg-stone-200 hover:bg-stone-300 font-medium rounded-xl text-stone-700 text-xs sm:text-sm transition-colors cursor-pointer"
           >
-            बंद करें
+            {language === 'en' ? "Close" : "बंद करें"}
           </button>
           <button
             onClick={() => {
@@ -127,7 +133,7 @@ export const ServicesDetailModal: React.FC<ServicesDetailModalProps> = ({
             className="px-5 py-2.5 bg-gradient-to-r from-[#0f4d3a] to-[#145f49] hover:from-[#135742] hover:to-[#0f4d3a] text-white font-bold text-xs sm:text-sm rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer"
           >
             <HeartHandshake className="w-4 h-4 text-amber-300" />
-            <span>इस प्रकल्प में दान दें</span>
+            <span>{language === 'en' ? "Donate for This Project" : "इस प्रकल्प में दान दें"}</span>
           </button>
         </div>
       </div>

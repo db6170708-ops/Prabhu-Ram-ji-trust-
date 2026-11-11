@@ -54,7 +54,8 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenConstructionProgress
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const t = TRANSLATIONS[language];
+  const t = TRANSLATIONS[language] || TRANSLATIONS['hi'];
+  const isEn = language === 'en';
 
   const navItems = [
     { id: 'home', label: t.navHome },
@@ -75,7 +76,7 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-stone-200 w-full max-w-full overflow-hidden">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-xs border-b border-stone-200 w-full max-w-full overflow-hidden">
       
       {/* Top Sacred Ribbon: Location, Routines & Official Social Channels */}
       <div className="bg-[#0b382c] text-amber-200 text-xs py-2 px-3 sm:px-8 border-b border-emerald-950/40 w-full overflow-hidden">
@@ -85,13 +86,13 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 sm:gap-3 text-center md:text-left">
             <span className="inline-flex items-center gap-1 font-medium text-amber-100">
               <MapPin className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-              <span>{TRUST_INFO.village}, {TRUST_INFO.tehsil}, {TRUST_INFO.district}</span>
+              <span>{isEn ? `${TRUST_INFO.village}, ${TRUST_INFO.tehsil}, ${TRUST_INFO.district}` : `${TRUST_INFO.village}, ${TRUST_INFO.tehsil}, ${TRUST_INFO.district}`}</span>
             </span>
             <span className="hidden sm:inline text-emerald-600/70">|</span>
             <a 
               href="https://prabhuramjitrustram.ai.studio/" 
               className="hidden md:inline-flex items-center gap-1 font-mono text-[11px] text-amber-300 hover:text-white transition-colors"
-              title="प्रभु रामजी ट्रस्ट आधिकारिक वेबसाइट"
+              title={isEn ? "Prabhu Ramji Trust Official Website" : "प्रभु रामजी ट्रस्ट आधिकारिक वेबसाइट"}
             >
               <span>prabhuramjitrustram.ai.studio</span>
             </a>
@@ -102,19 +103,18 @@ export const Header: React.FC<HeaderProps> = ({
             </span>
           </div>
 
-          {/* Right: Official Social Media Channels (YouTube, WhatsApp Channel, Instagram, Facebook), Language & Phone */}
+          {/* Right: Official Social Media Channels, Language & Phone */}
           <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
             
-            {/* Social Channels Pill Box (YouTube, WhatsApp Channel, Instagram, Facebook) */}
+            {/* Social Channels Pill Box */}
             <div className="flex items-center gap-1 bg-black/35 px-2.5 py-1 rounded-full border border-amber-400/30">
-              
               {/* YouTube */}
               <a
                 href={TRUST_INFO.youtube}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-600/20 hover:bg-red-600 text-red-300 hover:text-white transition-all text-[11px] font-semibold"
-                title="प्रभु रामजी ट्रस्ट - आधिकारिक YouTube चैनल"
+                title="YouTube"
               >
                 <Youtube className="w-3.5 h-3.5 text-red-400" />
                 <span className="hidden sm:inline">YouTube</span>
@@ -126,10 +126,10 @@ export const Header: React.FC<HeaderProps> = ({
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-600/25 hover:bg-emerald-600 text-emerald-300 hover:text-white transition-all text-[11px] font-semibold"
-                title="प्रभु रामजी ट्रस्ट - आधिकारिक WhatsApp चैनल"
+                title={t.whatsappChannelName}
               >
                 <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="hidden sm:inline">WhatsApp चैनल</span>
+                <span className="hidden sm:inline">{t.whatsappChannelName}</span>
               </a>
 
               {/* Instagram */}
@@ -138,7 +138,7 @@ export const Header: React.FC<HeaderProps> = ({
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-pink-600/20 hover:bg-pink-600 text-pink-300 hover:text-white transition-all text-[11px] font-semibold"
-                title="प्रभु रामजी ट्रस्ट - आधिकारिक Instagram"
+                title="Instagram"
               >
                 <Instagram className="w-3.5 h-3.5 text-pink-400" />
                 <span className="hidden sm:inline">Instagram</span>
@@ -150,23 +150,22 @@ export const Header: React.FC<HeaderProps> = ({
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-600/20 hover:bg-blue-600 text-blue-300 hover:text-white transition-all text-[11px] font-semibold"
-                title="प्रभु रामजी ट्रस्ट - आधिकारिक Facebook पेज"
+                title="Facebook"
               >
                 <Facebook className="w-3.5 h-3.5 text-blue-400" />
                 <span className="hidden sm:inline">Facebook</span>
               </a>
-
             </div>
 
-            {/* 17 Languages Modal Trigger */}
+            {/* 17 Languages Modal Trigger - Strict Single Language */}
             {onOpenLanguageModal && (
               <button
                 onClick={onOpenLanguageModal}
                 className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-400/25 hover:bg-amber-400/40 text-amber-200 border border-amber-400/50 text-[11px] font-bold transition-all cursor-pointer"
-                title="17 भाषाएं चुनें / 17 Indian & World Languages"
+                title={t.languageSelectBtn}
               >
                 <Globe className="w-3 h-3 text-amber-300" />
-                <span>17 भाषाएं (Languages)</span>
+                <span>{t.languageSelectBtn}</span>
               </button>
             )}
 
@@ -174,10 +173,10 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               onClick={onToggleLanguage}
               className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-400/20 hover:bg-amber-400/30 text-amber-300 border border-amber-400/40 text-[11px] font-bold transition-all cursor-pointer"
-              title="भाषा बदलें / Switch Language"
+              title={t.switchLangBtn}
             >
               <Languages className="w-3 h-3 text-amber-400" />
-              <span>{language === 'hi' ? 'English' : 'हिंदी'}</span>
+              <span>{t.switchLangBtn}</span>
             </button>
 
             {/* Phone */}
@@ -206,7 +205,7 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="w-14 h-14 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full overflow-hidden border-2.5 border-amber-500 shadow-lg animate-sacred-glow transition-transform group-hover:scale-105 shrink-0 bg-[#08241b] ring-2 ring-amber-300/40">
               <img
                 src={TRUST_INFO.logoUrl}
-                alt="प्रभु रामजी ट्रस्ट लोगो"
+                alt={t.trustName}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -257,10 +256,10 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 onClick={onOpenVolunteerModal}
                 className="hidden xl:inline-flex items-center gap-1 px-3 py-2 text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors border border-emerald-300 cursor-pointer"
-                title="स्वयंसेवक बनें / Join as Volunteer"
+                title={t.navVolunteer}
               >
                 <Users className="w-3.5 h-3.5 text-emerald-700" />
-                <span>स्वयंसेवक</span>
+                <span>{t.navVolunteer}</span>
               </button>
             )}
 
@@ -268,16 +267,16 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               onClick={onToggleLanguage}
               className="px-2.5 py-1.5 text-xs font-bold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg transition-colors border border-stone-300 flex items-center gap-1 cursor-pointer"
-              title="भाषा बदलें (Hindi / English)"
+              title={t.switchLangBtn}
             >
               <Languages className="w-3.5 h-3.5 text-amber-600" />
-              <span>{language === 'hi' ? 'EN' : 'हिंदी'}</span>
+              <span>{t.switchLangBtn}</span>
             </button>
 
             <button
               onClick={onOpenReceiptSearch}
               className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg transition-colors border border-stone-300 cursor-pointer"
-              title="दान रसीद खोजें व डाउनलोड करें"
+              title={t.searchReceiptBtn}
             >
               <Search className="w-3.5 h-3.5 text-stone-600" />
               <span>{t.searchReceiptBtn}</span>
@@ -306,17 +305,17 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               onClick={onToggleLanguage}
               className="px-2 py-1 text-xs font-bold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg border border-stone-300 shrink-0"
-              title="भाषा बदलें (Hindi / English)"
+              title={t.switchLangBtn}
             >
               {language === 'hi' ? 'EN' : 'हिं'}
             </button>
 
             <button
               onClick={() => handleNavClick('donate')}
-              className="inline-flex sm:hidden items-center gap-1 px-2.5 py-1 text-xs font-bold text-white bg-[#0f4d3a] rounded-lg shadow-sm shrink-0"
+              className="inline-flex sm:hidden items-center gap-1 px-2.5 py-1 text-xs font-bold text-white bg-[#0f4d3a] rounded-lg shadow-xs shrink-0"
             >
               <HeartHandshake className="w-3.5 h-3.5 text-amber-300" />
-              <span>दान</span>
+              <span>{t.donateBtn}</span>
             </button>
 
             <button
@@ -356,8 +355,8 @@ export const Header: React.FC<HeaderProps> = ({
             {/* PWA Mobile App Install Banner */}
             <div className="p-2.5 bg-gradient-to-r from-emerald-50 to-amber-50 rounded-xl border border-emerald-200/80 flex items-center justify-between gap-2">
               <div className="text-left">
-                <span className="font-bold text-xs text-[#0f4d3a] block">📲 मोबाइल ऐप डाउनलोड करें</span>
-                <span className="text-[10px] text-stone-500">HD लोगो व ऑफलाइन सपोर्ट के साथ</span>
+                <span className="font-bold text-xs text-[#0f4d3a] block">{t.downloadAppTitle}</span>
+                <span className="text-[10px] text-stone-500">{t.downloadAppSub}</span>
               </div>
               <PWAInstallButton />
             </div>
@@ -372,7 +371,7 @@ export const Header: React.FC<HeaderProps> = ({
                 className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-bold text-amber-950 bg-amber-100/70 hover:bg-amber-100 rounded-lg border border-amber-300"
               >
                 <Globe className="w-4 h-4 text-amber-700" />
-                <span>🌐 17 भाषाएं चुनें (Select from 17 Languages)</span>
+                <span>{t.languageSelectBtn}</span>
               </button>
             )}
 
@@ -386,7 +385,7 @@ export const Header: React.FC<HeaderProps> = ({
                 className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-semibold text-emerald-900 bg-emerald-50 hover:bg-emerald-100 rounded-lg border border-emerald-200"
               >
                 <Users className="w-4 h-4 text-emerald-700" />
-                <span>🤝 स्वयंसेवक सेवा पंजीकरण (Volunteer)</span>
+                <span>{t.navVolunteer}</span>
               </button>
             )}
 
@@ -400,7 +399,7 @@ export const Header: React.FC<HeaderProps> = ({
                 className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-semibold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg border border-stone-300"
               >
                 <Award className="w-4 h-4 text-amber-600" />
-                <span>🏆 सेवा सम्मान प्रमाण-पत्र (Certificate)</span>
+                <span>{t.navCertificate}</span>
               </button>
             )}
 
@@ -414,7 +413,7 @@ export const Header: React.FC<HeaderProps> = ({
                 className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-semibold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg border border-stone-300"
               >
                 <MessageSquare className="w-4 h-4 text-blue-600" />
-                <span>💬 सुझाव, शिकायत व सहायता केंद्र</span>
+                <span>{t.navComplaint}</span>
               </button>
             )}
 
@@ -428,7 +427,7 @@ export const Header: React.FC<HeaderProps> = ({
                 className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-semibold text-amber-900 bg-amber-50 hover:bg-amber-100 rounded-lg border border-amber-200"
               >
                 <Building2 className="w-4 h-4 text-amber-700" />
-                <span>🏗️ निर्माण प्रगति व बजट रिपोर्ट</span>
+                <span>{t.navConstructionProgress}</span>
               </button>
             )}
 
@@ -446,64 +445,52 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Official Social Channels in Mobile Menu */}
             <div className="pt-2">
               <p className="text-[11px] font-semibold text-stone-500 mb-2 text-center">
-                आधिकारिक सोशल चैनल से जुड़ें:
+                {t.connectSocialTitle}
               </p>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="flex items-center justify-center gap-3">
                 <a
                   href={TRUST_INFO.youtube}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-semibold text-red-700 bg-red-50 hover:bg-red-100 rounded-lg border border-red-200"
+                  className="p-2 rounded-full bg-red-100 text-red-600 hover:bg-red-200"
+                  title="YouTube"
                 >
-                  <Youtube className="w-4 h-4 text-red-600" />
-                  <span>YouTube</span>
+                  <Youtube className="w-4 h-4" />
                 </a>
-
                 <a
                   href={TRUST_INFO.whatsappChannel}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 rounded-lg border border-emerald-200"
+                  className="p-2 rounded-full bg-emerald-100 text-emerald-600 hover:bg-emerald-200"
+                  title="WhatsApp Channel"
                 >
-                  <MessageCircle className="w-4 h-4 text-emerald-600" />
-                  <span>WhatsApp चैनल</span>
+                  <MessageCircle className="w-4 h-4" />
                 </a>
-
                 <a
                   href={TRUST_INFO.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-semibold text-pink-700 bg-pink-50 hover:bg-pink-100 rounded-lg border border-pink-200"
+                  className="p-2 rounded-full bg-pink-100 text-pink-600 hover:bg-pink-200"
+                  title="Instagram"
                 >
-                  <Instagram className="w-4 h-4 text-pink-600" />
-                  <span>Instagram</span>
+                  <Instagram className="w-4 h-4" />
                 </a>
-
                 <a
                   href={TRUST_INFO.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200"
+                  className="p-2 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200"
+                  title="Facebook"
                 >
-                  <Facebook className="w-4 h-4 text-blue-600" />
-                  <span>Facebook</span>
+                  <Facebook className="w-4 h-4" />
                 </a>
               </div>
             </div>
 
-            <button
-              onClick={() => {
-                onOpenAdmin();
-                setMobileMenuOpen(false);
-              }}
-              className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-medium text-stone-500 hover:text-stone-800"
-            >
-              <Lock className="w-3.5 h-3.5" />
-              <span>{t.adminLogin}</span>
-            </button>
           </div>
         </div>
       )}
+
     </header>
   );
 };

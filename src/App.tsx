@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
+import { DevoteeServicesFolder } from './components/DevoteeServicesFolder';
 import { AshramNirmanSection } from './components/AshramNirmanSection';
 import { AboutSection } from './components/AboutSection';
 import { ObjectivesSection } from './components/ObjectivesSection';
@@ -23,7 +24,7 @@ import { ConstructionProgressModal } from './components/ConstructionProgressModa
 import { ServicesDetailModal } from './components/ServicesDetailModal';
 import { StorageService } from './utils/storage';
 import { TRUST_INFO, DEFAULT_SEVA_PROJECTS } from './data/defaultData';
-import { Language } from './utils/translations';
+import { Language, TRANSLATIONS } from './utils/translations';
 import { NewsItem, GalleryPhoto, GalleryVideo, TransparencyRecord, Official, DonationReceipt, SevaProject } from './types';
 import { MessageCircle, Heart, Phone, ArrowUp, Languages, Globe } from 'lucide-react';
 
@@ -32,6 +33,7 @@ export default function App() {
   const [language, setLanguage] = useState<Language>(() => {
     return (localStorage.getItem('prt_language') as Language) || 'hi';
   });
+  const t = TRANSLATIONS[language] || TRANSLATIONS['hi'];
 
   const [news, setNews] = useState<NewsItem[]>([]);
   const [photos, setPhotos] = useState<GalleryPhoto[]>([]);
@@ -234,11 +236,11 @@ export default function App() {
         <button
           onClick={() => setIsLanguageModalOpen(true)}
           className="flex items-center gap-2 px-3.5 py-2.5 rounded-full bg-white/95 backdrop-blur-md shadow-xl border-2 border-emerald-700/60 text-[#0f4d3a] hover:bg-emerald-50 transition-all font-bold text-xs sm:text-sm cursor-pointer hover:scale-105 active:scale-95"
-          title="17 भाषाएं चुनें / Select from 17 Languages"
-          aria-label="Choose Language"
+          title={t.languageSelectBtn}
+          aria-label={t.languageSelectBtn}
         >
           <Languages className="w-4 h-4 text-amber-600" />
-          <span className="font-bold">🌐 17 भाषाएं (Languages)</span>
+          <span className="font-bold">🌐 {t.languageSelectBtn}</span>
         </button>
       </div>
 
@@ -250,8 +252,8 @@ export default function App() {
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             className="pointer-events-auto w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center bg-white/95 hover:bg-white text-stone-700 rounded-full shadow-md border border-stone-200 transition-all hover:scale-105 active:scale-95 cursor-pointer backdrop-blur-xs"
-            title="ऊपर जाएं (Top)"
-            aria-label="Scroll to top"
+            title={t.scrollTop}
+            aria-label={t.scrollTop}
           >
             <ArrowUp className="w-5 h-5 text-[#0f4d3a]" />
           </button>
@@ -263,12 +265,12 @@ export default function App() {
           target="_blank"
           rel="noopener noreferrer"
           className="pointer-events-auto flex items-center justify-center w-11 h-11 sm:w-auto sm:px-4 sm:py-3 bg-[#25D366] hover:bg-[#20ba59] active:scale-95 text-white rounded-full shadow-xl transition-all transform hover:scale-105 group font-medium text-xs sm:text-sm"
-          title="व्हाट्सएप पर संपर्क जोड़ें / चैट करें"
-          aria-label="WhatsApp Contact"
+          title={t.floatingWhatsApp}
+          aria-label={t.floatingWhatsApp}
         >
           <MessageCircle className="w-5 h-5 fill-current shrink-0" />
           <span className="hidden sm:inline font-bold">
-            {language === 'hi' ? 'WhatsApp संपर्क' : 'WhatsApp Contact'}
+            {t.floatingWhatsApp}
           </span>
         </a>
 

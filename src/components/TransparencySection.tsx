@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { TransparencyRecord } from '../types';
 import { TRUST_INFO } from '../data/defaultData';
 import { 
@@ -6,8 +6,6 @@ import {
   FileSpreadsheet, 
   TrendingUp, 
   Receipt, 
-  HelpCircle, 
-  CheckCircle,
   Eye,
   Building
 } from 'lucide-react';
@@ -21,8 +19,7 @@ interface TransparencySectionProps {
 
 export const TransparencySection: React.FC<TransparencySectionProps> = ({ language = 'hi', records }) => {
   const isEn = language === 'en';
-  const t = TRANSLATIONS[language];
-  const [selectedRecord, setSelectedRecord] = useState<TransparencyRecord>(records[0] || {} as TransparencyRecord);
+  const t = TRANSLATIONS[language] || TRANSLATIONS['hi'];
 
   const totalDonationSum = records.reduce((acc, curr) => acc + curr.totalDonation, 0);
   const totalExpenseSum = records.reduce((acc, curr) => acc + curr.totalExpense, 0);
@@ -52,59 +49,65 @@ export const TransparencySection: React.FC<TransparencySectionProps> = ({ langua
           
           <div className="bg-[#FAF7F2] p-6 rounded-2xl border border-stone-200 shadow-xs">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold text-stone-500">कुल दर्ज सहयोग (हालिया अवधि)</span>
+              <span className="text-xs font-semibold text-stone-500">
+                {isEn ? "Total Contributions (Recent Period)" : "कुल दर्ज सहयोग (हालिया अवधि)"}
+              </span>
               <Receipt className="w-5 h-5 text-emerald-700" />
             </div>
             <div className="text-2xl sm:text-3xl font-heading font-bold font-mono text-[#0f4d3a]">
               ₹{totalDonationSum.toLocaleString('en-IN')}
             </div>
             <p className="text-xs text-stone-500 mt-2">
-              समस्त दान सीधे IDBI बैंक खाते एवं UPI के माध्यम से दर्ज।
+              {isEn ? "All donations recorded directly via IDBI Bank account and verified UPI." : "समस्त दान सीधे IDBI बैंक खाते एवं UPI के माध्यम से दर्ज।"}
             </p>
           </div>
 
           <div className="bg-[#FAF7F2] p-6 rounded-2xl border border-stone-200 shadow-xs">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold text-stone-500">कुल सेवा व्यय (गौसेवा व भंडारा)</span>
+              <span className="text-xs font-semibold text-stone-500">
+                {isEn ? "Total Expenditure (Cow Welfare & Bhandara)" : "कुल सेवा व्यय (गौसेवा व भंडारा)"}
+              </span>
               <TrendingUp className="w-5 h-5 text-amber-700" />
             </div>
             <div className="text-2xl sm:text-3xl font-heading font-bold font-mono text-stone-900">
               ₹{totalExpenseSum.toLocaleString('en-IN')}
             </div>
             <p className="text-xs text-stone-500 mt-2">
-              चारा, अनाज, प्रसादी सामग्री व परिक्रमा सेवा में समर्पित।
+              {isEn ? "Dedicated directly to fodder, grain, prasad ingredients, and pilgrim relief." : "चारा, अनाज, प्रसादी सामग्री व परिक्रमा सेवा में समर्पित।"}
             </p>
           </div>
 
           <div className="bg-[#FAF7F2] p-6 rounded-2xl border border-stone-200 shadow-xs">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold text-stone-500">पंजीकरण एवं कर स्थिति</span>
+              <span className="text-xs font-semibold text-stone-500">
+                {isEn ? "Registration & Tax Status" : "पंजीकरण एवं कर स्थिति"}
+              </span>
               <ShieldCheck className="w-5 h-5 text-emerald-700" />
             </div>
             <div className="text-lg font-bold text-stone-800">
-              12AB व 80G प्रक्रियाधीन
+              {isEn ? "12AB & 80G in Process" : "12AB व 80G प्रक्रियाधीन"}
             </div>
             <p className="text-xs text-stone-500 mt-2">
-              आयकर विभाग से अंतिम स्वीकृति उपरांत 80G टैक्स प्रमाण पत्र मान्य होगा।
+              {isEn ? "Statutory compliance in progress with the Income Tax Department." : "आयकर विभाग से अंतिम स्वीकृति उपरांत 80G टैक्स प्रमाण पत्र मान्य होगा।"}
             </p>
           </div>
 
         </div>
 
         {/* Detailed Monthly Ledger Table */}
-        <div className="bg-stone-50 rounded-3xl p-6 sm:p-8 border border-stone-200 shadow-sm mb-12">
+        <div className="bg-stone-50 rounded-3xl p-6 sm:p-8 border border-stone-200 shadow-xs mb-12">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-stone-200">
             <div>
               <h3 className="font-heading text-xl font-bold text-[#0f4d3a] flex items-center gap-2">
                 <FileSpreadsheet className="w-5 h-5 text-emerald-700" />
-                <span>मासिक सेवा व आय-व्यय विवरणिका</span>
+                <span>{isEn ? "Monthly Income & Expenditure Ledger" : "मासिक सेवा व आय-व्यय विवरणिका"}</span>
               </h3>
               <p className="text-xs text-stone-500 mt-0.5">
-                प्रभु रामजी ट्रस्ट, ग्राम गलगाँव (सनावद, खरगोन) अधिकृत बहीखाता
+                {t.trustName}, {t.tagline}
               </p>
             </div>
             <span className="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
-              सार्वजनिक निरीक्षणार्थ उपलब्ध
+              {isEn ? "Available for Public Inspection" : "सार्वजनिक निरीक्षणार्थ उपलब्ध"}
             </span>
           </div>
 
@@ -112,41 +115,61 @@ export const TransparencySection: React.FC<TransparencySectionProps> = ({ langua
             <table className="w-full text-left text-xs sm:text-sm">
               <thead>
                 <tr className="border-b border-stone-200 text-stone-500 uppercase text-[11px] tracking-wider">
-                  <th className="py-3 px-3">माह / वर्ष</th>
-                  <th className="py-3 px-3">प्राप्त दान (₹)</th>
-                  <th className="py-3 px-3">गौसेवा व्यय (₹)</th>
-                  <th className="py-3 px-3">भंडारा व्यय (₹)</th>
-                  <th className="py-3 px-3">नर्मदा सेवा (₹)</th>
-                  <th className="py-3 px-3 font-bold">कुल व्यय (₹)</th>
-                  <th className="py-3 px-3">मुख्य विवरण</th>
+                  <th className="py-3 px-3">{isEn ? "Month / Year" : "माह / वर्ष"}</th>
+                  <th className="py-3 px-3">{isEn ? "Received (₹)" : "प्राप्त दान (₹)"}</th>
+                  <th className="py-3 px-3">{isEn ? "Cow Welfare (₹)" : "गौसेवा व्यय (₹)"}</th>
+                  <th className="py-3 px-3">{isEn ? "Bhandara (₹)" : "भंडारा व्यय (₹)"}</th>
+                  <th className="py-3 px-3">{isEn ? "Narmada Seva (₹)" : "नर्मदा सेवा (₹)"}</th>
+                  <th className="py-3 px-3 font-bold">{isEn ? "Total Expense (₹)" : "कुल व्यय (₹)"}</th>
+                  <th className="py-3 px-3">{isEn ? "Particulars" : "मुख्य विवरण"}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-200/70 text-stone-800">
-                {records.map((r) => (
-                  <tr key={r.id} className="hover:bg-white transition-colors">
-                    <td className="py-3.5 px-3 font-bold text-[#0f4d3a] whitespace-nowrap">
-                      {r.monthYear}
-                    </td>
-                    <td className="py-3.5 px-3 font-mono font-semibold text-emerald-700">
-                      ₹{r.totalDonation.toLocaleString('en-IN')}
-                    </td>
-                    <td className="py-3.5 px-3 font-mono">
-                      ₹{r.gauSevaExpense.toLocaleString('en-IN')}
-                    </td>
-                    <td className="py-3.5 px-3 font-mono">
-                      ₹{r.bhandaraExpense.toLocaleString('en-IN')}
-                    </td>
-                    <td className="py-3.5 px-3 font-mono">
-                      ₹{r.narmadaSevaExpense.toLocaleString('en-IN')}
-                    </td>
-                    <td className="py-3.5 px-3 font-mono font-bold text-stone-900">
-                      ₹{r.totalExpense.toLocaleString('en-IN')}
-                    </td>
-                    <td className="py-3.5 px-3 text-xs text-stone-600 max-w-xs">
-                      {r.remarks}
-                    </td>
-                  </tr>
-                ))}
+                {records.map((r) => {
+                  const getMonthDisplay = (my: string) => {
+                    if (!isEn) return my;
+                    if (my.includes("अक्टूबर")) return "October 2026";
+                    if (my.includes("सितंबर")) return "September 2026";
+                    return my;
+                  };
+
+                  const getRemarksDisplay = (rem: string) => {
+                    if (!isEn) return rem;
+                    if (rem.includes("चाय सेवा")) {
+                      return "Daily morning tea seva, 4 Saturday evening community feasts, and ashram pillar construction expenditure.";
+                    }
+                    if (rem.includes("हरे चारे")) {
+                      return "Green fodder provision for sacred cows and Saturday grand community feast.";
+                    }
+                    return rem;
+                  };
+
+                  return (
+                    <tr key={r.id} className="hover:bg-white transition-colors">
+                      <td className="py-3.5 px-3 font-bold text-[#0f4d3a] whitespace-nowrap">
+                        {getMonthDisplay(r.monthYear)}
+                      </td>
+                      <td className="py-3.5 px-3 font-mono font-semibold text-emerald-700">
+                        ₹{r.totalDonation.toLocaleString('en-IN')}
+                      </td>
+                      <td className="py-3.5 px-3 font-mono">
+                        ₹{r.gauSevaExpense.toLocaleString('en-IN')}
+                      </td>
+                      <td className="py-3.5 px-3 font-mono">
+                        ₹{r.bhandaraExpense.toLocaleString('en-IN')}
+                      </td>
+                      <td className="py-3.5 px-3 font-mono">
+                        ₹{r.narmadaSevaExpense.toLocaleString('en-IN')}
+                      </td>
+                      <td className="py-3.5 px-3 font-mono font-bold text-stone-900">
+                        ₹{r.totalExpense.toLocaleString('en-IN')}
+                      </td>
+                      <td className="py-3.5 px-3 text-xs text-stone-600 max-w-xs">
+                        {getRemarksDisplay(r.remarks)}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -158,10 +181,12 @@ export const TransparencySection: React.FC<TransparencySectionProps> = ({ langua
             <div className="space-y-2">
               <h4 className="font-heading text-lg font-bold text-[#0f4d3a] flex items-center gap-2">
                 <Building className="w-5 h-5 text-amber-600" />
-                <span>खुली बहीखाता नीति (Open Books Policy)</span>
+                <span>{isEn ? "Open Books Financial Policy" : "खुली बहीखाता एवं पारदर्शी नीति"}</span>
               </h4>
               <p className="text-xs sm:text-sm text-stone-600 max-w-3xl leading-relaxed">
-                ट्रस्ट के किसी भी दानदाता अथवा श्रद्धालु को ट्रस्ट के मूल बिल, वाउचर, बैंक पासबुक एवं चारा-अन्न खरीद के बिल देखने का पूरा अधिकार है। आप किसी भी कार्यदिवस में ग्राम गलगाँव स्थित ट्रस्ट कार्यालय में पधारकर प्रत्यक्ष सत्यापन कर सकते हैं।
+                {isEn 
+                  ? "Every donor and devotee has full right to inspect original purchase vouchers, bank statements, and material registers. You are warmly welcome to visit the trust office in Gram Galgaon during any working day for physical verification."
+                  : "ट्रस्ट के किसी भी दानदाता अथवा श्रद्धालु को मूल बिल, वाउचर, बैंक पासबुक एवं चारा-अन्न खरीद के बिल देखने का पूरा अधिकार है। आप किसी भी कार्यदिवस में ग्राम गलगाँव स्थित ट्रस्ट कार्यालय में पधारकर प्रत्यक्ष सत्यापन कर सकते हैं।"}
               </p>
             </div>
             <div className="shrink-0">
@@ -170,7 +195,7 @@ export const TransparencySection: React.FC<TransparencySectionProps> = ({ langua
                 className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold text-emerald-900 bg-white hover:bg-emerald-50 rounded-xl border border-emerald-300 transition-colors shadow-xs"
               >
                 <Eye className="w-4 h-4 text-emerald-700" />
-                <span>कार्यालय में संपर्क करें</span>
+                <span>{isEn ? "Contact Office" : "कार्यालय में संपर्क करें"}</span>
               </a>
             </div>
           </div>

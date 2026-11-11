@@ -45,7 +45,8 @@ export const Footer: React.FC<FooterProps> = ({
   onOpenLanguageModal,
 }) => {
   const isEn = language === 'en';
-  const t = TRANSLATIONS[language];
+  const t = TRANSLATIONS[language] || TRANSLATIONS['hi'];
+
   return (
     <footer className="bg-[#08241b] text-stone-300 pt-16 pb-8 border-t-4 border-amber-500">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -59,26 +60,28 @@ export const Footer: React.FC<FooterProps> = ({
               <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2.5 border-amber-400 shadow-lg bg-[#08241b] shrink-0 ring-2 ring-amber-400/30">
                 <img
                   src={TRUST_INFO.logoUrl}
-                  alt="प्रभु रामजी ट्रस्ट लोगो"
+                  alt={t.trustName}
                   className="w-full h-full object-cover"
                 />
               </div>
               <div>
                 <h3 className="font-heading text-xl font-bold text-amber-100">
-                  {TRUST_INFO.name}
+                  {t.trustName}
                 </h3>
                 <p className="text-xs text-amber-300/80">
-                  {TRUST_INFO.village}, {TRUST_INFO.tehsil} (म.प्र.)
+                  {t.tagline}
                 </p>
               </div>
             </div>
 
             <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
-              सेवा, संस्कार और समाज कल्याण को समर्पित न्यास। प्रतिदिन प्रातः 6 बजे से नित्य निःशुल्क चाय सेवा, हर शनिवार शाम भव्य महाभंडारा, निराश्रित गौसेवा एवं प्रभु रामजी आश्रम व मंदिर निर्माण।
+              {isEn 
+                ? "Dedicated non-profit trust in the sacred Narmada valley for destitute cow protection, daily free tea service from 6 AM, Saturday grand community feast (Bhandara), and Prabhu Ramji Ashram construction." 
+                : "सेवा, संस्कार और समाज कल्याण को समर्पित न्यास। प्रतिदिन प्रातः 6 बजे से नित्य निःशुल्क चाय सेवा, हर शनिवार शाम भव्य महाभंडारा, निराश्रित गौसेवा एवं प्रभु रामजी आश्रम व मंदिर निर्माण।"}
             </p>
 
             <div className="text-xs font-heading text-amber-300 italic pt-1">
-              “{TRUST_INFO.motto}”
+              “{t.motto}”
             </div>
 
             {/* Social Channels */}
@@ -98,7 +101,7 @@ export const Footer: React.FC<FooterProps> = ({
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-full bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white border border-emerald-500/30 flex items-center justify-center transition-colors"
-                title="WhatsApp पर संपर्क जोड़ें / चैट करें"
+                title={t.contactChatBtn}
               >
                 <MessageCircle className="w-4 h-4" />
               </a>
@@ -128,108 +131,114 @@ export const Footer: React.FC<FooterProps> = ({
           {/* Col 2: Quick Navigation */}
           <div className="lg:col-span-2 space-y-3">
             <h4 className="text-sm font-bold uppercase tracking-wider text-amber-400">
-              त्वरित लिंक
+              {t.footerQuickLinks}
             </h4>
             <ul className="space-y-2 text-xs sm:text-sm">
               <li>
-                <button onClick={() => onNavigate('home')} className="hover:text-amber-200 transition-colors">
-                  मुख्य पृष्ठ (होम)
+                <button onClick={() => onNavigate('home')} className="hover:text-amber-200 transition-colors cursor-pointer">
+                  {t.navHome}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('ashram-nirman')} className="text-amber-300 font-bold hover:underline">
-                  ★ आश्रम निर्माण सहयोग
+                <button onClick={() => onNavigate('ashram-nirman')} className="text-amber-300 font-bold hover:underline cursor-pointer">
+                  ★ {t.navAshram}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('about')} className="hover:text-amber-200 transition-colors">
-                  ट्रस्ट परिचय व इतिहास
+                <button onClick={() => onNavigate('about')} className="hover:text-amber-200 transition-colors cursor-pointer">
+                  {t.navAbout}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('services')} className="hover:text-amber-200 transition-colors">
-                  सेवा प्रकल्प विवरण
+                <button onClick={() => onNavigate('objectives')} className="hover:text-amber-200 transition-colors cursor-pointer">
+                  {t.navObjectives}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('officials')} className="hover:text-amber-200 transition-colors">
-                  अधिकृत पदाधिकारी
+                <button onClick={() => onNavigate('services')} className="hover:text-amber-200 transition-colors cursor-pointer">
+                  {t.navServices}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('transparency')} className="hover:text-amber-200 transition-colors">
-                  वित्तीय पारदर्शिता
+                <button onClick={() => onNavigate('officials')} className="hover:text-amber-200 transition-colors cursor-pointer">
+                  {t.navOfficials}
+                </button>
+              </li>
+              <li>
+                <button onClick={() => onNavigate('transparency')} className="hover:text-amber-200 transition-colors cursor-pointer">
+                  {t.navTransparency}
                 </button>
               </li>
             </ul>
           </div>
 
-          {/* Col 3: Services & Receipts */}
+          {/* Col 3: Services & Support */}
           <div className="lg:col-span-3 space-y-3">
             <h4 className="text-sm font-bold uppercase tracking-wider text-amber-400">
-              सेवाएँ एवं सहयोग
+              {t.footerServices}
             </h4>
             <ul className="space-y-2 text-xs sm:text-sm">
               <li>
-                <button onClick={() => onNavigate('ashram-nirman')} className="hover:text-amber-200 transition-colors flex items-center gap-1.5">
+                <button onClick={() => onNavigate('ashram-nirman')} className="hover:text-amber-200 transition-colors flex items-center gap-1.5 cursor-pointer">
                   <Building className="w-3.5 h-3.5 text-amber-400" />
-                  <span>आश्रम व मंदिर निर्माण</span>
+                  <span>{isEn ? "Ashram & Mandir Construction" : "आश्रम व मंदिर निर्माण"}</span>
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('services')} className="hover:text-amber-200 transition-colors flex items-center gap-1.5">
+                <button onClick={() => onNavigate('services')} className="hover:text-amber-200 transition-colors flex items-center gap-1.5 cursor-pointer">
                   <UtensilsCrossed className="w-3.5 h-3.5 text-amber-400" />
-                  <span>हर शनिवार शाम भंडारा</span>
+                  <span>{isEn ? "Saturday Community Bhandara" : "हर शनिवार शाम भंडारा"}</span>
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('services')} className="hover:text-amber-200 transition-colors flex items-center gap-1.5">
+                <button onClick={() => onNavigate('services')} className="hover:text-amber-200 transition-colors flex items-center gap-1.5 cursor-pointer">
                   <Coffee className="w-3.5 h-3.5 text-amber-400" />
-                  <span>प्रतिदिन निःशुल्क चाय सेवा</span>
+                  <span>{isEn ? "Daily Free Tea & Water Service" : "प्रतिदिन निःशुल्क चाय सेवा"}</span>
                 </button>
               </li>
               <li>
                 <button onClick={() => onNavigate('donate')} className="text-amber-300 font-bold hover:underline cursor-pointer">
-                  • PhonePe QR / बैंक विवरण
+                  • {isEn ? "PhonePe QR / Bank Details" : "PhonePe QR / बैंक विवरण"}
                 </button>
               </li>
               <li>
                 <button onClick={onOpenReceiptSearch} className="text-emerald-300 font-semibold hover:underline cursor-pointer">
-                  • डिजिटल दान रसीद खोजें
+                  • {isEn ? "Search Digital Donation Receipt" : "डिजिटल दान रसीद खोजें"}
                 </button>
               </li>
               {onOpenVolunteerModal && (
                 <li>
                   <button onClick={onOpenVolunteerModal} className="text-amber-200 hover:underline cursor-pointer">
-                    • स्वयंसेवक सेवा पंजीकरण (Volunteer)
+                    • {t.navVolunteer}
                   </button>
                 </li>
               )}
               {onOpenCertificateModal && (
                 <li>
                   <button onClick={onOpenCertificateModal} className="text-amber-200 hover:underline cursor-pointer">
-                    • सेवा सम्मान प्रमाण-पत्र (Certificate)
+                    • {t.navCertificate}
                   </button>
                 </li>
               )}
               {onOpenConstructionProgress && (
                 <li>
                   <button onClick={onOpenConstructionProgress} className="text-amber-300 hover:underline cursor-pointer">
-                    • निर्माण प्रगति व बजट रिपोर्ट
+                    • {t.navConstructionProgress}
                   </button>
                 </li>
               )}
               {onOpenComplaintModal && (
                 <li>
                   <button onClick={onOpenComplaintModal} className="text-stone-300 hover:underline cursor-pointer">
-                    • सुझाव, शिकायत व सहायता केंद्र
+                    • {t.navComplaint}
                   </button>
                 </li>
               )}
               {onOpenLanguageModal && (
                 <li>
-                  <button onClick={onOpenLanguageModal} className="text-amber-400 font-semibold hover:underline cursor-pointer">
-                    🌐 17 भाषाएं चुनें (Select Language)
+                  <button onClick={onOpenLanguageModal} className="text-amber-400 font-semibold hover:underline cursor-pointer flex items-center gap-1">
+                    <Globe className="w-3.5 h-3.5" />
+                    <span>{t.languageSelectBtn}</span>
                   </button>
                 </li>
               )}
@@ -237,70 +246,75 @@ export const Footer: React.FC<FooterProps> = ({
 
             <div className="pt-2">
               <span className="text-[11px] text-stone-400 block">
-                अधिकृत UPI ID: <strong className="font-mono text-amber-200">{TRUST_INFO.upiId}</strong>
+                {isEn ? "Authorized UPI ID:" : "अधिकृत UPI ID:"} <strong className="font-mono text-amber-200">{TRUST_INFO.upiId}</strong>
               </span>
             </div>
           </div>
 
-          {/* Col 4: Address & Trust Office */}
-          <div className="lg:col-span-3 space-y-3 text-xs sm:text-sm">
+          {/* Col 4: Trust Office & Contact */}
+          <div className="lg:col-span-3 space-y-3">
             <h4 className="text-sm font-bold uppercase tracking-wider text-amber-400">
-              ट्रस्ट संपर्क व कार्यालय
+              {t.footerContact}
             </h4>
-            <p className="flex items-start gap-2 text-stone-300 leading-relaxed">
-              <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-              <span>{TRUST_INFO.fullAddress}</span>
-            </p>
-            <p className="flex items-center gap-2">
-              <Phone className="w-4 h-4 text-amber-400 shrink-0" />
-              <span>{TRUST_INFO.phone}</span>
-            </p>
-            <p className="flex items-center gap-2">
-              <Mail className="w-4 h-4 text-amber-400 shrink-0" />
-              <span className="font-mono text-xs">{TRUST_INFO.email}</span>
-            </p>
-            <p className="flex items-center gap-2">
-              <Globe className="w-4 h-4 text-amber-400 shrink-0" />
-              <a 
-                href="https://prabhuramjitrustram.ai.studio/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="font-mono text-xs text-amber-300 hover:underline"
-              >
-                prabhuramjitrustram.ai.studio
-              </a>
-            </p>
+            <ul className="space-y-3 text-xs sm:text-sm">
+              <li className="flex items-start gap-2.5">
+                <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                <span className="leading-snug">
+                  {TRUST_INFO.fullAddress}
+                </span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <Phone className="w-4 h-4 text-amber-400 shrink-0" />
+                <a href={`tel:${TRUST_INFO.phone.replace(/[^0-9+]/g, '')}`} className="hover:text-amber-200 font-mono">
+                  {TRUST_INFO.phone}
+                </a>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <Mail className="w-4 h-4 text-amber-400 shrink-0" />
+                <a href={`mailto:${TRUST_INFO.email}`} className="hover:text-amber-200 font-mono text-xs">
+                  {TRUST_INFO.email}
+                </a>
+              </li>
+              <li className="flex items-center gap-2.5 pt-1">
+                <Globe className="w-4 h-4 text-amber-400 shrink-0" />
+                <a href="https://prabhuramjitrustram.ai.studio/" className="text-amber-300 font-mono text-xs hover:underline">
+                  prabhuramjitrustram.ai.studio
+                </a>
+              </li>
+            </ul>
+
             <div className="pt-2">
               <button
                 onClick={onOpenAdmin}
-                className="text-xs text-stone-400 hover:text-white underline cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-950/90 border border-emerald-700/60 text-stone-300 hover:text-white text-xs transition-colors cursor-pointer"
               >
-                प्रशासनिक लॉगिन (Admin Area)
+                <span>{t.adminLogin}</span>
               </button>
             </div>
           </div>
 
         </div>
 
-        {/* Bottom Legal & Copyright Bar */}
+        {/* Bottom Legal Copyright */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-stone-400">
-          <div>
-            © 2026 {TRUST_INFO.name} | सर्वाधिकार सुरक्षित | ग्राम गलगाँव (सनावद, खरगोन)
+          <div className="text-center sm:text-left">
+            <p>© {new Date().getFullYear()} {t.trustName}. {t.footerRights}.</p>
+            <p className="text-[11px] text-stone-500 mt-0.5">
+              {t.tagline}
+            </p>
           </div>
 
-          <div className="flex items-center gap-4">
-            <button
-              onClick={onOpenPrivacy}
-              className="hover:text-amber-200 transition-colors"
-            >
-              गोपनीयता नीति (Privacy Policy)
+          <div className="flex flex-wrap items-center gap-4 text-xs">
+            <button onClick={onOpenPrivacy} className="hover:text-amber-200 transition-colors cursor-pointer">
+              {isEn ? "Privacy Policy" : "गोपनीयता नीति"}
             </button>
-            <span>·</span>
-            <button
-              onClick={onOpenTerms}
-              className="hover:text-amber-200 transition-colors"
-            >
-              नियम व शर्तें (Terms & Conditions)
+            <span>•</span>
+            <button onClick={onOpenTerms} className="hover:text-amber-200 transition-colors cursor-pointer">
+              {isEn ? "Terms of Service" : "नियम व शर्तें"}
+            </button>
+            <span>•</span>
+            <button onClick={onOpenReceiptSearch} className="hover:text-amber-200 transition-colors cursor-pointer">
+              {t.searchReceiptBtn}
             </button>
           </div>
         </div>

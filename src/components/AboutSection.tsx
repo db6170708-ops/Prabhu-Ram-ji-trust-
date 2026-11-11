@@ -4,13 +4,9 @@ import { Language } from '../utils/translations';
 import { 
   Heart, 
   ShieldCheck, 
-  Sparkles, 
-  Eye, 
   Target, 
   Compass, 
   CheckCircle2, 
-  FileText,
-  Building
 } from 'lucide-react';
 
 interface AboutSectionProps {
@@ -19,6 +15,15 @@ interface AboutSectionProps {
 
 export const AboutSection: React.FC<AboutSectionProps> = ({ language = 'hi' }) => {
   const isEn = language === 'en';
+
+  const values = isEn
+    ? [
+        { label: "Seva", desc: "Service to living beings is true worship" },
+        { label: "Values", desc: "Eternal Sanatan cultural principles" },
+        { label: "Dedication", desc: "Pure sincerity and continuous effort" },
+        { label: "Integrity", desc: "100% truth and financial transparency" }
+      ]
+    : ABOUT_DECLARATION.values;
 
   return (
     <section id="about" className="py-16 md:py-24 bg-white border-b border-stone-200">
@@ -38,10 +43,14 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ language = 'hi' }) =
             “{isEn ? 'Prabhu Ramji Trust, Gram Galgaon (Sanawad, Khargone, M.P.) is committed to cow welfare, daily free tea for Maa Narmada pilgrims, Saturday grand community feast, and rural spiritual upliftment.' : ABOUT_DECLARATION.mainHeader}”
           </p>
 
-          {/* Natural SEO On-Page Introduction */}
+          {/* Clean Introduction */}
           <div className="mt-4 p-4 bg-emerald-50/80 rounded-2xl border border-emerald-300/80 text-emerald-950 text-xs sm:text-sm font-medium leading-relaxed">
             <p>
-              Aap sabhi ka <strong className="text-emerald-900 font-bold">Prabhu Ram ji trust</strong> (प्रभु रामजी ट्रस्ट) mein swagat hai. <strong className="text-emerald-900 font-bold">Ramji trust</strong> ka mukhya uddeshya dharmik, gauseva aur samajik sewa hai. <strong className="text-emerald-900 font-bold">Trust Prabhu Ram ji</strong> se judne ke liye humse sampark karein.
+              {isEn ? (
+                <>Welcome to <strong>Prabhu Ramji Trust</strong>. Our primary vision is cow welfare, uninterrupted pilgrim support on the banks of holy Narmada, and humanitarian service for underprivileged rural communities.</>
+              ) : (
+                <>आप सभी का <strong>प्रभु रामजी ट्रस्ट</strong> में हार्दिक स्वागत है। ट्रस्ट का मुख्य उद्देश्य गौसेवा, नर्मदा परिक्रमा में नित्य अन्न-जल सेवा तथा जरूरतमंदों का सामाजिक कल्याण है।</>
+              )}
             </p>
           </div>
         </div>
@@ -70,7 +79,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ language = 'hi' }) =
               <div className="bg-[#FAF7F2] p-5 rounded-2xl border border-stone-200">
                 <div className="flex items-center gap-2 text-emerald-800 font-bold text-sm mb-1.5">
                   <Target className="w-4 h-4 text-emerald-700" />
-                  <span>{isEn ? 'Our Mission' : 'हमारा मिशन (Mission)'}</span>
+                  <span>{isEn ? 'Our Mission' : 'हमारा मिशन'}</span>
                 </div>
                 <p className="text-xs text-stone-600 leading-relaxed">
                   {isEn ? 'Operating rural gaushalas, continuous tea and food prasad for Narmada parikrama pilgrims, supporting education for underprivileged children, and promoting spiritual values.' : 'ग्रामीण स्तर पर गौशाला संचालन, नर्मदा परिक्रमा में निरंतर अन्न-जल सेवा, कमजोर परिवारों के बच्चों की शिक्षा में संबल तथा समाज में आध्यात्मिक संस्कारों का विस्तार करना।'}
@@ -80,7 +89,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ language = 'hi' }) =
               <div className="bg-[#FAF7F2] p-5 rounded-2xl border border-stone-200">
                 <div className="flex items-center gap-2 text-amber-800 font-bold text-sm mb-1.5">
                   <Compass className="w-4 h-4 text-amber-700" />
-                  <span>{isEn ? 'Our Vision' : 'हमारा विज़न (Vision)'}</span>
+                  <span>{isEn ? 'Our Vision' : 'हमारा विज़न'}</span>
                 </div>
                 <p className="text-xs text-stone-600 leading-relaxed">
                   {isEn ? 'Building a compassionate society where no cow wanders destitute, no pilgrim goes hungry, and every deserving family receives timely benevolent support.' : 'एक ऐसे आत्मनिर्भर, संस्कारित और संवेदनशील समाज की रचना, जहाँ कोई भी गौवंश निराश्रित न भटके, कोई परिक्रमावासी भूखा-प्यासा न रहे और हर जरूरतमंद को समय पर सहारा मिले।'}
@@ -114,7 +123,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ language = 'hi' }) =
             
             {/* 4 Sacred Values Grid */}
             <div className="grid grid-cols-2 gap-3">
-              {ABOUT_DECLARATION.values.map((v, i) => (
+              {values.map((v, i) => (
                 <div
                   key={i}
                   className="bg-[#FAF7F2] p-4 rounded-2xl border border-amber-200/80 text-center shadow-2xs hover:shadow-sm transition-all"
@@ -135,29 +144,29 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ language = 'hi' }) =
             {/* Official Brief Box */}
             <div className="bg-gradient-to-br from-[#0f4d3a] to-[#082a20] text-white p-6 rounded-3xl shadow-lg border-2 border-amber-400/40 space-y-3.5">
               <span className="text-amber-400 font-bold text-xs tracking-wider uppercase block">
-                अधिकृत न्यास विवरण
+                {isEn ? "Authorized Trust Profile" : "अधिकृत न्यास विवरण"}
               </span>
 
               <div className="space-y-2 text-xs">
                 <div className="flex justify-between py-1.5 border-b border-emerald-800/60">
-                  <span className="text-emerald-200">स्थान:</span>
-                  <span className="font-semibold text-white">ग्राम गलगाँव (सनावद, खरगोन)</span>
+                  <span className="text-emerald-200">{isEn ? "Location:" : "स्थान:"}</span>
+                  <span className="font-semibold text-white">{isEn ? "Village Galgaon, Sanawad, Khargone (M.P.)" : "ग्राम गलगाँव (सनावद, खरगोन)"}</span>
                 </div>
                 <div className="flex justify-between py-1.5 border-b border-emerald-800/60">
-                  <span className="text-emerald-200">प्रेरणा:</span>
-                  <span className="font-semibold text-amber-300">मर्यादा पुरुषोत्तम प्रभु श्रीराम</span>
+                  <span className="text-emerald-200">{isEn ? "Guiding Deity:" : "प्रेरणा:"}</span>
+                  <span className="font-semibold text-amber-300">{isEn ? "Bhagwan Shri Ram" : "मर्यादा पुरुषोत्तम प्रभु श्रीराम"}</span>
                 </div>
                 <div className="flex justify-between py-1.5 border-b border-emerald-800/60">
-                  <span className="text-emerald-200">अध्यक्ष:</span>
-                  <span className="font-semibold text-white">श्री गुलाबचंद जी (पिता: हीरालाल जी)</span>
+                  <span className="text-emerald-200">{isEn ? "President:" : "अध्यक्ष:"}</span>
+                  <span className="font-semibold text-white">{isEn ? "Shri Gulabchand Ji (S/o Hiralal Ji)" : "श्री गुलाबचंद जी (पिता: हीरालाल जी)"}</span>
                 </div>
                 <div className="flex justify-between py-1.5 border-b border-emerald-800/60">
-                  <span className="text-emerald-200">सचिव:</span>
-                  <span className="font-semibold text-white">श्री दिनेश जी</span>
+                  <span className="text-emerald-200">{isEn ? "Secretary:" : "सचिव:"}</span>
+                  <span className="font-semibold text-white">{isEn ? "Shri Dinesh Ji" : "श्री दिनेश जी"}</span>
                 </div>
                 <div className="flex justify-between py-1.5">
-                  <span className="text-emerald-200">कोषाध्यक्ष:</span>
-                  <span className="font-semibold text-white">श्रीमती चम्पा बाई</span>
+                  <span className="text-emerald-200">{isEn ? "Treasurer:" : "कोषाध्यक्ष:"}</span>
+                  <span className="font-semibold text-white">{isEn ? "Smt. Champa Bai" : "श्रीमती चम्पा बाई"}</span>
                 </div>
               </div>
             </div>
@@ -167,17 +176,19 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ language = 'hi' }) =
         </div>
 
         {/* Statutory & Ethical Declaration Banner */}
-        <div className="bg-amber-50/90 border-2 border-amber-300/80 rounded-3xl p-6 sm:p-8 shadow-sm">
+        <div className="bg-amber-50/90 border-2 border-amber-300/80 rounded-3xl p-6 sm:p-8 shadow-xs">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-400 flex items-center justify-center text-amber-800 shrink-0">
               <ShieldCheck className="w-6 h-6 text-amber-700" />
             </div>
             <div>
               <h4 className="font-heading text-lg font-bold text-amber-950 mb-1">
-                आधिकारिक सत्यनिष्ठा एवं वैधानिक घोषणा
+                {isEn ? "Statutory & Ethical Compliance Declaration" : "आधिकारिक सत्यनिष्ठा एवं वैधानिक घोषणा"}
               </h4>
               <p className="text-xs sm:text-sm text-stone-700 leading-relaxed">
-                {ABOUT_DECLARATION.legalDeclaration}
+                {isEn 
+                  ? "Official legal documentation and registration numbers under Section 12AB/80G are under statutory processing with the regulatory authorities and will be publicly indexed upon final issuance. The Trust adheres strictly to high ethical standards and transparent accounting." 
+                  : ABOUT_DECLARATION.legalDeclaration}
               </p>
             </div>
           </div>

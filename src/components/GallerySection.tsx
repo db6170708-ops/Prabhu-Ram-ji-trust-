@@ -24,7 +24,7 @@ interface GallerySectionProps {
 
 export const GallerySection: React.FC<GallerySectionProps> = ({ language = 'hi', photos, videos }) => {
   const isEn = language === 'en';
-  const t = TRANSLATIONS[language];
+  const t = TRANSLATIONS[language] || TRANSLATIONS['hi'];
   const [activeTab, setActiveTab] = useState<'photos' | 'videos'>('photos');
   const [selectedCategory, setSelectedCategory] = useState<SevaCategory>('all');
   
@@ -32,14 +32,23 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ language = 'hi',
   const [previewPhoto, setPreviewPhoto] = useState<GalleryPhoto | null>(null);
   const [previewVideo, setPreviewVideo] = useState<GalleryVideo | null>(null);
 
-  const categories: { id: SevaCategory; label: string }[] = [
-    { id: 'all', label: 'समस्त सेवा' },
-    { id: 'ashram', label: 'आश्रम व मंदिर निर्माण' },
-    { id: 'chaiseva', label: 'नित्य चाय सेवा' },
-    { id: 'annadan', label: 'अन्नदान व भंडारा' },
-    { id: 'gauseva', label: 'गौसेवा व गौशाला' },
-    { id: 'narmada', label: 'नर्मदा परिक्रमा सेवा' }
-  ];
+  const categories: { id: SevaCategory; label: string }[] = isEn
+    ? [
+        { id: 'all', label: 'All Activities' },
+        { id: 'ashram', label: 'Ashram Construction' },
+        { id: 'chaiseva', label: 'Daily Tea Seva' },
+        { id: 'annadan', label: 'Community Bhandara' },
+        { id: 'gauseva', label: 'Gaushala & Cows' },
+        { id: 'narmada', label: 'Narmada Pilgrims' }
+      ]
+    : [
+        { id: 'all', label: 'समस्त सेवा' },
+        { id: 'ashram', label: 'आश्रम व मंदिर निर्माण' },
+        { id: 'chaiseva', label: 'नित्य चाय सेवा' },
+        { id: 'annadan', label: 'अन्नदान व भंडारा' },
+        { id: 'gauseva', label: 'गौसेवा व गौशाला' },
+        { id: 'narmada', label: 'नर्मदा परिक्रमा सेवा' }
+      ];
 
   const filteredPhotos = photos.filter(p => {
     if (selectedCategory === 'all') return true;
@@ -58,14 +67,16 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ language = 'hi',
         {/* Section Heading */}
         <div className="text-center max-w-3xl mx-auto mb-12">
           <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 bg-emerald-100/70 px-3 py-1 rounded-full border border-emerald-300">
-            प्रत्यक्ष दर्शन
+            {t.galleryTag}
           </span>
           <h2 className="font-heading text-3xl sm:text-4xl font-bold text-[#0f4d3a] mt-3">
-            फोटो एवं वीडियो गैलरी
+            {t.galleryTitle}
           </h2>
           <div className="w-20 h-1 bg-amber-500 mx-auto mt-4 rounded-full"></div>
           <p className="text-stone-600 mt-4 text-base sm:text-lg">
-            ग्राम गलगाँव में संचालित गौसेवा, नर्मदा परिक्रमा पथिक सेवा एवं शनिवार भंडारे के पावन क्षण।
+            {isEn 
+              ? "Sacred moments of cow protection, pilgrim welfare, and Saturday community feasts at Gram Galgaon."
+              : "ग्राम गलगाँव में संचालित गौसेवा, नर्मदा परिक्रमा पथिक सेवा एवं शनिवार भंडारे के पावन क्षण।"}
           </p>
         </div>
 
@@ -78,24 +89,24 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ language = 'hi',
               onClick={() => setActiveTab('photos')}
               className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                 activeTab === 'photos'
-                  ? 'bg-[#0f4d3a] text-white shadow-sm'
+                  ? 'bg-[#0f4d3a] text-white shadow-xs'
                   : 'text-stone-600 hover:text-stone-900'
               }`}
             >
               <ImageIcon className="w-4 h-4" />
-              <span>छायाचित्र (फोटो)</span>
+              <span>{t.galleryPhotosTab}</span>
             </button>
 
             <button
               onClick={() => setActiveTab('videos')}
               className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                 activeTab === 'videos'
-                  ? 'bg-[#0f4d3a] text-white shadow-sm'
+                  ? 'bg-[#0f4d3a] text-white shadow-xs'
                   : 'text-stone-600 hover:text-stone-900'
               }`}
             >
               <Video className="w-4 h-4" />
-              <span>चलचित्र (वीडियो)</span>
+              <span>{t.galleryVideosTab}</span>
             </button>
           </div>
 
@@ -125,7 +136,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ language = 'hi',
               <div
                 key={photo.id}
                 onClick={() => setPreviewPhoto(photo)}
-                className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all border border-stone-200 group cursor-pointer flex flex-col"
+                className="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-lg transition-all border border-stone-200 group cursor-pointer flex flex-col"
               >
                 <div className="relative aspect-4/3 overflow-hidden bg-stone-100">
                   <img
@@ -142,7 +153,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ language = 'hi',
                   <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <span className="text-white text-xs font-bold px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-xs flex items-center gap-1.5">
                       <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                      बड़ा देखें
+                      {isEn ? "View Larger" : "बड़ा देखें"}
                     </span>
                   </div>
                 </div>
@@ -161,7 +172,9 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ language = 'hi',
                       <Calendar className="w-3 h-3" />
                       {photo.date}
                     </span>
-                    <span className="text-emerald-700 font-medium">गलगाँव सेवा</span>
+                    <span className="text-emerald-700 font-medium">
+                      {isEn ? "Galgaon Seva" : "गलगाँव सेवा"}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -176,7 +189,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ language = 'hi',
               <div
                 key={video.id}
                 onClick={() => setPreviewVideo(video)}
-                className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all border border-stone-200 group cursor-pointer flex flex-col"
+                className="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-lg transition-all border border-stone-200 group cursor-pointer flex flex-col"
               >
                 <div className="relative aspect-video bg-stone-900 flex items-center justify-center">
                   <img
@@ -184,7 +197,6 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ language = 'hi',
                     alt={video.title}
                     className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
                     onError={(e) => {
-                      // Fallback image if thumbnail fails
                       (e.target as HTMLElement).style.display = 'none';
                     }}
                   />
@@ -218,13 +230,13 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ language = 'hi',
         )}
 
         {/* Social Channels Callout Banner */}
-        <div className="mt-14 bg-white rounded-3xl p-6 sm:p-8 border border-stone-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="mt-14 bg-white rounded-3xl p-6 sm:p-8 border border-stone-200 shadow-xs flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-1 text-center md:text-left">
             <h3 className="font-heading text-lg font-bold text-[#0f4d3a]">
-              हमारे सोशल मीडिया चैनलों पर लाइव सेवा दर्शन करें
+              {isEn ? "Watch Live Video Updates on Official Channels" : "हमारे सोशल मीडिया चैनलों पर लाइव सेवा दर्शन करें"}
             </h3>
             <p className="text-xs sm:text-sm text-stone-500">
-              यूट्यूब, फेसबुक एवं इंस्टाग्राम पर गौसेवा एवं शनिवार भंडारे के नित्य वीडियो देखें।
+              {isEn ? "Watch regular updates of Saturday Bhandara and cow welfare on YouTube, Facebook, and Instagram." : "यूट्यूब, फेसबुक एवं इंस्टाग्राम पर गौसेवा एवं शनिवार भंडारे के नित्य वीडियो देखें।"}
             </p>
           </div>
 
@@ -233,30 +245,30 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ language = 'hi',
               href={TRUST_INFO.youtube}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-all shadow-xs"
+              className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-all shadow-xs cursor-pointer"
             >
               <Youtube className="w-4 h-4" />
-              <span>यूट्यूब चैनल (@ramjitrust)</span>
+              <span>YouTube (@ramjitrust)</span>
             </a>
 
             <a
               href={TRUST_INFO.facebook}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-xs"
+              className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-xs cursor-pointer"
             >
               <Facebook className="w-4 h-4" />
-              <span>फेसबुक पेज</span>
+              <span>Facebook</span>
             </a>
 
             <a
               href={TRUST_INFO.instagram}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-white bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 hover:opacity-95 rounded-xl transition-all shadow-xs"
+              className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-white bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 hover:opacity-95 rounded-xl transition-all shadow-xs cursor-pointer"
             >
               <Instagram className="w-4 h-4" />
-              <span>इंस्टाग्राम (@prabhushriramtrust)</span>
+              <span>Instagram (@prabhushriramtrust)</span>
             </a>
           </div>
         </div>
@@ -269,7 +281,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ language = 'hi',
           <div className="bg-white rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl relative animate-in zoom-in-95">
             <button
               onClick={() => setPreviewPhoto(null)}
-              className="absolute top-4 right-4 z-10 p-2 text-stone-700 hover:text-black bg-white/80 hover:bg-white rounded-full transition-colors"
+              className="absolute top-4 right-4 z-10 p-2 text-stone-700 hover:text-black bg-white/80 hover:bg-white rounded-full transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -306,7 +318,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ language = 'hi',
           <div className="bg-stone-900 rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl relative animate-in zoom-in-95">
             <button
               onClick={() => setPreviewVideo(null)}
-              className="absolute top-4 right-4 z-10 p-2 text-white/80 hover:text-white bg-black/50 hover:bg-black rounded-full transition-colors"
+              className="absolute top-4 right-4 z-10 p-2 text-white/80 hover:text-white bg-black/50 hover:bg-black rounded-full transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -329,14 +341,14 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ language = 'hi',
                 {previewVideo.description}
               </p>
               <div className="mt-4 pt-3 border-t border-stone-800 flex items-center justify-between text-xs text-stone-400">
-                <span>दिनांक: {previewVideo.date}</span>
+                <span>{isEn ? "Date:" : "दिनांक:"} {previewVideo.date}</span>
                 <a
                   href={TRUST_INFO.youtube}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-red-400 hover:text-red-300 font-medium flex items-center gap-1"
+                  className="text-red-400 hover:text-red-300 font-medium flex items-center gap-1 cursor-pointer"
                 >
-                  यूट्यूब पर अधिक वीडियो देखें <ExternalLink className="w-3.5 h-3.5" />
+                  {isEn ? "Watch More on YouTube" : "यूट्यूब पर अधिक वीडियो देखें"} <ExternalLink className="w-3.5 h-3.5" />
                 </a>
               </div>
             </div>

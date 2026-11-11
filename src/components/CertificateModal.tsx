@@ -75,7 +75,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
           <form onSubmit={handleSearch} className="flex gap-2">
             <input
               type="text"
-              placeholder="प्रमाण-पत्र क्रमांक दर्ज करें (उदा. PRT-CERT-2026-101)..."
+              placeholder={language === 'en' ? "Enter certificate ID (e.g. PRT-CERT-2026-101)..." : "प्रमाण-पत्र क्रमांक दर्ज करें (उदा. PRT-CERT-2026-101)..."}
               value={certIdInput}
               onChange={(e) => setCertIdInput(e.target.value)}
               className="flex-1 px-3 py-2 text-sm border border-stone-300 rounded-xl focus:ring-2 focus:ring-[#0f4d3a] focus:outline-none bg-white"
@@ -85,7 +85,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
               className="px-4 py-2 bg-[#0f4d3a] hover:bg-[#145e48] text-white text-xs sm:text-sm font-semibold rounded-xl flex items-center gap-1.5 cursor-pointer"
             >
               <Search className="w-4 h-4" />
-              <span>सत्यापित करें</span>
+              <span>{language === 'en' ? "Verify" : "सत्यापित करें"}</span>
             </button>
           </form>
         </div>
@@ -106,18 +106,18 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
               {/* Logo & Header */}
               <div className="flex flex-col items-center">
                 <img
-                  src="/logo.svg"
-                  alt="प्रभु रामजी ट्रस्ट लोगो"
+                  src={TRUST_INFO.logoUrl}
+                  alt="Prabhu Ramji Trust Logo"
                   className="w-16 h-16 sm:w-20 sm:h-20 object-contain mb-2"
                 />
                 <span className="text-[11px] font-bold text-amber-800 uppercase tracking-widest">
-                  श्री सीतारामजी की असीम कृपा से
+                  {language === 'en' ? "With the Grace of Shri Sita Ram" : "श्री सीतारामजी की असीम कृपा से"}
                 </span>
                 <h2 className="text-xl sm:text-2xl font-heading font-bold text-[#0f4d3a] tracking-tight">
-                  {TRUST_INFO.name}
+                  {language === 'en' ? "Prabhu Ramji Trust" : TRUST_INFO.name}
                 </h2>
                 <p className="text-[11px] text-stone-600">
-                  {TRUST_INFO.village}, तहसील {TRUST_INFO.tehsil}, जिला {TRUST_INFO.district} (म.प्र.)
+                  {TRUST_INFO.fullAddress}
                 </p>
                 <div className="w-32 h-0.5 bg-gradient-to-r from-transparent via-amber-600 to-transparent my-2" />
               </div>
@@ -125,25 +125,34 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
               {/* Certificate Title */}
               <div className="my-3">
                 <span className="inline-block px-4 py-1 bg-amber-100 text-amber-900 border border-amber-400 rounded-full font-serif font-bold text-xs sm:text-sm tracking-wider">
-                  सेवा सम्मान पत्र / Certificate of Appreciation
+                  {language === 'en' ? "Certificate of Devotional Appreciation" : "सेवा सम्मान पत्र"}
                 </span>
               </div>
 
               {/* Salutation & Body */}
               <p className="text-xs sm:text-sm text-stone-600 italic mt-2">
-                यह प्रमाण-पत्र आदर एवं कृतज्ञता सहित सादर समर्पित है:
+                {language === 'en' ? "This certificate is presented with highest reverence and gratitude to:" : "यह प्रमाण-पत्र आदर एवं कृतज्ञता सहित सादर समर्पित है:"}
               </p>
               <h3 className="text-lg sm:text-2xl font-bold text-[#0f4d3a] font-serif my-2 border-b-2 border-dashed border-amber-300 pb-1 max-w-sm mx-auto">
                 {certificate.recipientName}
               </h3>
 
               <p className="text-xs sm:text-sm text-stone-700 leading-relaxed max-w-md mx-auto my-3">
-                आपने प्रभु रामजी ट्रस्ट द्वारा संचालित पूज्य सेवा प्रकल्प{' '}
-                <strong className="text-[#0f4d3a]">« {certificate.sevaTitle} »</strong> में अपना
-                पुण्यमय सहयोग प्रदान कर धर्म एवं मानवता के संवर्धन में अमूल्य योगदान दिया है।
+                {language === 'en' ? (
+                  <>
+                    In recognition of your pious contribution and dedicated support to the sacred initiative{' '}
+                    <strong className="text-[#0f4d3a]">« {certificate.sevaTitle} »</strong> of Prabhu Ramji Trust.
+                  </>
+                ) : (
+                  <>
+                    आपने प्रभु रामजी ट्रस्ट द्वारा संचालित पूज्य सेवा प्रकल्प{' '}
+                    <strong className="text-[#0f4d3a]">« {certificate.sevaTitle} »</strong> में अपना
+                    पुण्यमय सहयोग प्रदान कर धर्म एवं मानवता के संवर्धन में अमूल्य योगदान दिया है।
+                  </>
+                )}
                 {certificate.amount && (
                   <span className="block mt-1 font-semibold text-amber-900">
-                    पुण्य सहयोग राशि: ₹{certificate.amount.toLocaleString('en-IN')}
+                    {language === 'en' ? "Contribution Amount: " : "पुण्य सहयोग राशि: "}₹{certificate.amount.toLocaleString('en-IN')}
                   </span>
                 )}
               </p>
@@ -151,17 +160,17 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
               {/* Signatures & Seal */}
               <div className="grid grid-cols-2 gap-4 mt-6 pt-4 border-t border-stone-200 text-xs text-stone-600">
                 <div className="text-left">
-                  <div className="font-mono text-[10px] text-stone-500">प्रमाण-पत्र क्रमांक:</div>
+                  <div className="font-mono text-[10px] text-stone-500">{language === 'en' ? "Certificate ID:" : "प्रमाण-पत्र क्रमांक:"}</div>
                   <div className="font-mono font-bold text-stone-800">{certificate.id}</div>
-                  <div className="text-[10px] text-stone-500 mt-1">जारी दिनांक: {certificate.issueDate}</div>
+                  <div className="text-[10px] text-stone-500 mt-1">{language === 'en' ? "Issue Date: " : "जारी दिनांक: "}{certificate.issueDate}</div>
                 </div>
 
                 <div className="text-right flex flex-col items-end">
                   <div className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-300">
                     <ShieldCheck className="w-3.5 h-3.5" />
-                    <span>ट्रस्ट प्राधिकृत हस्ताक्षरी</span>
+                    <span>{language === 'en' ? "Authorized Signatory" : "ट्रस्ट प्राधिकृत हस्ताक्षरी"}</span>
                   </div>
-                  <div className="text-[10px] text-stone-500 mt-1">प्रभु रामजी ट्रस्ट, गलगाँव</div>
+                  <div className="text-[10px] text-stone-500 mt-1">{language === 'en' ? "Prabhu Ramji Trust, Galgaon" : "प्रभु रामजी ट्रस्ट, गलगाँव"}</div>
                 </div>
               </div>
             </div>
@@ -173,10 +182,12 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
                     <Search className="w-6 h-6" />
                   </div>
                   <div className="text-sm font-semibold text-stone-800">
-                    इस क्रमांक से कोई प्रमाण-पत्र नहीं मिला
+                    {language === 'en' ? "No certificate found with this ID" : "इस क्रमांक से कोई प्रमाण-पत्र नहीं मिला"}
                   </div>
                   <p className="text-xs text-stone-500">
-                    कृपया अपना प्रमाण-पत्र ID पुनः जांचें अथवा दान रसीद सत्यापन के बाद प्रमाण-पत्र हेतु ट्रस्ट से संपर्क करें।
+                    {language === 'en'
+                      ? "Please verify your certificate ID or contact the trust office for assistance."
+                      : "कृपया अपना प्रमाण-पत्र ID पुनः जांचें अथवा दान रसीद सत्यापन के बाद प्रमाण-पत्र हेतु ट्रस्ट से संपर्क करें।"}
                   </p>
                 </div>
               ) : (
@@ -185,10 +196,12 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
                     <Award className="w-6 h-6" />
                   </div>
                   <div className="text-sm font-semibold text-stone-800">
-                    प्रमाण-पत्र क्रमांक दर्ज कर खोजें
+                    {language === 'en' ? "Enter certificate ID to search" : "प्रमाण-पत्र क्रमांक दर्ज कर खोजें"}
                   </div>
                   <p className="text-xs text-stone-500">
-                    प्रभु रामजी ट्रस्ट द्वारा दानदाताओं एवं कर्मठ स्वयंसेवकों को जारी डिजिटल सेवा सम्मान पत्र यहाँ से सत्यापित किया जा सकता है।
+                    {language === 'en'
+                      ? "Verify official Seva appreciation certificates issued by Prabhu Ramji Trust here."
+                      : "प्रभु रामजी ट्रस्ट द्वारा दानदाताओं एवं कर्मठ स्वयंसेवकों को जारी डिजिटल सेवा सम्मान पत्र यहाँ से सत्यापित किया जा सकता है।"}
                   </p>
                 </div>
               )}
@@ -202,7 +215,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
             {certificate && (
               <span className="text-emerald-700 font-semibold flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                सत्यापित डिजिटल प्रमाण-पत्र
+                <span>{language === 'en' ? "Verified Digital Certificate" : "सत्यापित डिजिटल प्रमाण-पत्र"}</span>
               </span>
             )}
           </div>
@@ -213,14 +226,14 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
                 className="px-3.5 py-1.5 bg-[#0f4d3a] hover:bg-[#145d47] text-white font-medium rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer"
               >
                 <Printer className="w-3.5 h-3.5" />
-                <span>प्रिंट / PDF सेव करें</span>
+                <span>{language === 'en' ? "Print / Save PDF" : "प्रिंट / PDF सेव करें"}</span>
               </button>
             )}
             <button
               onClick={onClose}
-              className="px-4 py-1.5 bg-stone-200 hover:bg-stone-300 font-medium rounded-lg text-stone-700 transition-colors"
+              className="px-4 py-1.5 bg-stone-200 hover:bg-stone-300 font-medium rounded-lg text-stone-700 transition-colors cursor-pointer"
             >
-              बंद करें
+              {language === 'en' ? "Close" : "बंद करें"}
             </button>
           </div>
         </div>

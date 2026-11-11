@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TRUST_INFO } from '../data/defaultData';
+import { TRUST_INFO, ASHRAM_NIRMAN_INFO } from '../data/defaultData';
 import { TRANSLATIONS, Language } from '../utils/translations';
 import { 
   HeartHandshake, 
@@ -11,10 +11,15 @@ import {
   UtensilsCrossed, 
   Heart,
   MessageCircle,
-  FileText
+  FileText,
+  Folder,
+  FolderOpen,
+  ChevronDown,
+  ChevronUp,
+  PackageCheck
 } from 'lucide-react';
 
-export const ASHRAM_ACTIVE_WORKS = [
+export const ASHRAM_ACTIVE_WORKS_HI = [
   {
     id: 1,
     title: 'प्रभु रामजी आश्रम एवं परिक्रमा विश्राम भवन निर्माण',
@@ -73,6 +78,65 @@ export const ASHRAM_ACTIVE_WORKS = [
   }
 ];
 
+export const ASHRAM_ACTIVE_WORKS_EN = [
+  {
+    id: 1,
+    title: 'Prabhu Ramji Ashram & Pilgrim Rest Complex Construction',
+    desc: 'Deep foundation, pillars, and solid hall construction progressing actively along Maa Narmada Parikrama route.',
+    badge: 'Active in Progress',
+    icon: '🏛️',
+    actionType: 'ashram'
+  },
+  {
+    id: 2,
+    title: 'Daily Free Tea & Pure Drinking Water Seva',
+    desc: 'Serving fresh hot tea, herbal brew, and pure water daily from 6 AM for sadhus and walking pilgrims.',
+    badge: 'Daily Ongoing',
+    icon: '🍵',
+    actionType: 'donate'
+  },
+  {
+    id: 3,
+    title: 'Every Saturday Evening Grand Bhandara Community Feast',
+    desc: 'Grand public sanctified community prasad feast every Saturday evening for hundreds of devotees.',
+    badge: 'Every Saturday Evening',
+    icon: '🍲',
+    actionType: 'donate'
+  },
+  {
+    id: 4,
+    title: 'Destitute Cow Welfare & Green Fodder Seva',
+    desc: 'Providing daily fresh green fodder, grain porridge, pure water, and primary medical care for abandoned cows.',
+    badge: 'Continuous Daily Care',
+    icon: '🐄',
+    actionType: 'donate'
+  },
+  {
+    id: 5,
+    title: 'Sacred Foundation, Concrete Pillars & Wall Work',
+    desc: 'Contributing cement bags, bricks, TMT steel bars, and pillars for the divine ashram complex.',
+    badge: 'Construction Yajna',
+    icon: '🧱',
+    actionType: 'ashram'
+  },
+  {
+    id: 6,
+    title: 'Shri Ram - Hanuman Mandir & Spiritual Satsang Hall',
+    desc: 'Spiritual haven under development near Maa Narmada for religious discourses and rural community unity.',
+    badge: 'Under Planning',
+    icon: '🛕',
+    actionType: 'ashram'
+  },
+  {
+    id: 7,
+    title: 'Educational Support & Cultural Values for Rural Children',
+    desc: 'Distributing school supplies, books, and fostering moral and cultural foundation among rural youth.',
+    badge: 'Humanitarian Care',
+    icon: '📚',
+    actionType: 'donate'
+  }
+];
+
 interface HeroProps {
   language?: Language;
   onDonateClick: () => void;
@@ -88,19 +152,34 @@ export const Hero: React.FC<HeroProps> = ({
   onExploreClick,
   onOpenReceiptSearch 
 }) => {
-  const t = TRANSLATIONS[language];
+  const isEn = language === 'en';
+  const t = TRANSLATIONS[language] || TRANSLATIONS['hi'];
+  const activeWorks = isEn ? ASHRAM_ACTIVE_WORKS_EN : ASHRAM_ACTIVE_WORKS_HI;
+
   const [currentWorkIndex, setCurrentWorkIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [isHomeFolderExpanded, setIsHomeFolderExpanded] = useState(false);
+
+  const folderPackages = isEn
+    ? [
+        { name: "1 Cement Bag Contribution", amount: 380, desc: "For solid concrete foundation and pillar construction" },
+        { name: "100 Construction Bricks", amount: 750, desc: "For constructing sacred ashram hall walls" },
+        { name: "1 Quintal TMT Steel", amount: 6200, desc: "For reinforcement of pillars and roof casting" },
+        { name: "1 Ashram Pillar (Stambha)", amount: 11000, desc: "Primary structural support of the pilgrim hall" },
+        { name: "Pilgrim Rest Hall / Shed Unit", amount: 25000, desc: "Dedicated resting shelter for sadhus & walking pilgrims" },
+        { name: "Voluntary Custom Contribution", amount: 0, desc: "Any amount dedicated as per your personal devotion" }
+      ]
+    : ASHRAM_NIRMAN_INFO.packages;
 
   useEffect(() => {
     if (isPaused) return;
     const interval = setInterval(() => {
-      setCurrentWorkIndex((prev) => (prev + 1) % ASHRAM_ACTIVE_WORKS.length);
+      setCurrentWorkIndex((prev) => (prev + 1) % activeWorks.length);
     }, 3500);
     return () => clearInterval(interval);
-  }, [isPaused]);
+  }, [isPaused, activeWorks.length]);
 
-  const activeWork = ASHRAM_ACTIVE_WORKS[currentWorkIndex];
+  const activeWork = activeWorks[currentWorkIndex];
 
   return (
     <section className="relative bg-gradient-to-b from-[#08241b] via-[#0e4333] to-[#0a3125] text-white overflow-hidden py-12 md:py-20 border-b-4 border-amber-500 w-full max-w-full">
@@ -116,7 +195,7 @@ export const Hero: React.FC<HeroProps> = ({
           <div className="w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 rounded-full overflow-hidden border-3 border-amber-400 shadow-2xl animate-sacred-glow bg-[#08241b] shrink-0 ring-4 ring-amber-400/30 transition-transform hover:scale-105">
             <img
               src={TRUST_INFO.logoUrl}
-              alt="प्रभु रामजी ट्रस्ट लोगो"
+              alt={t.trustName}
               className="w-full h-full object-cover"
             />
           </div>
@@ -128,11 +207,11 @@ export const Hero: React.FC<HeroProps> = ({
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
           </div>
 
-          {/* Centered Trust Name with SEO Keywords */}
+          {/* Centered Trust Name */}
           <h1 className="font-heading text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-amber-50 leading-tight">
             <span>{t.trustName}</span>
             <span className="block text-xs sm:text-sm md:text-base font-sans font-semibold tracking-wider text-amber-300/90 mt-1 uppercase">
-              Prabhu Ram Ji Trust · Official Website · Ramji Trust
+              {isEn ? "Prabhu Ramji Trust · Official Portal · Gram Galgaon" : "प्रभु रामजी ट्रस्ट · आधिकारिक पोर्टल · ग्राम गलगाँव"}
             </span>
           </h1>
 
@@ -141,7 +220,7 @@ export const Hero: React.FC<HeroProps> = ({
             {t.heroSubtitle}
           </p>
 
-          {/* Animated Ashram Works Showcase - Below Logo, Title & Location */}
+          {/* Animated Ashram Works Showcase */}
           <div 
             className="w-full max-w-4xl mx-auto pt-4 min-w-0 overflow-hidden"
             onMouseEnter={() => setIsPaused(true)}
@@ -155,7 +234,7 @@ export const Hero: React.FC<HeroProps> = ({
                 <div className="flex flex-col sm:flex-row items-center gap-3 flex-1 min-w-0">
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600 text-white text-[11px] font-bold tracking-wide shadow-xs shrink-0 animate-pulse">
                     <span className="w-2 h-2 rounded-full bg-white animate-ping" />
-                    <span>आश्रम में सक्रिय कार्य</span>
+                    <span>{t.heroActiveWorkBadge}</span>
                   </div>
 
                   {/* Animated Text Content */}
@@ -184,24 +263,24 @@ export const Hero: React.FC<HeroProps> = ({
                     }}
                     className="inline-flex items-center gap-1 px-3.5 py-1.5 text-xs font-bold text-[#08241b] bg-gradient-to-r from-amber-300 to-amber-400 hover:from-amber-400 hover:to-amber-500 rounded-lg shadow-sm transition-transform hover:scale-105 cursor-pointer"
                   >
-                    <span>सहयोग करें</span>
+                    <span>{t.heroSupportNow}</span>
                     <ChevronRight className="w-3.5 h-3.5" />
                   </button>
 
                   <div className="flex items-center gap-1">
                     <button
                       type="button"
-                      onClick={() => setCurrentWorkIndex((prev) => (prev - 1 + ASHRAM_ACTIVE_WORKS.length) % ASHRAM_ACTIVE_WORKS.length)}
+                      onClick={() => setCurrentWorkIndex((prev) => (prev - 1 + activeWorks.length) % activeWorks.length)}
                       className="p-1.5 rounded-md bg-white/10 hover:bg-white/20 text-amber-200 transition-colors cursor-pointer"
-                      title="पिछला कार्य"
+                      title={t.heroPrevWork}
                     >
                       <ChevronLeft className="w-3.5 h-3.5" />
                     </button>
                     <button
                       type="button"
-                      onClick={() => setCurrentWorkIndex((prev) => (prev + 1) % ASHRAM_ACTIVE_WORKS.length)}
+                      onClick={() => setCurrentWorkIndex((prev) => (prev + 1) % activeWorks.length)}
                       className="p-1.5 rounded-md bg-white/10 hover:bg-white/20 text-amber-200 transition-colors cursor-pointer"
-                      title="अगला कार्य"
+                      title={t.heroNextWork}
                     >
                       <ChevronRight className="w-3.5 h-3.5" />
                     </button>
@@ -212,7 +291,7 @@ export const Hero: React.FC<HeroProps> = ({
 
               {/* Progress Indicator Dots */}
               <div className="flex items-center justify-center gap-1.5 mt-2.5 pt-2 border-t border-amber-500/20">
-                {ASHRAM_ACTIVE_WORKS.map((work, idx) => (
+                {activeWorks.map((work, idx) => (
                   <button
                     key={work.id}
                     onClick={() => setCurrentWorkIndex(idx)}
@@ -230,7 +309,7 @@ export const Hero: React.FC<HeroProps> = ({
             {/* Continuous Smooth Streaming Marquee Ribbon */}
             <div className="mt-2.5 overflow-hidden rounded-xl bg-black/50 border border-amber-500/40 py-1.5 px-3 backdrop-blur-xs text-xs text-amber-200/90 relative shadow-inner w-full max-w-full">
               <div className="animate-marquee whitespace-nowrap flex items-center gap-8">
-                {ASHRAM_ACTIVE_WORKS.concat(ASHRAM_ACTIVE_WORKS).map((w, index) => (
+                {activeWorks.concat(activeWorks).map((w, index) => (
                   <div key={index} className="inline-flex items-center gap-2">
                     <span>{w.icon}</span>
                     <strong className="text-amber-300 font-semibold">{w.title}</strong>
@@ -244,6 +323,111 @@ export const Hero: React.FC<HeroProps> = ({
           </div>
         </div>
 
+        {/* FEATURED: Home Page Dedicated Ashram Construction Folder Widget (User requested: "home page me ek folder hona chahiye") */}
+        <div className="w-full max-w-5xl mx-auto mb-10 bg-[#072b20]/95 backdrop-blur-md rounded-3xl p-5 sm:p-7 border-2 border-amber-400/70 shadow-2xl relative overflow-hidden">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
+            <div className="flex items-start sm:items-center gap-3.5 sm:gap-4">
+              <div className="w-13 h-13 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-amber-400/25 to-amber-600/35 border border-amber-400/60 flex items-center justify-center shrink-0 shadow-inner">
+                {isHomeFolderExpanded ? (
+                  <FolderOpen className="w-7 h-7 sm:w-8 sm:h-8 text-amber-300" />
+                ) : (
+                  <Folder className="w-7 h-7 sm:w-8 sm:h-8 text-amber-400" />
+                )}
+              </div>
+              
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-[11px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md bg-amber-400/20 border border-amber-400/40 text-amber-300">
+                    📂 {t.homeFolderBadge}
+                  </span>
+                  <span className="text-xs text-stone-300">· {t.homeFolderAvailable}</span>
+                </div>
+                <h2 className="font-heading text-lg sm:text-2xl font-bold text-amber-100">
+                  {t.homeFolderTitle}
+                </h2>
+                <p className="text-xs sm:text-sm text-stone-300 mt-0.5">
+                  {t.homeFolderDesc}
+                </p>
+              </div>
+            </div>
+
+            {/* Folder Action Buttons */}
+            <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+              <button
+                type="button"
+                onClick={onAshramClick}
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-stone-950 font-bold text-xs sm:text-sm shadow-md transition-all cursor-pointer hover:scale-105"
+              >
+                <span>{t.homeFolderOpenBtn}</span>
+                <ChevronRight className="w-4 h-4 text-stone-950" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setIsHomeFolderExpanded(!isHomeFolderExpanded)}
+                className="inline-flex items-center gap-1 px-3.5 py-2.5 rounded-xl bg-emerald-950/90 hover:bg-emerald-900 text-amber-200 border border-amber-400/50 text-xs sm:text-sm font-semibold transition-all cursor-pointer"
+              >
+                <span>{isHomeFolderExpanded ? t.homeFolderCollapseBtn : t.homeFolderExpandBtn}</span>
+                {isHomeFolderExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+
+          {/* Quick Item Pills Preview */}
+          <div className="mt-4 pt-3 border-t border-emerald-800/60 flex flex-wrap items-center gap-2 text-xs">
+            <span className="text-[11px] text-amber-300/80 font-bold">
+              {isEn ? "Folder Items:" : "फोल्डर सामग्री:"}
+            </span>
+            {folderPackages.map((pkg, i) => (
+              <button
+                key={i}
+                onClick={onAshramClick}
+                className="px-2.5 py-1 rounded-lg bg-emerald-950/70 hover:bg-emerald-900 border border-emerald-600/40 text-stone-200 hover:text-amber-300 font-mono text-[11px] transition-all cursor-pointer"
+              >
+                {pkg.name} {pkg.amount > 0 ? `(₹${pkg.amount})` : ''}
+              </button>
+            ))}
+          </div>
+
+          {/* Expandable 6-item Grid on Home Page */}
+          {isHomeFolderExpanded && (
+            <div className="mt-5 pt-4 border-t-2 border-amber-400/40 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 animate-slide-up-fade">
+              {folderPackages.map((pkg, idx) => (
+                <div
+                  key={idx}
+                  className="bg-black/45 rounded-2xl p-4 border border-amber-400/40 hover:border-amber-400 transition-all flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xl">
+                        {idx === 0 ? '🧱' : idx === 1 ? '🧱' : idx === 2 ? '⛓️' : idx === 3 ? '🏛️' : idx === 4 ? '🏠' : '❤️'}
+                      </span>
+                      <span className="text-sm font-bold font-mono text-amber-300 bg-amber-400/15 px-2 py-0.5 rounded-md border border-amber-400/30">
+                        {pkg.amount > 0 ? `₹${pkg.amount.toLocaleString('en-IN')}` : (isEn ? 'Custom' : 'श्रद्धानुसार')}
+                      </span>
+                    </div>
+                    <h4 className="font-heading font-bold text-sm text-amber-100">
+                      {pkg.name}
+                    </h4>
+                    <p className="text-xs text-stone-300 mt-1 line-clamp-2">
+                      {pkg.desc}
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={onAshramClick}
+                    className="mt-3 w-full py-1.5 px-3 rounded-lg bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-stone-950 font-bold text-xs flex items-center justify-center gap-1 cursor-pointer transition-transform hover:scale-102"
+                  >
+                    <span>{t.ashramSponsorBtn}</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* 2-Column Hero Grid: Left Content & Right Kodanda Ram Frame */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           
           {/* Left Column: Trust Identity, Routines & Actions */}
@@ -313,11 +497,11 @@ export const Hero: React.FC<HeroProps> = ({
 
               <button
                 onClick={onOpenReceiptSearch}
-                className="inline-flex items-center gap-2 px-4 py-3.5 text-xs font-semibold text-amber-200 bg-amber-950/50 hover:bg-amber-900/70 rounded-xl border border-amber-400/40 transition-all cursor-pointer shadow-sm"
-                title="दान रसीद खोजें व डाउनलोड करें"
+                className="inline-flex items-center gap-2 px-4 py-3.5 text-xs font-semibold text-amber-200 bg-amber-950/50 hover:bg-amber-900/70 rounded-xl border border-amber-400/40 transition-all cursor-pointer shadow-xs"
+                title={t.searchReceiptBtn}
               >
                 <FileText className="w-4 h-4 text-amber-300" />
-                <span>रसीद खोजें</span>
+                <span>{t.searchReceiptBtn}</span>
               </button>
             </div>
 
@@ -334,7 +518,7 @@ export const Hero: React.FC<HeroProps> = ({
               <div className="relative rounded-3xl overflow-hidden shadow-2xl border-2 sm:border-3 border-amber-400/90 bg-stone-950 group">
                 <img
                   src="/shri_ram_kodanda.jpg"
-                  alt="कोदण्डधारी मर्यादा पुरुषोत्तम प्रभु श्री रामजी - प्रभु रामजी ट्रस्ट ग्राम गलगाँव"
+                  alt={t.kodandaTitle}
                   className="w-full h-auto object-cover max-h-[580px] sm:max-h-[640px] group-hover:scale-102 transition-transform duration-700 block"
                   loading="eager"
                   onError={(e) => {
@@ -346,11 +530,11 @@ export const Hero: React.FC<HeroProps> = ({
                 <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/95 via-black/80 to-transparent p-4 sm:p-6 text-center">
                   <div className="text-amber-300 font-heading text-lg sm:text-2xl font-bold flex items-center justify-center gap-2">
                     <Sparkles className="w-5 h-5 text-amber-400" />
-                    <span>॥ कोदण्डधारी प्रभु श्री राम ॥</span>
+                    <span>{t.kodandaTitle}</span>
                     <Sparkles className="w-5 h-5 text-amber-400" />
                   </div>
                   <p className="text-xs sm:text-sm text-stone-200 mt-1 font-medium">
-                    ग्राम गलगाँव (सनावद, खरगोन) · माँ नर्मदा के पावन प्रवाह व प्रभु रामजी के आदर्शों पर निष्काम जनसेवा
+                    {t.kodandaDesc}
                   </p>
                 </div>
               </div>

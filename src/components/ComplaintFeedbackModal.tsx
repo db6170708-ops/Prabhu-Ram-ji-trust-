@@ -123,7 +123,7 @@ export const ComplaintFeedbackModal: React.FC<ComplaintFeedbackModalProps> = ({
                 : 'border-transparent text-stone-500 hover:text-stone-800'
             }`}
           >
-            {language === 'hi' ? '🔍 स्थिति ट्रैक करें (Track)' : '🔍 Track Status'}
+            {language === 'hi' ? '🔍 स्थिति ट्रैक करें' : '🔍 Track Status'}
           </button>
         </div>
 

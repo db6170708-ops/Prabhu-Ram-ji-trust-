@@ -20,12 +20,11 @@ interface ContactSectionProps {
   language?: Language;
 }
 
-export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' }) => {
-  const isEn = language === 'en';
-  const t = TRANSLATIONS[language] || TRANSLATIONS['hi'];
+export const ContactSection: React.FC<ContactSectionProps> = () => {
+  const t = TRANSLATIONS['hi'];
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
-  const [subject, setSubject] = useState(isEn ? 'Fodder Contribution for Gaushala' : 'गौसेवा हेतु चारा सहयोग');
+  const [subject, setSubject] = useState('गौसेवा हेतु चारा सहयोग');
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [submittedWhatsAppUrl, setSubmittedWhatsAppUrl] = useState<string>('');
@@ -38,16 +37,12 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
     e.preventDefault();
     setContactError(null);
     if (!name.trim() || !mobile.trim() || !message.trim()) {
-      setContactError(
-        isEn
-          ? 'Please enter all required fields (Name, Mobile, and Message).'
-          : 'कृपया सभी आवश्यक जानकारी (नाम, मोबाइल नंबर एवं संदेश) दर्ज करें।'
-      );
+      setContactError('कृपया सभी आवश्यक जानकारी (नाम, मोबाइल नंबर एवं संदेश) दर्ज करें।');
       return;
     }
 
     const whatsappText = encodeURIComponent(
-      `नमस्ते प्रभु रामजी ट्रस्ट,\nName: ${name}\nMobile: ${mobile}\nSubject: ${subject}\nMessage: ${message}`
+      `नमस्ते प्रभु रामजी ट्रस्ट,\nनाम: ${name}\nमोबाइल: ${mobile}\nविषय: ${subject}\nसंदेश: ${message}`
     );
     const targetUrl = `https://api.whatsapp.com/send?phone=919575301233&text=${whatsappText}`;
     setSubmittedWhatsAppUrl(targetUrl);
@@ -68,9 +63,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
           </h2>
           <div className="w-20 h-1 bg-amber-500 mx-auto mt-4 rounded-full"></div>
           <p className="text-stone-600 mt-4 text-base sm:text-lg">
-            {isEn 
-              ? "Visit or contact us anytime for cow welfare, Saturday Bhandara, or Narmada Parikrama pilgrim service."
-              : "गौसेवा, शनिवार भंडारा या नर्मदा परिक्रमा सहयोग हेतु कभी भी पधारें अथवा संपर्क करें।"}
+            गौसेवा, शनिवार भंडारा या नर्मदा परिक्रमा सहयोग हेतु कभी भी पधारें अथवा संपर्क करें।
           </p>
         </div>
 
@@ -83,10 +76,10 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
               
               <div>
                 <h3 className="font-heading text-xl font-bold text-[#0f4d3a]">
-                  {isEn ? "Prabhu Ramji Trust Office" : "प्रभु रामजी ट्रस्ट कार्यालय"}
+                  प्रभु रामजी ट्रस्ट कार्यालय
                 </h3>
                 <p className="text-xs text-stone-500 mt-1">
-                  {isEn ? "Authorized Center & Gaushala Premises" : "अधिकृत सेवा केंद्र एवं मुख्य गौशाला परिसर"}
+                  अधिकृत सेवा केंद्र एवं मुख्य गौशाला परिसर
                 </p>
               </div>
 
@@ -96,9 +89,9 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h4 className="text-xs font-bold text-stone-700 uppercase">{t.contactFullAddressLabel}</h4>
+                  <h4 className="text-xs font-bold text-stone-700 uppercase">पूर्ण आधिकारिक पता</h4>
                   <p className="text-sm text-stone-800 font-medium mt-0.5 leading-relaxed break-words">
-                    {isEn ? "Prabhu Ramji Trust, Village Galgaon, Tehsil Sanawad, Dist. Khargone (M.P.) - 451111" : TRUST_INFO.fullAddress}
+                    {TRUST_INFO.fullAddress}
                   </p>
                   <div className="mt-1.5 flex flex-wrap items-center gap-2">
                     <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-300 text-xs font-bold font-mono break-all">
@@ -107,7 +100,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
                     </span>
                   </div>
                   <p className="text-xs text-stone-500 mt-1">
-                    {isEn ? "(Approx. 10-12 km from Sanawad, near Maa Narmada Parikrama Route)" : "(सनावद से लगभग 10-12 किमी, माँ नर्मदा परिक्रमा मार्ग के समीप)"}
+                    (सनावद से लगभग 10-12 किमी, माँ नर्मदा परिक्रमा मार्ग के समीप)
                   </p>
                 </div>
               </div>
@@ -118,7 +111,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
                   <Phone className="w-5 h-5 text-emerald-700" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h4 className="text-xs font-bold text-stone-700 uppercase">{t.contactHelplineLabel}</h4>
+                  <h4 className="text-xs font-bold text-stone-700 uppercase">अधिकृत हेल्पलाइन नंबर</h4>
                   <div className="mt-1 space-y-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <a
@@ -129,7 +122,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
                       </a>
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
                         <MessageCircle className="w-2.5 h-2.5 fill-emerald-600 text-emerald-600" />
-                        {isEn ? "WhatsApp & Calls" : "WhatsApp व कॉलिंग"}
+                        WhatsApp व कॉलिंग
                       </span>
                     </div>
 
@@ -142,13 +135,13 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
                           {TRUST_INFO.secondaryPhone}
                         </a>
                         <span className="text-[11px] text-stone-500 font-normal">
-                          {isEn ? "(Office Contact)" : "(कार्यालय संपर्क)"}
+                          (कार्यालय संपर्क)
                         </span>
                       </div>
                     )}
                   </div>
                   <p className="text-xs text-stone-500 mt-1">
-                    {isEn ? "(Shri Dinesh Ji / President Shri Gulabchand Ji)" : "(श्री दिनेश जी / अध्यक्ष श्री गुलाबचंद जी)"}
+                    (श्री दिनेश जी / अध्यक्ष श्री गुलाबचंद जी)
                   </p>
                 </div>
               </div>
@@ -159,7 +152,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
                   <Mail className="w-5 h-5" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h4 className="text-xs font-bold text-stone-700 uppercase">{t.contactEmailLabel}</h4>
+                  <h4 className="text-xs font-bold text-stone-700 uppercase">ईमेल संपर्क</h4>
                   <a
                     href={`mailto:${TRUST_INFO.email}`}
                     className="text-xs sm:text-sm font-medium text-stone-900 hover:text-[#0f4d3a] transition-colors block mt-0.5 font-mono break-all"
@@ -175,7 +168,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
                   <Globe className="w-5 h-5" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h4 className="text-xs font-bold text-stone-700 uppercase">{isEn ? "Official Portal" : "आधिकारिक पोर्टल"}</h4>
+                  <h4 className="text-xs font-bold text-stone-700 uppercase">आधिकारिक पोर्टल</h4>
                   <a
                     href="https://prabhuramjitrustram.ai.studio/"
                     target="_blank"
@@ -193,12 +186,12 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
                   <Clock className="w-5 h-5" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h4 className="text-xs font-bold text-stone-700 uppercase">{t.contactVisitingLabel}</h4>
+                  <h4 className="text-xs font-bold text-stone-700 uppercase">दर्शन एवं भेंट का समय</h4>
                   <p className="text-xs sm:text-sm text-stone-800 mt-0.5">
-                    {isEn ? "7:00 AM to 7:30 PM Daily" : "प्रातः 07:00 बजे से सायं 07:30 बजे तक"}
+                    प्रातः 07:00 बजे से सायं 07:30 बजे तक
                   </p>
                   <p className="text-xs text-amber-700 font-semibold mt-0.5">
-                    {isEn ? "Saturday Community Bhandara: Prasad from 11:30 AM" : "शनिवार महाभंडारा: प्रातः 11:30 बजे से प्रसादी"}
+                    शनिवार महाभंडारा: प्रातः 11:30 बजे से प्रसादी
                   </p>
                 </div>
               </div>
@@ -254,13 +247,13 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
               <div className="flex items-center gap-2 mb-3">
                 <Navigation className="w-5 h-5 text-amber-600" />
                 <h4 className="font-heading text-base font-bold text-stone-900">
-                  {isEn ? "How to Reach from Sanawad / Omkareshwar?" : "सनावद / ओंकारेश्वर से कैसे पहुँचें?"}
+                  सनावद / ओंकारेश्वर से कैसे पहुँचें?
                 </h4>
               </div>
               <ul className="text-xs text-stone-600 space-y-1.5 leading-relaxed">
-                <li>• <strong>{isEn ? "From Sanawad:" : "सनावद से:"}</strong> {isEn ? "10-12 km by auto or private vehicle from Sanawad Bus Stand / Railway Station to Village Galgaon." : "सनावद बस स्टैंड / रेलवे स्टेशन से ऑटो या निजी वाहन द्वारा ग्राम गलगाँव (10-12 किमी)।"}</li>
-                <li>• <strong>{isEn ? "From Omkareshwar Jyotirlinga:" : "ओंकारेश्वर ज्योतिर्लिंग से:"}</strong> {isEn ? "Approx. 22 km distance along the Nimar valley highway." : "मात्र 22 किमी दूरी पर निमाड़ अंचल मार्ग।"}</li>
-                <li>• <strong>{isEn ? "From Indore:" : "इंदौर से:"}</strong> {isEn ? "Reach Sanawad via Indore-Icchapur Highway, then turn towards Galgaon." : "इंदौर-इच्छापुर हाइवे होकर सनावद पहुँचें, वहां से गलगाँव।"}</li>
+                <li>• <strong>सनावद से:</strong> सनावद बस स्टैंड / रेलवे स्टेशन से ऑटो या निजी वाहन द्वारा ग्राम गलगाँव (10-12 किमी)।</li>
+                <li>• <strong>ओंकारेश्वर ज्योतिर्लिंग से:</strong> मात्र 22 किमी दूरी पर निमाड़ अंचल मार्ग।</li>
+                <li>• <strong>इंदौर से:</strong> इंदौर-इच्छापुर हाइवे होकर सनावद पहुँचें, वहां से गलगाँव।</li>
               </ul>
               <div className="mt-4 pt-3 border-t border-stone-100">
                 <a
@@ -270,7 +263,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
                   className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 text-xs font-bold text-[#0f4d3a] bg-emerald-50 hover:bg-emerald-100 rounded-xl border border-emerald-200 transition-colors cursor-pointer"
                 >
                   <MapPin className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>{isEn ? "Open in Google Maps (5X5W+4JR)" : "Google Maps पर लोकेशन खोलें (5X5W+4JR)"}</span>
+                  <span>Google Maps पर लोकेशन खोलें (5X5W+4JR)</span>
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
               </div>
@@ -283,22 +276,20 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
             
             <div className="bg-white rounded-3xl p-6 sm:p-10 shadow-xs border border-stone-200">
               <h3 className="font-heading text-xl sm:text-2xl font-bold text-[#0f4d3a] mb-2">
-                {isEn ? "Send a Message or Proposal" : "संदेश या सहयोग प्रस्ताव भेजें"}
+                संदेश या सहयोग प्रस्ताव भेजें
               </h3>
               <p className="text-xs sm:text-sm text-stone-500 mb-6">
-                {isEn 
-                  ? "Write to us regarding Saturday Bhandara sponsorship, cow welfare support, or any inquiries."
-                  : "शनिवार भंडारा प्रायोजन, गौसेवा सहयोग या किसी भी जिज्ञासा हेतु नीचे दिए फॉर्म में लिखें।"}
+                शनिवार भंडारा प्रायोजन, गौसेवा सहयोग या किसी भी जिज्ञासा हेतु नीचे दिए फॉर्म में लिखें।
               </p>
 
               {submitted ? (
                 <div className="bg-emerald-50 border border-emerald-300 rounded-2xl p-6 text-center space-y-3.5">
                   <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto" />
                   <h4 className="font-heading text-lg font-bold text-emerald-900">
-                    {isEn ? "Your Message is Ready!" : "आपका संदेश तैयार है!"}
+                    आपका संदेश तैयार है!
                   </h4>
                   <p className="text-xs sm:text-sm text-emerald-800">
-                    {isEn ? "Click the button below to send your message directly to the Trust WhatsApp:" : "नीचे दिए गए बटन पर क्लिक करके सीधे ट्रस्ट के अधिकृत WhatsApp पर अपना संदेश भेजें:"}
+                    नीचे दिए गए बटन पर क्लिक करके सीधे ट्रस्ट के अधिकृत WhatsApp पर अपना संदेश भेजें:
                   </p>
                   
                   {submittedWhatsAppUrl && (
@@ -310,7 +301,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
                         className="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold text-white bg-emerald-700 hover:bg-emerald-800 rounded-xl shadow-md transition-all cursor-pointer"
                       >
                         <MessageCircle className="w-4 h-4 text-emerald-200" />
-                        <span>{isEn ? "Send on WhatsApp Now →" : "WhatsApp पर संदेश अभी भेजें →"}</span>
+                        <span>WhatsApp पर संदेश अभी भेजें →</span>
                       </a>
                     </div>
                   )}
@@ -325,7 +316,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
                     }}
                     className="mt-2 text-xs font-semibold text-emerald-900 hover:underline cursor-pointer block mx-auto"
                   >
-                    {isEn ? "Write another message" : "अन्य संदेश लिखें"}
+                    अन्य संदेश लिखें
                   </button>
                 </div>
               ) : (
@@ -333,12 +324,12 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-semibold text-stone-700 mb-1">
-                        {isEn ? "Your Name *" : "आपका नाम *"}
+                        आपका नाम *
                       </label>
                       <input
                         type="text"
                         required
-                        placeholder={isEn ? "e.g. Rahul Sharma" : "उदा. राहुल शर्मा"}
+                        placeholder="उदा. राहुल शर्मा"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0f4d3a] focus:bg-white"
@@ -347,7 +338,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
 
                     <div>
                       <label className="block text-xs font-semibold text-stone-700 mb-1">
-                        {isEn ? "Mobile Number *" : "मोबाइल नंबर *"}
+                        मोबाइल नंबर *
                       </label>
                       <input
                         type="tel"
@@ -362,36 +353,28 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
 
                   <div>
                     <label className="block text-xs font-semibold text-stone-700 mb-1">
-                      {isEn ? "Subject" : "विषय"}
+                      विषय
                     </label>
                     <select
                       value={subject}
                       onChange={(e) => setSubject(e.target.value)}
                       className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0f4d3a]"
                     >
-                      <option value={isEn ? "Fodder Contribution for Gaushala" : "गौसेवा हेतु चारा सहयोग"}>
-                        {isEn ? "Fodder Contribution for Gaushala" : "गौसेवा हेतु चारा सहयोग"}
-                      </option>
-                      <option value={isEn ? "Saturday Bhandara Sponsorship" : "शनिवार भंडारा प्रायोजन"}>
-                        {isEn ? "Saturday Bhandara Sponsorship" : "शनिवार भंडारा प्रायोजन (जन्मदिन/पुण्यतिथि)"}
-                      </option>
-                      <option value={isEn ? "Narmada Parikrama Seva Participation" : "नर्मदा परिक्रमा सेवा में सहभागिता"}>
-                        {isEn ? "Narmada Parikrama Seva Participation" : "नर्मदा परिक्रमा सेवा में सहभागिता"}
-                      </option>
-                      <option value={isEn ? "General Inquiry or Visit" : "सामान्य जिज्ञासा या भेंट हेतु"}>
-                        {isEn ? "General Inquiry or Visit" : "सामान्य जिज्ञासा या भेंट हेतु"}
-                      </option>
+                      <option value="गौसेवा हेतु चारा सहयोग">गौसेवा हेतु चारा सहयोग</option>
+                      <option value="शनिवार भंडारा प्रायोजन">शनिवार भंडारा प्रायोजन (जन्मदिन/पुण्यतिथि)</option>
+                      <option value="नर्मदा परिक्रमा सेवा में सहभागिता">नर्मदा परिक्रमा सेवा में सहभागिता</option>
+                      <option value="सामान्य जिज्ञासा या भेंट हेतु">सामान्य जिज्ञासा या भेंट हेतु</option>
                     </select>
                   </div>
 
                   <div>
                     <label className="block text-xs font-semibold text-stone-700 mb-1">
-                      {isEn ? "Your Message / Details *" : "आपका संदेश / विवरण *"}
+                      आपका संदेश / विवरण *
                     </label>
                     <textarea
                       required
                       rows={4}
-                      placeholder={isEn ? "Write your message in detail here..." : "यहाँ अपना संदेश विस्तार से लिखें..."}
+                      placeholder="यहाँ अपना संदेश विस्तार से लिखें..."
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0f4d3a] focus:bg-white resize-none"
@@ -409,7 +392,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
                     className="w-full py-3.5 px-6 text-sm font-bold text-white bg-[#0f4d3a] hover:bg-[#125843] rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <Send className="w-4 h-4 text-amber-300" />
-                    <span>{isEn ? "Send Message via WhatsApp" : "संदेश भेजें (सीधे WhatsApp से जुड़ें)"}</span>
+                    <span>संदेश भेजें (सीधे WhatsApp से जुड़ें)</span>
                   </button>
                 </form>
               )}
@@ -425,11 +408,11 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
                   <div>
                     <div className="flex items-center gap-1.5">
                       <h4 className="font-heading text-sm font-bold text-stone-900">
-                        {isEn ? "Google Maps Live Location" : "Google Maps लाइव लोकेशन"}
+                        Google Maps लाइव लोकेशन
                       </h4>
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-ping" />
-                        {isEn ? "Satellite View" : "सैटेलाइट व्यू"}
+                        सैटेलाइट व्यू
                       </span>
                     </div>
                     <p className="text-[11px] font-mono text-emerald-800 font-semibold">
@@ -445,7 +428,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-white bg-[#0f4d3a] hover:bg-[#125843] rounded-lg shadow-xs transition-colors cursor-pointer"
                 >
                   <Globe className="w-3.5 h-3.5 text-amber-300" />
-                  <span>{isEn ? "Open in Google Maps" : "Google Maps में खोलें"}</span>
+                  <span>Google Maps में खोलें</span>
                   <ExternalLink className="w-3 h-3 text-emerald-200" />
                 </a>
               </div>
@@ -459,10 +442,10 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
                       <div>
                         <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30">
                           <MapPin className="w-3.5 h-3.5 text-amber-400" />
-                          <span>{isEn ? "Sacred Ashram & Gaushala Premises" : "पवित्र आश्रम एवं गौशाला स्थल"}</span>
+                          <span>पवित्र आश्रम एवं गौशाला स्थल</span>
                         </div>
                         <h5 className="font-heading text-lg sm:text-xl font-bold text-amber-100 mt-2">
-                          {t.trustName}, {isEn ? "Gram Galgaon" : "ग्राम गलगाँव"}
+                          {t.trustName}, ग्राम गलगाँव
                         </h5>
                         <p className="text-xs text-stone-300 mt-0.5">
                           {t.tagline}
@@ -482,11 +465,11 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
                     <div className="bg-black/35 border border-white/10 rounded-xl p-3 text-xs text-stone-200 space-y-1.5">
                       <p className="flex items-center gap-1.5">
                         <Navigation className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                        <span>{isEn ? "Only 10-12 km from Sanawad Bus Stand / Railway Station" : "सनावद बस स्टैंड / रेलवे स्टेशन से मात्र 10-12 किमी"}</span>
+                        <span>सनावद बस स्टैंड / रेलवे स्टेशन से मात्र 10-12 किमी</span>
                       </p>
                       <p className="flex items-center gap-1.5 text-stone-300">
                         <Globe className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                        <span>{isEn ? "Distance from Omkareshwar Jyotirlinga: Approx. 22 km" : "ओंकारेश्वर ज्योतिर्लिंग से दूरी: लगभग 22 किमी"}</span>
+                        <span>ओंकारेश्वर ज्योतिर्लिंग से दूरी: लगभग 22 किमी</span>
                       </p>
                     </div>
 
@@ -497,7 +480,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
                         className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-[#08241b] bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 hover:from-amber-400 hover:to-amber-500 rounded-xl shadow-md transition-all cursor-pointer"
                       >
                         <Globe className="w-4 h-4 text-[#08241b]" />
-                        <span>{isEn ? "Load Live Satellite Map" : "लाइव सैटेलाइट मैप लोड करें"}</span>
+                        <span>लाइव सैटेलाइट मैप लोड करें</span>
                       </button>
 
                       <a
@@ -507,7 +490,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
                         className="inline-flex items-center gap-1.5 px-3.5 py-2.5 text-xs font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl transition-colors cursor-pointer"
                       >
                         <Navigation className="w-3.5 h-3.5 text-amber-300" />
-                        <span>{isEn ? "Directions in Google Maps" : "Google Maps में दिशाएं देखें"}</span>
+                        <span>Google Maps में दिशाएं देखें</span>
                         <ExternalLink className="w-3 h-3 text-stone-300" />
                       </a>
                     </div>
@@ -526,7 +509,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
                             : 'text-stone-700 hover:bg-white/80'
                         }`}
                       >
-                        <span>{isEn ? "Satellite" : "सैटेलाइट"}</span>
+                        <span>सैटेलाइट</span>
                       </button>
 
                       <button
@@ -538,7 +521,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
                             : 'text-stone-700 hover:bg-white/80'
                         }`}
                       >
-                        <span>{isEn ? "Hybrid" : "हाइब्रिड"}</span>
+                        <span>हाइब्रिड</span>
                       </button>
 
                       <button
@@ -550,7 +533,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
                             : 'text-stone-700 hover:bg-white/80'
                         }`}
                       >
-                        <span>{isEn ? "Road Map" : "रोड मैप"}</span>
+                        <span>रोड मैप</span>
                       </button>
                     </div>
 
@@ -560,7 +543,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
                           type="button"
                           onClick={() => setZoomLevel((z) => Math.min(z + 1, 19))}
                           className="p-1 rounded bg-white hover:bg-stone-200 border border-stone-300 text-stone-700 transition-colors cursor-pointer"
-                          title={isEn ? "Zoom In" : "ज़ूम इन"}
+                          title="ज़ूम इन"
                         >
                           <ZoomIn className="w-3.5 h-3.5" />
                         </button>
@@ -568,7 +551,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
                           type="button"
                           onClick={() => setZoomLevel((z) => Math.max(z - 1, 13))}
                           className="p-1 rounded bg-white hover:bg-stone-200 border border-stone-300 text-stone-700 transition-colors cursor-pointer"
-                          title={isEn ? "Zoom Out" : "ज़ूम आउट"}
+                          title="ज़ूम आउट"
                         >
                           <ZoomOut className="w-3.5 h-3.5" />
                         </button>
@@ -579,7 +562,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
                         onClick={() => setIsInteractiveMapActive(false)}
                         className="px-2.5 py-1 text-xs font-semibold text-stone-600 hover:text-stone-900 bg-white hover:bg-stone-100 rounded-lg border border-stone-300 transition-colors cursor-pointer"
                       >
-                        ✕ {isEn ? "Close" : "बंद करें"}
+                        ✕ बंद करें
                       </button>
                     </div>
                   </div>
@@ -601,9 +584,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ language = 'hi' 
               <div className="text-[11px] text-stone-500 text-center flex items-center justify-center gap-1.5 pt-1">
                 <Navigation className="w-3.5 h-3.5 text-amber-600" />
                 <span>
-                  {isEn 
-                    ? "Click the button above for turn-by-turn navigation, or enter Plus Code 5X5W+4JR into your GPS."
-                    : "नेविगेशन हेतु ऊपर दिए बटन पर क्लिक करें या GPS में Plus Code 5X5W+4JR दर्ज करें।"}
+                  नेविगेशन हेतु ऊपर दिए बटन पर क्लिक करें या GPS में Plus Code 5X5W+4JR दर्ज करें।
                 </span>
               </div>
             </div>

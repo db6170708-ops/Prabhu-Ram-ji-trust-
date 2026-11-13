@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TRUST_INFO } from '../data/defaultData';
-import { TRANSLATIONS, Language } from '../utils/translations';
 import { PWAInstallButton } from './PWAInstallButton';
+import { GoogleTranslateWidget } from './GoogleTranslateWidget';
 import { 
   HeartHandshake, 
   MapPin, 
@@ -10,30 +10,22 @@ import {
   X, 
   Lock, 
   MessageCircle, 
-  Sparkles,
-  Search,
-  Building,
-  Coffee,
-  Languages,
-  Youtube,
-  Instagram,
-  Facebook,
-  Globe,
-  Users,
-  Award,
-  MessageSquare,
-  Building2,
-  Download
+  Search, 
+  Coffee, 
+  Youtube, 
+  Instagram, 
+  Facebook, 
+  Users, 
+  Award, 
+  MessageSquare, 
+  Building2 
 } from 'lucide-react';
 
 interface HeaderProps {
-  language: Language;
-  onToggleLanguage: () => void;
   onNavigate: (sectionId: string) => void;
   activeSection: string;
   onOpenAdmin: () => void;
   onOpenReceiptSearch: () => void;
-  onOpenLanguageModal?: () => void;
   onOpenVolunteerModal?: () => void;
   onOpenCertificateModal?: () => void;
   onOpenComplaintModal?: () => void;
@@ -41,33 +33,28 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ 
-  language,
-  onToggleLanguage,
   onNavigate, 
   activeSection, 
   onOpenAdmin,
   onOpenReceiptSearch,
-  onOpenLanguageModal,
   onOpenVolunteerModal,
   onOpenCertificateModal,
   onOpenComplaintModal,
   onOpenConstructionProgress
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const t = TRANSLATIONS[language] || TRANSLATIONS['hi'];
-  const isEn = language === 'en';
 
   const navItems = [
-    { id: 'home', label: t.navHome },
-    { id: 'ashram-nirman', label: t.navAshram, highlight: true },
-    { id: 'about', label: t.navAbout },
-    { id: 'objectives', label: t.navObjectives },
-    { id: 'services', label: t.navServices },
-    { id: 'officials', label: t.navOfficials },
-    { id: 'gallery', label: t.navGallery },
-    { id: 'transparency', label: t.navTransparency },
-    { id: 'news', label: t.navNews },
-    { id: 'contact', label: t.navContact }
+    { id: 'home', label: 'मुख्य पृष्ठ' },
+    { id: 'ashram-nirman', label: 'आश्रम निर्माण', highlight: true },
+    { id: 'about', label: 'हमारा परिचय' },
+    { id: 'objectives', label: 'ट्रस्ट के उद्देश्य' },
+    { id: 'services', label: 'सेवा प्रकल्प' },
+    { id: 'officials', label: 'न्यासी मंडल' },
+    { id: 'gallery', label: 'सेवा दर्शन' },
+    { id: 'transparency', label: 'वित्तीय शुचिता' },
+    { id: 'news', label: 'समाचार व सूचनाएं' },
+    { id: 'contact', label: 'संपर्क व मार्ग दर्शन' }
   ];
 
   const handleNavClick = (id: string) => {
@@ -76,34 +63,34 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-xs border-b border-stone-200 w-full max-w-full overflow-hidden">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-xs border-b border-stone-200 w-full max-w-full notranslate-header">
       
-      {/* Top Sacred Ribbon: Location, Routines & Official Social Channels */}
-      <div className="bg-[#0b382c] text-amber-200 text-xs py-2 px-3 sm:px-8 border-b border-emerald-950/40 w-full overflow-hidden">
+      {/* Top Sacred Ribbon: Location, Routine, Social Links & Google Translate */}
+      <div className="bg-[#0b382c] text-amber-200 text-xs py-2 px-3 sm:px-8 border-b border-emerald-950/40 w-full">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-2.5">
           
-          {/* Left: Location & Routine */}
+          {/* Left: Location & Routine Notice */}
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 sm:gap-3 text-center md:text-left">
             <span className="inline-flex items-center gap-1 font-medium text-amber-100">
               <MapPin className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-              <span>{isEn ? `${TRUST_INFO.village}, ${TRUST_INFO.tehsil}, ${TRUST_INFO.district}` : `${TRUST_INFO.village}, ${TRUST_INFO.tehsil}, ${TRUST_INFO.district}`}</span>
+              <span>{TRUST_INFO.village}, {TRUST_INFO.tehsil}, {TRUST_INFO.district} (म.प्र.)</span>
             </span>
             <span className="hidden sm:inline text-emerald-600/70">|</span>
             <a 
               href="https://prabhuramjitrustram.ai.studio/" 
               className="hidden md:inline-flex items-center gap-1 font-mono text-[11px] text-amber-300 hover:text-white transition-colors"
-              title={isEn ? "Prabhu Ramji Trust Official Website" : "प्रभु रामजी ट्रस्ट आधिकारिक वेबसाइट"}
+              title="प्रभु रामजी ट्रस्ट आधिकारिक वेबसाइट"
             >
               <span>prabhuramjitrustram.ai.studio</span>
             </a>
             <span className="hidden md:inline text-emerald-600/70">|</span>
             <span className="hidden lg:inline-flex items-center gap-1.5 text-amber-300 font-semibold">
               <Coffee className="w-3 h-3 text-amber-400 shrink-0" />
-              <span>{t.dailyTeaNotice}</span>
+              <span>प्रातः 6 बजे से नित्य निःशुल्क चाय सेवा</span>
             </span>
           </div>
 
-          {/* Right: Official Social Media Channels, Language & Phone */}
+          {/* Right: Official Social Media Channels & Google Translate Widget */}
           <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
             
             {/* Social Channels Pill Box */}
@@ -126,10 +113,10 @@ export const Header: React.FC<HeaderProps> = ({
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-600/25 hover:bg-emerald-600 text-emerald-300 hover:text-white transition-all text-[11px] font-semibold"
-                title={t.whatsappChannelName}
+                title="WhatsApp चैनल"
               >
                 <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="hidden sm:inline">{t.whatsappChannelName}</span>
+                <span className="hidden sm:inline">WhatsApp</span>
               </a>
 
               {/* Instagram */}
@@ -157,29 +144,12 @@ export const Header: React.FC<HeaderProps> = ({
               </a>
             </div>
 
-            {/* 17 Languages Modal Trigger - Strict Single Language */}
-            {onOpenLanguageModal && (
-              <button
-                onClick={onOpenLanguageModal}
-                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-400/25 hover:bg-amber-400/40 text-amber-200 border border-amber-400/50 text-[11px] font-bold transition-all cursor-pointer"
-                title={t.languageSelectBtn}
-              >
-                <Globe className="w-3 h-3 text-amber-300" />
-                <span>{t.languageSelectBtn}</span>
-              </button>
-            )}
+            {/* Custom Google Translate Dropdown in Header Top Bar */}
+            <div className="shrink-0">
+              <GoogleTranslateWidget variant="header" />
+            </div>
 
-            {/* Quick 2-Language Switcher Pill */}
-            <button
-              onClick={onToggleLanguage}
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-400/20 hover:bg-amber-400/30 text-amber-300 border border-amber-400/40 text-[11px] font-bold transition-all cursor-pointer"
-              title={t.switchLangBtn}
-            >
-              <Languages className="w-3 h-3 text-amber-400" />
-              <span>{t.switchLangBtn}</span>
-            </button>
-
-            {/* Phone */}
+            {/* Helpline Phone */}
             <a 
               href={`tel:${TRUST_INFO.phone.replace(/[^0-9+]/g, '')}`} 
               className="hidden xl:inline-flex items-center gap-1 text-amber-200 hover:text-white transition-colors text-[11px] font-medium"
@@ -205,21 +175,21 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="w-14 h-14 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full overflow-hidden border-2.5 border-amber-500 shadow-lg animate-sacred-glow transition-transform group-hover:scale-105 shrink-0 bg-[#08241b] ring-2 ring-amber-300/40">
               <img
                 src={TRUST_INFO.logoUrl}
-                alt={t.trustName}
+                alt="प्रभु रामजी ट्रस्ट"
                 className="w-full h-full object-cover"
               />
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
                 <span className="font-heading text-lg sm:text-2xl md:text-3xl font-bold tracking-tight text-[#0f4d3a] truncate">
-                  {t.trustName}
+                  प्रभु रामजी ट्रस्ट
                 </span>
                 <span className="hidden lg:inline text-[11px] font-bold px-2 py-0.5 rounded-full text-amber-900 bg-gradient-to-r from-amber-200 to-amber-300 border border-amber-400 shadow-xs">
-                  {t.officialBadge}
+                  आधिकारिक सेवा मंच
                 </span>
               </div>
               <p className="text-[11px] sm:text-xs md:text-sm text-stone-600 font-medium truncate">
-                {t.tagline}
+                सेवा ही संकल्प • सहयोग ही शक्ति
               </p>
             </div>
           </button>
@@ -256,72 +226,59 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 onClick={onOpenVolunteerModal}
                 className="hidden xl:inline-flex items-center gap-1 px-3 py-2 text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors border border-emerald-300 cursor-pointer"
-                title={t.navVolunteer}
+                title="स्वयंसेवक बनें"
               >
                 <Users className="w-3.5 h-3.5 text-emerald-700" />
-                <span>{t.navVolunteer}</span>
+                <span>स्वयंसेवक</span>
               </button>
             )}
 
-            {/* Language switch button */}
-            <button
-              onClick={onToggleLanguage}
-              className="px-2.5 py-1.5 text-xs font-bold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg transition-colors border border-stone-300 flex items-center gap-1 cursor-pointer"
-              title={t.switchLangBtn}
-            >
-              <Languages className="w-3.5 h-3.5 text-amber-600" />
-              <span>{t.switchLangBtn}</span>
-            </button>
-
+            {/* Receipt Search Button */}
             <button
               onClick={onOpenReceiptSearch}
               className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg transition-colors border border-stone-300 cursor-pointer"
-              title={t.searchReceiptBtn}
+              title="रसीद खोजें"
             >
               <Search className="w-3.5 h-3.5 text-stone-600" />
-              <span>{t.searchReceiptBtn}</span>
+              <span>रसीद खोजें</span>
             </button>
 
+            {/* Donate CTA Button */}
             <button
               onClick={() => handleNavClick('donate')}
               className="inline-flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-[#0f4d3a] via-[#125843] to-[#0f4d3a] hover:from-[#145d47] hover:to-[#0f4d3a] rounded-lg shadow-md hover:shadow-lg transition-all border border-amber-400/40 text-amber-200 animate-pulse-gold cursor-pointer"
             >
               <HeartHandshake className="w-4 h-4 text-amber-300" />
-              <span>{t.donateBtn}</span>
+              <span>दान करें</span>
             </button>
 
+            {/* Admin Login */}
             <button
               onClick={onOpenAdmin}
               className="p-2 text-stone-500 hover:text-stone-800 hover:bg-stone-100 rounded-lg transition-colors cursor-pointer"
-              title={t.adminLogin}
-              aria-label="Admin Login"
+              title="व्यवस्थापक प्रवेश"
+              aria-label="व्यवस्थापक प्रवेश"
             >
               <Lock className="w-4 h-4" />
             </button>
           </div>
 
-          {/* Mobile Menu & Language Button */}
+          {/* Mobile Right Controls: Google Translate & Menu Button */}
           <div className="flex items-center gap-1.5 sm:gap-2 xl:hidden shrink-0">
-            <button
-              onClick={onToggleLanguage}
-              className="px-2 py-1 text-xs font-bold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg border border-stone-300 shrink-0"
-              title={t.switchLangBtn}
-            >
-              {language === 'hi' ? 'EN' : 'हिं'}
-            </button>
+            <GoogleTranslateWidget variant="mobile" />
 
             <button
               onClick={() => handleNavClick('donate')}
               className="inline-flex sm:hidden items-center gap-1 px-2.5 py-1 text-xs font-bold text-white bg-[#0f4d3a] rounded-lg shadow-xs shrink-0"
             >
               <HeartHandshake className="w-3.5 h-3.5 text-amber-300" />
-              <span>{t.donateBtn}</span>
+              <span>दान</span>
             </button>
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-1.5 text-stone-700 hover:bg-stone-100 rounded-lg transition-colors shrink-0"
-              aria-label="Menu"
+              className="p-1.5 text-stone-700 hover:bg-stone-100 rounded-lg transition-colors shrink-0 cursor-pointer"
+              aria-label="मेनू खोलें"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -333,12 +290,14 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="xl:hidden bg-white border-b border-stone-200 px-4 pt-3 pb-6 shadow-xl animate-in slide-in-from-top duration-200">
+          
+          {/* Navigation Links Grid */}
           <div className="grid grid-cols-2 gap-2 mb-4">
             {navItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
-                className={`text-left px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+                className={`text-left px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors cursor-pointer ${
                   item.highlight
                     ? 'bg-amber-100 text-amber-900 font-bold border border-amber-300'
                     : activeSection === item.id
@@ -355,25 +314,11 @@ export const Header: React.FC<HeaderProps> = ({
             {/* PWA Mobile App Install Banner */}
             <div className="p-2.5 bg-gradient-to-r from-emerald-50 to-amber-50 rounded-xl border border-emerald-200/80 flex items-center justify-between gap-2">
               <div className="text-left">
-                <span className="font-bold text-xs text-[#0f4d3a] block">{t.downloadAppTitle}</span>
-                <span className="text-[10px] text-stone-500">{t.downloadAppSub}</span>
+                <span className="font-bold text-xs text-[#0f4d3a] block">प्रभु रामजी ट्रस्ट ऐप डाउनलोड करें</span>
+                <span className="text-[10px] text-stone-500">बिना किसी रुकावट के सेवा, दान व रसीद की सुविधा मोबाइल पर</span>
               </div>
               <PWAInstallButton />
             </div>
-
-            {/* 17 Languages Modal Button */}
-            {onOpenLanguageModal && (
-              <button
-                onClick={() => {
-                  onOpenLanguageModal();
-                  setMobileMenuOpen(false);
-                }}
-                className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-bold text-amber-950 bg-amber-100/70 hover:bg-amber-100 rounded-lg border border-amber-300"
-              >
-                <Globe className="w-4 h-4 text-amber-700" />
-                <span>{t.languageSelectBtn}</span>
-              </button>
-            )}
 
             {/* Volunteer Registration */}
             {onOpenVolunteerModal && (
@@ -382,10 +327,10 @@ export const Header: React.FC<HeaderProps> = ({
                   onOpenVolunteerModal();
                   setMobileMenuOpen(false);
                 }}
-                className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-semibold text-emerald-900 bg-emerald-50 hover:bg-emerald-100 rounded-lg border border-emerald-200"
+                className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-semibold text-emerald-900 bg-emerald-50 hover:bg-emerald-100 rounded-lg border border-emerald-200 cursor-pointer"
               >
                 <Users className="w-4 h-4 text-emerald-700" />
-                <span>{t.navVolunteer}</span>
+                <span>स्वयंसेवक पंजीकरण</span>
               </button>
             )}
 
@@ -396,10 +341,10 @@ export const Header: React.FC<HeaderProps> = ({
                   onOpenCertificateModal();
                   setMobileMenuOpen(false);
                 }}
-                className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-semibold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg border border-stone-300"
+                className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-semibold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg border border-stone-300 cursor-pointer"
               >
                 <Award className="w-4 h-4 text-amber-600" />
-                <span>{t.navCertificate}</span>
+                <span>सेवा सम्मान प्रमाण-पत्र</span>
               </button>
             )}
 
@@ -410,10 +355,10 @@ export const Header: React.FC<HeaderProps> = ({
                   onOpenComplaintModal();
                   setMobileMenuOpen(false);
                 }}
-                className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-semibold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg border border-stone-300"
+                className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-semibold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg border border-stone-300 cursor-pointer"
               >
                 <MessageSquare className="w-4 h-4 text-blue-600" />
-                <span>{t.navComplaint}</span>
+                <span>सुझाव एवं सहायता</span>
               </button>
             )}
 
@@ -424,13 +369,14 @@ export const Header: React.FC<HeaderProps> = ({
                   onOpenConstructionProgress();
                   setMobileMenuOpen(false);
                 }}
-                className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-semibold text-amber-900 bg-amber-50 hover:bg-amber-100 rounded-lg border border-amber-200"
+                className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-semibold text-amber-900 bg-amber-50 hover:bg-amber-100 rounded-lg border border-amber-200 cursor-pointer"
               >
                 <Building2 className="w-4 h-4 text-amber-700" />
-                <span>{t.navConstructionProgress}</span>
+                <span>आश्रम निर्माण प्रगति रिपोर्ट</span>
               </button>
             )}
 
+            {/* Search Receipt */}
             <button
               onClick={() => {
                 onOpenReceiptSearch();
@@ -439,13 +385,13 @@ export const Header: React.FC<HeaderProps> = ({
               className="w-full flex items-center justify-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-medium text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg border border-stone-300 cursor-pointer"
             >
               <Search className="w-4 h-4" />
-              <span>{t.searchReceiptBtn}</span>
+              <span>रसीद खोजें व डाउनलोड करें</span>
             </button>
 
             {/* Official Social Channels in Mobile Menu */}
             <div className="pt-2">
               <p className="text-[11px] font-semibold text-stone-500 mb-2 text-center">
-                {t.connectSocialTitle}
+                आधिकारिक सोशल मीडिया माध्यम
               </p>
               <div className="flex items-center justify-center gap-3">
                 <a

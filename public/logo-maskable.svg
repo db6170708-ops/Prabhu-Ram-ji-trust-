@@ -99,18 +99,4 @@
     letter-spacing="3"
     filter="drop-shadow(0px 3px 6px rgba(0,0,0,0.8))"
   >प्रभु रामजी ट्रस्ट</text>
-
-  <!-- Circular Bottom Arc Text "ग्राम गलगाँव (सनावद, खरगोन, म.प्र.)" -->
-  <text 
-    font-family="'Noto Sans Devanagari', 'Noto Serif Devanagari', 'Mangal', sans-serif" 
-    font-size="28" 
-    font-weight="600" 
-    fill="#e6be65" 
-    letter-spacing="2.5"
-    opacity="0.95"
-  >
-    <textPath href="#bottomTextArcM" startOffset="50%" text-anchor="middle">
-      ग्राम गलगाँव (सनावद, खरगोन, म.प्र.)
-    </textPath>
-  </text>
 </svg>

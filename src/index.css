@@ -44,6 +44,54 @@
   }
 }
 
+/* ==========================================================================
+   Google Translate UI Polish & Clean Banner Suppression
+   ========================================================================== */
+/* Hide the default Google Translate top banner frame and prevent page top displacement */
+body {
+  top: 0px !important;
+  position: static !important;
+}
+
+.goog-te-banner-frame,
+.goog-te-banner-frame.skiptranslate,
+iframe.goog-te-banner-frame,
+.goog-te-banner {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0px !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Hide Google Translate tooltip balloon on text hover */
+#goog-gt-tt,
+.goog-te-balloon-frame,
+.goog-tooltip,
+.goog-tooltip:hover {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+.goog-text-highlight {
+  background: none !important;
+  box-shadow: none !important;
+}
+
+/* Hide native Google Translate combo/gadget elements */
+.goog-te-gadget,
+.goog-te-gadget-simple,
+.VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
+.VIpgJd-ZVi9od-aZ2wEe-wOHMyf-ti6hGc {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Ensure no Google iframe takes space */
+iframe[name="goog-te-banner-frame"] {
+  display: none !important;
+}
+
 /* Sacred Animations & Glow Effects ("वेबसाइट एनीमेशन वाली") */
 @keyframes sacredGlow {
   0%, 100% {

@@ -1,22 +1,29 @@
 // Service Worker for Prabhu Ram Ji Trust PWA
-const CACHE_NAME = 'prt-pwa-v5-hd-icons';
+const CACHE_NAME = 'prt-pwa-v7-crisp-icons';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
-  '/logo.svg',
-  '/site.webmanifest',
   '/manifest.json',
+  '/site.webmanifest',
+  '/logo.png',
+  '/logo.svg',
+  '/logo-maskable.svg',
   '/pwa-1024x1024.png',
-  '/pwa-maskable-1024x1024.png',
   '/pwa-512x512.png',
   '/pwa-192x192.png',
+  '/pwa-maskable-1024x1024.png',
   '/pwa-maskable-512x512.png',
   '/pwa-maskable-192x192.png',
   '/apple-touch-icon.png',
-  '/logo.png',
+  '/splash-screen.png',
+  '/splash-1170x2532.png',
   '/favicon.ico',
+  '/favicon.png',
+  '/favicon-32x32.png',
   '/favicon-48x48.png',
-  '/favicon-96x96.png'
+  '/favicon-96x96.png',
+  '/favicon-192x192.png',
+  '/favicon-512x512.png'
 ];
 
 self.addEventListener('install', (event) => {
@@ -41,7 +48,51 @@ self.addEventListener('fetch', (event) => {
   const request = event.request;
   if (request.method !== 'GET') return;
 
-  // Stale-while-revalidate or Network-first strategy
+  // Use Network-First for HTML navigation requests so app updates load immediately
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(request, responseToCache);
+            });
+          }
+          return networkResponse;
+        })
+        .catch(() => caches.match(request).then((res) => res || caches.match('/index.html')))
+    );
+    return;
+  }
+
+  // Network-First for manifest and icons so updated sharp icons reflect immediately
+  const url = new URL(request.url);
+  if (
+    url.pathname.endsWith('.json') ||
+    url.pathname.endsWith('.webmanifest') ||
+    url.pathname.startsWith('/pwa-') ||
+    url.pathname.startsWith('/splash-') ||
+    url.pathname === '/apple-touch-icon.png' ||
+    url.pathname === '/logo.png'
+  ) {
+    event.respondWith(
+      fetch(request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(request, responseToCache);
+            });
+          }
+          return networkResponse;
+        })
+        .catch(() => caches.match(request))
+    );
+    return;
+  }
+
+  // Stale-while-revalidate for other static assets
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
       const fetchPromise = fetch(request).then((networkResponse) => {

@@ -43,17 +43,15 @@ interface DonationSystemProps {
 export const DonationSystem: React.FC<DonationSystemProps> = ({ 
   initialCause, 
   initialAmount,
-  onReceiptGenerated,
-  language = 'hi'
+  onReceiptGenerated
 }) => {
-  const isEn = language === 'en';
-  const t = TRANSLATIONS[language] || TRANSLATIONS['hi'];
+  const t = TRANSLATIONS['hi'];
 
   // Default to ₹501 to match the reference design in IMG_20261110_023724
   const [selectedAmount, setSelectedAmount] = useState<number>(initialAmount || 501);
   const [customAmount, setCustomAmount] = useState<string>('');
   const [selectedCause, setSelectedCause] = useState<string>(
-    initialCause || (isEn ? 'Ashram & Mandir Construction Support' : 'आश्रम एवं मंदिर निर्माण सहयोग')
+    initialCause || 'आश्रम एवं मंदिर निर्माण सहयोग'
   );
   
   // Donor form
@@ -125,11 +123,7 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
     try {
       navigator.clipboard.writeText(TRUST_INFO.upiId);
       setCopiedField('upi');
-      setUpiToast(
-        isEn
-          ? '✓ UPI ID (dineshbirla312@ybl) copied! If the app asks, paste this UPI ID or scan the QR.'
-          : '✓ UPI ID (dineshbirla312@ybl) कॉपी हो गई है! यदि ऐप में आवश्यकता हो तो यह UPI ID पेस्ट करें या QR स्कैन करें।'
-      );
+      setUpiToast('✓ UPI ID (dineshbirla312@ybl) कॉपी हो गई है! यदि ऐप में आवश्यकता हो तो यह UPI ID पेस्ट करें या QR स्कैन करें।');
       setTimeout(() => {
         setCopiedField(null);
         setUpiToast(null);
@@ -147,15 +141,15 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
     e.preventDefault();
     setFormError(null);
     if (!donorName.trim()) {
-      setFormError(isEn ? 'Please enter donor full name.' : 'कृपया दानदाता का नाम दर्ज करें।');
+      setFormError('कृपया दानदाता का नाम दर्ज करें।');
       return;
     }
     if (!donorMobile.trim() || donorMobile.length < 10) {
-      setFormError(isEn ? 'Please enter a valid 10-digit mobile number.' : 'कृपया 10 अंकों का वैध मोबाइल नंबर दर्ज करें।');
+      setFormError('कृपया 10 अंकों का वैध मोबाइल नंबर दर्ज करें।');
       return;
     }
     if (currentAmount <= 0) {
-      setFormError(isEn ? 'Please enter a valid donation amount.' : 'कृपया वैध दान राशि चुनें या दर्ज करें।');
+      setFormError('कृपया वैध दान राशि चुनें या दर्ज करें।');
       return;
     }
 
@@ -163,19 +157,11 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
     if (!paymentMode.includes('नकद') && !paymentMode.includes('Cash')) {
       const cleanRef = transactionRef.trim();
       if (!cleanRef || cleanRef.length < 6) {
-        setFormError(
-          isEn 
-            ? '⚠️ Please enter the 12-digit UPI UTR / Transaction number from PhonePe, Google Pay or Paytm after paying ₹' + currentAmount + '.'
-            : '⚠️ कृपया PhonePe, Google Pay या Paytm से ₹' + currentAmount + ' के भुगतान के बाद प्राप्त 12 अंकों का UTR / Transaction No दर्ज करें।'
-        );
+        setFormError('⚠️ कृपया PhonePe, Google Pay या Paytm से ₹' + currentAmount + ' के भुगतान के बाद प्राप्त 12 अंकों का UTR / Transaction No दर्ज करें।');
         return;
       }
       if (!hasPaidConfirmation) {
-        setFormError(
-          isEn
-            ? '⚠️ Please tick the confirmation checkbox to verify that you have transferred ₹' + currentAmount + ' to Prabhu Ramji Trust (dineshbirla312@ybl).'
-            : '⚠️ कृपया नीचे दिए गए चेकबॉक्स पर टिक करके पुष्टि करें कि आपने प्रभु रामजी ट्रस्ट (dineshbirla312@ybl) को ₹' + currentAmount + ' का भुगतान सफलता पूर्वक कर दिया है।'
-        );
+        setFormError('⚠️ कृपया नीचे दिए गए चेकबॉक्स पर टिक करके पुष्टि करें कि आपने प्रभु रामजी ट्रस्ट (dineshbirla312@ybl) को ₹' + currentAmount + ' का भुगतान सफलता पूर्वक कर दिया है।');
         return;
       }
     }
@@ -194,7 +180,7 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
         pan: donorPan.trim().toUpperCase() || undefined,
         amount: currentAmount,
         cause: selectedCause,
-        date: new Date().toLocaleDateString(isEn ? 'en-IN' : 'hi-IN', {
+        date: new Date().toLocaleDateString('hi-IN', {
           year: 'numeric',
           month: 'long',
           day: 'numeric'
@@ -355,9 +341,7 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
                 />
               </div>
               <p className="text-[11px] text-stone-400 italic">
-                {isEn
-                  ? "Select any preset or enter custom voluntary amount."
-                  : "इच्छानुसार कोई भी राशि चुनें या दर्ज करें।"}
+                इच्छानुसार कोई भी राशि चुनें या दर्ज करें।
               </p>
             </div>
 
@@ -396,14 +380,14 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
               
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold uppercase tracking-wider text-amber-300">
-                  {isEn ? "Payment Details & Receipt Verification" : "भुगतान माध्यम व रसीद सत्यापन"}
+                  भुगतान माध्यम व रसीद सत्यापन
                 </span>
                 <button
                   type="button"
                   onClick={() => setShowPaymentDetailsDrawer(!showPaymentDetailsDrawer)}
                   className="text-xs text-stone-400 hover:text-white flex items-center gap-1 cursor-pointer"
                 >
-                  <span>{showPaymentDetailsDrawer ? (isEn ? "Hide Options" : "विकल्प छिपाएं") : (isEn ? "Show Options" : "विकल्प देखें")}</span>
+                  <span>{showPaymentDetailsDrawer ? "विकल्प छिपाएं" : "विकल्प देखें"}</span>
                   {showPaymentDetailsDrawer ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                 </button>
               </div>
@@ -443,7 +427,7 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
                         onClick={() => handleDirectUpiPayment('universal')}
                         className="py-2.5 px-3 rounded-xl bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 font-bold text-xs border border-emerald-700/60 flex items-center justify-center gap-1.5 cursor-pointer"
                       >
-                        <span>Any UPI App</span>
+                        <span>अन्य UPI ऐप</span>
                       </button>
                     </div>
                   </div>
@@ -457,7 +441,7 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
                         <div className="flex items-center justify-between mb-2">
                           <span className="text-xs font-bold text-stone-200">{t.scanPhonePeQrTitle}</span>
                           <span className="text-[10px] bg-purple-950 text-purple-300 font-bold px-2 py-0.5 rounded-full border border-purple-800">
-                            Accepted Here
+                            यहाँ स्वीकार्य
                           </span>
                         </div>
                         <div className="relative mx-auto max-w-[190px] bg-stone-950 p-2 rounded-xl border border-stone-800 mb-2">
@@ -513,11 +497,11 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
                         
                         <div className="space-y-2.5 text-xs">
                           <div className="flex justify-between items-center py-1 border-b border-stone-800/80">
-                            <span className="text-stone-400">{isEn ? "Account Holder:" : "खाता धारक:"}</span>
+                            <span className="text-stone-400">खाता धारक:</span>
                             <span className="font-bold text-white text-right">{TRUST_INFO.accountHolder}</span>
                           </div>
                           <div className="flex justify-between items-center py-1 border-b border-stone-800/80">
-                            <span className="text-stone-400">{isEn ? "Account No:" : "खाता संख्या:"}</span>
+                            <span className="text-stone-400">खाता संख्या:</span>
                             <div className="flex items-center gap-1 font-mono font-bold text-amber-300">
                               <span>{TRUST_INFO.accountNumber}</span>
                               <button
@@ -530,7 +514,7 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
                             </div>
                           </div>
                           <div className="flex justify-between items-center py-1 border-b border-stone-800/80">
-                            <span className="text-stone-400">{isEn ? "IFSC Code:" : "IFSC कोड:"}</span>
+                            <span className="text-stone-400">IFSC कोड:</span>
                             <div className="flex items-center gap-1 font-mono font-bold text-amber-300">
                               <span>{TRUST_INFO.ifscCode}</span>
                               <button
@@ -543,16 +527,14 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
                             </div>
                           </div>
                           <div className="flex justify-between items-center py-1">
-                            <span className="text-stone-400">{isEn ? "Bank & Branch:" : "बैंक व शाखा:"}</span>
+                            <span className="text-stone-400">बैंक व शाखा:</span>
                             <span className="text-stone-200 text-right">{TRUST_INFO.bankName}, {TRUST_INFO.branchName}</span>
                           </div>
                         </div>
                       </div>
 
                       <div className="mt-3 p-2.5 bg-black/40 rounded-xl border border-stone-800 text-[11px] text-stone-400">
-                        {isEn
-                          ? "After transfer, fill the form below to receive your official stamped digital receipt."
-                          : "ट्रांसफर के बाद आधिकारिक रसीद पाने हेतु नीचे रसीद फॉर्म भरें।"}
+                        ट्रांसफर के बाद आधिकारिक रसीद पाने हेतु नीचे रसीद फॉर्म भरें।
                       </div>
                     </div>
 
@@ -588,7 +570,7 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
                             required
                             value={donorName}
                             onChange={(e) => setDonorName(e.target.value)}
-                            placeholder={isEn ? "e.g. Ramesh Kumar Sharma" : "उदा. रमेश कुमार शर्मा"}
+                            placeholder="उदा. रमेश कुमार शर्मा"
                             className="w-full px-3.5 py-2.5 bg-stone-900 border border-stone-700 rounded-xl text-xs sm:text-sm text-white placeholder:text-stone-500 focus:outline-none focus:border-amber-400"
                           />
                         </div>
@@ -657,7 +639,7 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
                         {isSubmitting ? (
                           <>
                             <Loader2 className="w-4 h-4 animate-spin text-stone-950" />
-                            <span>{isEn ? "Generating Receipt..." : "रसीद तैयार हो रही है..."}</span>
+                            <span>रसीद तैयार हो रही है...</span>
                           </>
                         ) : (
                           <>
@@ -737,38 +719,38 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
                 {TRUST_INFO.village}, {TRUST_INFO.tehsil}, {TRUST_INFO.district} (म.प्र.) - 451111
               </p>
               <span className="inline-block mt-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-900 font-bold text-xs border border-emerald-300">
-                {isEn ? "OFFICIAL DIGITAL DONATION RECEIPT" : "आधिकारिक डिजिटल दान पावती"}
+                आधिकारिक डिजिटल दान पावती
               </span>
             </div>
 
             {/* Slip Details */}
             <div className="space-y-2.5 text-xs sm:text-sm py-2">
               <div className="flex justify-between py-1 border-b border-stone-100">
-                <span className="text-stone-500">{isEn ? "Receipt No:" : "रसीद संख्या:"}</span>
+                <span className="text-stone-500">रसीद संख्या:</span>
                 <span className="font-mono font-bold text-stone-900">{generatedReceipt.receiptNo}</span>
               </div>
               <div className="flex justify-between py-1 border-b border-stone-100">
-                <span className="text-stone-500">{isEn ? "Date:" : "दिनांक:"}</span>
+                <span className="text-stone-500">दिनांक:</span>
                 <span className="font-medium text-stone-900">{generatedReceipt.date}</span>
               </div>
               <div className="flex justify-between py-1 border-b border-stone-100">
-                <span className="text-stone-500">{isEn ? "Donor Name:" : "दानदाता का नाम:"}</span>
+                <span className="text-stone-500">दानदाता का नाम:</span>
                 <span className="font-bold text-stone-900">{generatedReceipt.donorName}</span>
               </div>
               <div className="flex justify-between py-1 border-b border-stone-100">
-                <span className="text-stone-500">{isEn ? "Mobile Number:" : "मोबाइल नंबर:"}</span>
+                <span className="text-stone-500">मोबाइल नंबर:</span>
                 <span className="font-mono text-stone-900">{generatedReceipt.mobile}</span>
               </div>
               <div className="flex justify-between py-1 border-b border-stone-100">
-                <span className="text-stone-500">{isEn ? "Seva Cause:" : "सहयोग प्रकल्प:"}</span>
+                <span className="text-stone-500">सहयोग प्रकल्प:</span>
                 <span className="font-semibold text-emerald-900">{generatedReceipt.cause}</span>
               </div>
               <div className="flex justify-between py-1 border-b border-stone-100">
-                <span className="text-stone-500">{isEn ? "Payment Mode & Ref:" : "माध्यम व संदर्भ:"}</span>
+                <span className="text-stone-500">माध्यम व संदर्भ:</span>
                 <span className="font-mono text-stone-800 text-xs">{generatedReceipt.paymentMode} ({generatedReceipt.transactionRef})</span>
               </div>
               <div className="flex justify-between items-center py-2.5 bg-emerald-50 px-3 rounded-xl border border-emerald-200 mt-2">
-                <span className="font-bold text-emerald-950 text-sm">{isEn ? "Amount Received:" : "प्राप्त सहयोग राशि:"}</span>
+                <span className="font-bold text-emerald-950 text-sm">प्राप्त सहयोग राशि:</span>
                 <span className="font-mono font-extrabold text-emerald-900 text-xl">
                   ₹{generatedReceipt.amount.toLocaleString('en-IN')} /-
                 </span>
@@ -789,13 +771,13 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
                 className="flex-1 py-2.5 px-4 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <Printer className="w-4 h-4" />
-                <span>{isEn ? "Print Receipt" : "रसीद प्रिंट करें"}</span>
+                <span>रसीद प्रिंट करें</span>
               </button>
               <button
                 onClick={() => setGeneratedReceipt(null)}
                 className="flex-1 py-2.5 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer"
               >
-                <span>{isEn ? "Done" : "पूर्ण"}</span>
+                <span>पूर्ण</span>
               </button>
             </div>
           </div>

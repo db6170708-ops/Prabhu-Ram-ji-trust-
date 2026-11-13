@@ -357,6 +357,9 @@ export const StorageService = {
       return null;
     }
   },
+  getCertificateById: (certNo: string): SevaCertificate | null => {
+    return StorageService.findCertificate(certNo);
+  },
 
   // 4. Complaints & Feedback
   getComplaints: (): ComplaintFeedback[] => {

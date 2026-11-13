@@ -107,6 +107,8 @@ export interface SevaCertificate {
   status?: 'valid' | 'revoked';
 }
 
+export type VolunteerCertificate = SevaCertificate;
+
 export interface ComplaintFeedback {
   id?: string;
   refNo?: string;

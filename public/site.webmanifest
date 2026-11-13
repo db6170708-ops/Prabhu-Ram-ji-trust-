@@ -8,8 +8,10 @@
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui"],
   "orientation": "portrait-primary",
-  "theme_color": "#08241b",
-  "background_color": "#08241b",
+  "theme_color": "#041610",
+  "background_color": "#041610",
+  "lang": "hi",
+  "dir": "ltr",
   "categories": ["social", "community", "charity"],
   "icons": [
     {
@@ -47,12 +49,6 @@
       "sizes": "1024x1024",
       "type": "image/png",
       "purpose": "maskable"
-    },
-    {
-      "src": "/apple-touch-icon.png",
-      "sizes": "180x180",
-      "type": "image/png",
-      "purpose": "any"
     }
   ]
 }

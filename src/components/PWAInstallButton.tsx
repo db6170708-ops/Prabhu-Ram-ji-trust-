@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { usePWAInstall } from '../utils/usePWAInstall';
-import { Download, Smartphone, X, CheckCircle2, Sparkles } from 'lucide-react';
-import { TRUST_INFO } from '../data/defaultData';
+import { Smartphone } from 'lucide-react';
 
 export const PWAInstallButton: React.FC<{ 
   variant?: 'header' | 'hero' | 'floating'; 
@@ -10,7 +9,7 @@ export const PWAInstallButton: React.FC<{
   const { isInstallable, isInstalled, isIOS, install } = usePWAInstall();
   const [showGuide, setShowGuide] = useState(false);
 
-  // If already installed, hide
+  // If already running in standalone / installed PWA mode, hide
   if (isInstalled) {
     return null;
   }
@@ -47,12 +46,16 @@ export const PWAInstallButton: React.FC<{
         </button>
       )}
 
-      {/* Installation Guide Modal for Chrome & iOS */}
+      {/* Installation Guide Modal for Android Chrome & iOS Safari */}
       {showGuide && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs">
           <div className="bg-white rounded-3xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl border-2 border-amber-400 animate-in zoom-in-95">
-            <div className="w-16 h-16 mx-auto rounded-full bg-[#08241b] p-1 border-2 border-amber-400 shadow-md">
-              <img src={TRUST_INFO.logoUrl} alt="Logo" className="w-full h-full object-contain" />
+            <div className="w-20 h-20 mx-auto rounded-2xl bg-[#041610] p-1 border-2 border-amber-400 shadow-lg overflow-hidden">
+              <img
+                src="/pwa-192x192.png"
+                alt="प्रभु रामजी ट्रस्ट लोगो"
+                className="w-full h-full object-contain rounded-xl"
+              />
             </div>
 
             <div>
@@ -64,20 +67,37 @@ export const PWAInstallButton: React.FC<{
               </p>
             </div>
 
-            <div className="text-left bg-stone-50 p-4 rounded-2xl border border-stone-200 space-y-2.5 text-xs text-stone-700">
-              <div className="flex items-start gap-2">
-                <span className="w-5 h-5 rounded-full bg-amber-400 text-[#08241b] flex items-center justify-center font-bold text-[11px] shrink-0">1</span>
-                <span>Chrome ब्राउज़र में ऊपर दाईं ओर <strong>तीन बिंदुओं (⋮)</strong> पर टैप करें।</span>
+            {isIOS ? (
+              <div className="text-left bg-stone-50 p-4 rounded-2xl border border-stone-200 space-y-2.5 text-xs text-stone-700">
+                <div className="flex items-start gap-2">
+                  <span className="w-5 h-5 rounded-full bg-amber-400 text-[#08241b] flex items-center justify-center font-bold text-[11px] shrink-0">1</span>
+                  <span>Safari ब्राउज़र में नीचे (या ऊपर) दिए गए <strong>Share (साझा करें)</strong> आइकन पर टैप करें।</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="w-5 h-5 rounded-full bg-amber-400 text-[#08241b] flex items-center justify-center font-bold text-[11px] shrink-0">2</span>
+                  <span>नीचे स्क्रॉल करके <strong>"Add to Home Screen"</strong> विकल्प चुनें।</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="w-5 h-5 rounded-full bg-amber-400 text-[#08241b] flex items-center justify-center font-bold text-[11px] shrink-0">3</span>
+                  <span>दाईं ओर <strong>"Add"</strong> दबाते ही प्रभु रामजी ट्रस्ट का HD ऐप आपके iPhone / iPad में जुड़ जाएगा!</span>
+                </div>
               </div>
-              <div className="flex items-start gap-2">
-                <span className="w-5 h-5 rounded-full bg-amber-400 text-[#08241b] flex items-center justify-center font-bold text-[11px] shrink-0">2</span>
-                <span>सूची में से <strong>"Install app"</strong> या <strong>"Add to Home screen"</strong> चुनें।</span>
+            ) : (
+              <div className="text-left bg-stone-50 p-4 rounded-2xl border border-stone-200 space-y-2.5 text-xs text-stone-700">
+                <div className="flex items-start gap-2">
+                  <span className="w-5 h-5 rounded-full bg-amber-400 text-[#08241b] flex items-center justify-center font-bold text-[11px] shrink-0">1</span>
+                  <span>Chrome ब्राउज़र में ऊपर दाईं ओर <strong>तीन बिंदुओं (⋮)</strong> पर टैप करें।</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="w-5 h-5 rounded-full bg-amber-400 text-[#08241b] flex items-center justify-center font-bold text-[11px] shrink-0">2</span>
+                  <span>सूची में से <strong>"Install app"</strong> या <strong>"Add to Home screen"</strong> चुनें।</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="w-5 h-5 rounded-full bg-amber-400 text-[#08241b] flex items-center justify-center font-bold text-[11px] shrink-0">3</span>
+                  <span><strong>"Install"</strong> दबाते ही प्रभु रामजी ट्रस्ट का HD ऐप आपके फोन में जुड़ जाएगा!</span>
+                </div>
               </div>
-              <div className="flex items-start gap-2">
-                <span className="w-5 h-5 rounded-full bg-amber-400 text-[#08241b] flex items-center justify-center font-bold text-[11px] shrink-0">3</span>
-                <span><strong>"Install"</strong> दबाते ही प्रभु रामजी ट्रस्ट का HD ऐप आपके फोन में जुड़ जाएगा!</span>
-              </div>
-            </div>
+            )}
 
             <button
               onClick={() => setShowGuide(false)}

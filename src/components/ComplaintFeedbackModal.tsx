@@ -85,12 +85,10 @@ export const ComplaintFeedbackModal: React.FC<ComplaintFeedbackModalProps> = ({
             </div>
             <div>
               <h3 className="text-lg font-bold">
-                {language === 'hi' ? 'सुझाव, शिकायत व सहायता केंद्र' : 'Feedback & Grievance Center'}
+                सुझाव, शिकायत व सहायता केंद्र
               </h3>
               <p className="text-xs text-amber-200/90">
-                {language === 'hi'
-                  ? 'पारदर्शिता एवं निरंतर सेवा सुधार हेतु अपनी बात सीधे ट्रस्ट तक पहुँचाएँ'
-                  : 'Submit feedback, inquiries or grievances directly to trust trustees'}
+                पारदर्शिता एवं निरंतर सेवा सुधार हेतु अपनी बात सीधे ट्रस्ट तक पहुँचाएँ
               </p>
             </div>
           </div>
@@ -113,7 +111,7 @@ export const ComplaintFeedbackModal: React.FC<ComplaintFeedbackModalProps> = ({
                 : 'border-transparent text-stone-500 hover:text-stone-800'
             }`}
           >
-            {language === 'hi' ? '📝 नया संदेश / शिकायत दर्ज करें' : '📝 Submit Ticket'}
+            📝 नया संदेश / शिकायत दर्ज करें
           </button>
           <button
             onClick={() => setActiveTab('track')}
@@ -123,7 +121,7 @@ export const ComplaintFeedbackModal: React.FC<ComplaintFeedbackModalProps> = ({
                 : 'border-transparent text-stone-500 hover:text-stone-800'
             }`}
           >
-            {language === 'hi' ? '🔍 स्थिति ट्रैक करें' : '🔍 Track Status'}
+            🔍 स्थिति ट्रैक करें
           </button>
         </div>
 
@@ -137,7 +135,7 @@ export const ComplaintFeedbackModal: React.FC<ComplaintFeedbackModalProps> = ({
                 </div>
                 <div>
                   <h4 className="text-xl font-bold text-stone-900">
-                    {language === 'hi' ? 'संदेश सफलतापूर्वक दर्ज हुआ!' : 'Ticket Submitted Successfully!'}
+                    संदेश सफलतापूर्वक दर्ज हुआ!
                   </h4>
                   <p className="text-xs sm:text-sm text-stone-600 mt-1">
                     आपका संदर्भ क्रमांक नीचे दिया गया है। ट्रस्ट प्रबंधन द्वारा इसका शीघ्र संज्ञान लिया जाएगा।

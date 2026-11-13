@@ -7,7 +7,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="प्रभु रामजी ट्रस्ट" />
-    <meta name="theme-color" content="#08241b" />
+    <meta name="theme-color" content="#041610" />
+    <meta name="msapplication-TileColor" content="#041610" />
     <meta name="google-site-verification" content="-ZHZ7GPkgnvdbAL_kJ0Q6mxqlKWrIqdXw_efhirU0zY" />
     <meta name="google-site-verification" content="rYcgJ1MlRPDQdGkNSMa9gqeC-yGtEwfi3P33KJrlgto" />
     <meta name="google-site-verification" content="RoleYXg4Fp5CYObslgfqeJnbzinOCjUwTy0errUynIA" />
@@ -27,19 +28,18 @@
       gtag('js', new Date());
     </script>
 
-    <!-- Primary Favicons for Google Search Snippets, Mobile Browsers & PWAs -->
-    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <!-- Primary Crisp PNG & ICO Icons for Mobile Launchers, Splash Screens & Browsers -->
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="/pwa-192x192.png" />
     <link rel="icon" type="image/png" sizes="512x512" href="/pwa-512x512.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="apple-touch-icon-precomposed" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="apple-touch-startup-image" href="/pwa-512x512.png" />
+    <link rel="apple-touch-startup-image" href="/splash-1170x2532.png" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" />
+    <link rel="apple-touch-startup-image" href="/splash-screen.png" />
     <link rel="manifest" href="/manifest.json" />
-    <link rel="alternate" type="application/manifest+json" href="/site.webmanifest" />
     <link rel="canonical" href="https://prabhuramjitrustram.ai.studio/" />
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
     
@@ -111,6 +111,21 @@
     </script>
   </head>
   <body class="bg-[#FAF7F2] text-stone-800 antialiased selection:bg-amber-100 selection:text-amber-950">
+    <!-- Hidden Google Translate Mount Container -->
+    <div id="google_translate_element" style="display:none;position:absolute;top:-9999px;left:-9999px;visibility:hidden;height:0;width:0;"></div>
+    <script type="text/javascript">
+      window.googleTranslateElementInit = function() {
+        if (window.google && window.google.translate) {
+          new window.google.translate.TranslateElement({
+            pageLanguage: 'hi',
+            includedLanguages: 'hi,en,gu,mr,pa,bn,ta,te,kn,ml,or,as,ur,sa,ne,sd,gom',
+            autoDisplay: false
+          }, 'google_translate_element');
+        }
+      };
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <script>

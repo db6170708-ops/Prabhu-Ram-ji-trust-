@@ -9,11 +9,8 @@ import {
   ExternalLink, 
   Youtube, 
   Instagram, 
-  Facebook,
-  Calendar,
-  Sparkles
+  Facebook
 } from 'lucide-react';
-
 import { Language, TRANSLATIONS } from '../utils/translations';
 
 interface GallerySectionProps {
@@ -22,9 +19,8 @@ interface GallerySectionProps {
   videos: GalleryVideo[];
 }
 
-export const GallerySection: React.FC<GallerySectionProps> = ({ language = 'hi', photos, videos }) => {
-  const isEn = language === 'en';
-  const t = TRANSLATIONS[language] || TRANSLATIONS['hi'];
+export const GallerySection: React.FC<GallerySectionProps> = ({ photos, videos }) => {
+  const t = TRANSLATIONS['hi'];
   const [activeTab, setActiveTab] = useState<'photos' | 'videos'>('photos');
   const [selectedCategory, setSelectedCategory] = useState<SevaCategory>('all');
   
@@ -32,23 +28,14 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ language = 'hi',
   const [previewPhoto, setPreviewPhoto] = useState<GalleryPhoto | null>(null);
   const [previewVideo, setPreviewVideo] = useState<GalleryVideo | null>(null);
 
-  const categories: { id: SevaCategory; label: string }[] = isEn
-    ? [
-        { id: 'all', label: 'All Activities' },
-        { id: 'ashram', label: 'Ashram Construction' },
-        { id: 'chaiseva', label: 'Daily Tea Seva' },
-        { id: 'annadan', label: 'Community Bhandara' },
-        { id: 'gauseva', label: 'Gaushala & Cows' },
-        { id: 'narmada', label: 'Narmada Pilgrims' }
-      ]
-    : [
-        { id: 'all', label: 'समस्त सेवा' },
-        { id: 'ashram', label: 'आश्रम व मंदिर निर्माण' },
-        { id: 'chaiseva', label: 'नित्य चाय सेवा' },
-        { id: 'annadan', label: 'अन्नदान व भंडारा' },
-        { id: 'gauseva', label: 'गौसेवा व गौशाला' },
-        { id: 'narmada', label: 'नर्मदा परिक्रमा सेवा' }
-      ];
+  const categories: { id: SevaCategory; label: string }[] = [
+    { id: 'all', label: 'समस्त सेवा' },
+    { id: 'ashram', label: 'आश्रम व मंदिर निर्माण' },
+    { id: 'chaiseva', label: 'नित्य चाय सेवा' },
+    { id: 'annadan', label: 'अन्नदान व भंडारा' },
+    { id: 'gauseva', label: 'गौसेवा व गौशाला' },
+    { id: 'narmada', label: 'नर्मदा परिक्रमा सेवा' }
+  ];
 
   const filteredPhotos = photos.filter(p => {
     if (selectedCategory === 'all') return true;
@@ -74,9 +61,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ language = 'hi',
           </h2>
           <div className="w-20 h-1 bg-amber-500 mx-auto mt-4 rounded-full"></div>
           <p className="text-stone-600 mt-4 text-base sm:text-lg">
-            {isEn 
-              ? "Sacred moments of cow protection, pilgrim welfare, and Saturday community feasts at Gram Galgaon."
-              : "ग्राम गलगाँव में संचालित गौसेवा, नर्मदा परिक्रमा पथिक सेवा एवं शनिवार भंडारे के पावन क्षण।"}
+            ग्राम गलगाँव में संचालित गौसेवा, नर्मदा परिक्रमा पथिक सेवा एवं शनिवार भंडारे के पावन क्षण।
           </p>
         </div>
 
@@ -110,16 +95,16 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ language = 'hi',
             </button>
           </div>
 
-          {/* Category Filter Buttons */}
-          <div className="flex flex-wrap items-center gap-1.5">
+          {/* Category Filter Chips */}
+          <div className="flex items-center gap-1.5 overflow-x-auto max-w-full pb-1 sm:pb-0">
             {categories.map((c) => (
               <button
                 key={c.id}
                 onClick={() => setSelectedCategory(c.id)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                   selectedCategory === c.id
-                    ? 'bg-amber-500 text-stone-950 font-bold shadow-xs'
-                    : 'bg-white text-stone-600 hover:bg-stone-100 border border-stone-200'
+                    ? 'bg-amber-500 text-stone-900 font-bold shadow-xs'
+                    : 'bg-white hover:bg-stone-100 text-stone-600 border border-stone-200'
                 }`}
               >
                 {c.label}
@@ -131,50 +116,42 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ language = 'hi',
 
         {/* Photos Grid */}
         {activeTab === 'photos' && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredPhotos.map((photo) => (
-              <div
+              <div 
                 key={photo.id}
                 onClick={() => setPreviewPhoto(photo)}
-                className="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-lg transition-all border border-stone-200 group cursor-pointer flex flex-col"
+                className="group bg-white rounded-3xl overflow-hidden shadow-xs hover:shadow-xl transition-all border border-stone-200 hover:border-amber-400 cursor-pointer flex flex-col justify-between"
               >
-                <div className="relative aspect-4/3 overflow-hidden bg-stone-100">
+                <div className="aspect-4/3 overflow-hidden bg-stone-100 relative">
                   <img
                     src={photo.imageUrl}
                     alt={photo.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    referrerPolicy="no-referrer"
                     loading="lazy"
                     onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src = '/shri_ram_kodanda.jpg';
+                      (e.target as HTMLElement).style.display = 'none';
                     }}
                   />
-                  <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <span className="text-white text-xs font-bold px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-xs flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                      {isEn ? "View Larger" : "बड़ा देखें"}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                    <span className="text-white text-xs font-bold bg-[#0f4d3a]/80 px-3 py-1 rounded-full backdrop-blur-xs">
+                      बड़ा देखें
                     </span>
                   </div>
                 </div>
 
-                <div className="p-4 flex-1 flex flex-col justify-between">
+                <div className="p-5 flex-1 flex flex-col justify-between">
                   <div>
-                    <h3 className="font-heading font-bold text-sm text-stone-900 line-clamp-1 group-hover:text-[#0f4d3a] transition-colors">
+                    <h3 className="font-heading font-bold text-base text-stone-900 group-hover:text-[#0f4d3a] transition-colors line-clamp-1">
                       {photo.title}
                     </h3>
-                    <p className="text-xs text-stone-500 mt-1 line-clamp-2">
+                    <p className="text-xs text-stone-600 mt-1 line-clamp-2 leading-relaxed">
                       {photo.description}
                     </p>
                   </div>
-                  <div className="mt-3 pt-2 border-t border-stone-100 flex items-center justify-between text-[11px] text-stone-400">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-3 h-3" />
-                      {photo.date}
-                    </span>
-                    <span className="text-emerald-700 font-medium">
-                      {isEn ? "Galgaon Seva" : "गलगाँव सेवा"}
-                    </span>
+                  <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-[11px] text-stone-400">
+                    <span>{photo.date}</span>
+                    <span className="text-emerald-700 font-semibold">गलगाँव सेवा</span>
                   </div>
                 </div>
               </div>
@@ -186,18 +163,20 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ language = 'hi',
         {activeTab === 'videos' && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredVideos.map((video) => (
-              <div
+              <div 
                 key={video.id}
                 onClick={() => setPreviewVideo(video)}
-                className="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-lg transition-all border border-stone-200 group cursor-pointer flex flex-col"
+                className="group bg-white rounded-3xl overflow-hidden shadow-xs hover:shadow-xl transition-all border border-stone-200 hover:border-amber-400 cursor-pointer flex flex-col justify-between"
               >
-                <div className="relative aspect-video bg-stone-900 flex items-center justify-center">
+                <div className="aspect-video overflow-hidden bg-stone-900 relative">
                   <img
                     src={`https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`}
                     alt={video.title}
-                    className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
+                    loading="lazy"
                     onError={(e) => {
-                      (e.target as HTMLElement).style.display = 'none';
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/shri_ram_kodanda.jpg';
                     }}
                   />
                   <div className="absolute inset-0 flex items-center justify-center">
@@ -233,10 +212,10 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ language = 'hi',
         <div className="mt-14 bg-white rounded-3xl p-6 sm:p-8 border border-stone-200 shadow-xs flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-1 text-center md:text-left">
             <h3 className="font-heading text-lg font-bold text-[#0f4d3a]">
-              {isEn ? "Watch Live Video Updates on Official Channels" : "हमारे सोशल मीडिया चैनलों पर लाइव सेवा दर्शन करें"}
+              हमारे सोशल मीडिया चैनलों पर लाइव सेवा दर्शन करें
             </h3>
             <p className="text-xs sm:text-sm text-stone-500">
-              {isEn ? "Watch regular updates of Saturday Bhandara and cow welfare on YouTube, Facebook, and Instagram." : "यूट्यूब, फेसबुक एवं इंस्टाग्राम पर गौसेवा एवं शनिवार भंडारे के नित्य वीडियो देखें।"}
+              यूट्यूब, फेसबुक एवं इंस्टाग्राम पर गौसेवा एवं शनिवार भंडारे के नित्य वीडियो देखें।
             </p>
           </div>
 
@@ -341,14 +320,14 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ language = 'hi',
                 {previewVideo.description}
               </p>
               <div className="mt-4 pt-3 border-t border-stone-800 flex items-center justify-between text-xs text-stone-400">
-                <span>{isEn ? "Date:" : "दिनांक:"} {previewVideo.date}</span>
+                <span>दिनांक: {previewVideo.date}</span>
                 <a
                   href={TRUST_INFO.youtube}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-red-400 hover:text-red-300 font-medium flex items-center gap-1 cursor-pointer"
                 >
-                  {isEn ? "Watch More on YouTube" : "यूट्यूब पर अधिक वीडियो देखें"} <ExternalLink className="w-3.5 h-3.5" />
+                  यूट्यूब पर अधिक वीडियो देखें <ExternalLink className="w-3.5 h-3.5" />
                 </a>
               </div>
             </div>

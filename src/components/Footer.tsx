@@ -1,21 +1,18 @@
 import React from 'react';
 import { TRUST_INFO } from '../data/defaultData';
+import { Language, TRANSLATIONS } from '../utils/translations';
 import { 
-  HeartHandshake, 
-  MapPin, 
   Phone, 
   Mail, 
-  Youtube, 
-  Facebook, 
-  Instagram, 
-  MessageCircle, 
+  MapPin, 
+  Heart, 
+  Building, 
+  UtensilsCrossed, 
   Coffee,
-  Building,
-  UtensilsCrossed,
-  Globe
+  Globe,
+  Youtube,
+  MessageCircle,
 } from 'lucide-react';
-
-import { Language, TRANSLATIONS } from '../utils/translations';
 
 interface FooterProps {
   language?: Language;
@@ -32,7 +29,6 @@ interface FooterProps {
 }
 
 export const Footer: React.FC<FooterProps> = ({
-  language = 'hi',
   onNavigate,
   onOpenPrivacy,
   onOpenTerms,
@@ -44,8 +40,7 @@ export const Footer: React.FC<FooterProps> = ({
   onOpenConstructionProgress,
   onOpenLanguageModal,
 }) => {
-  const isEn = language === 'en';
-  const t = TRANSLATIONS[language] || TRANSLATIONS['hi'];
+  const t = TRANSLATIONS['hi'];
 
   return (
     <footer className="bg-[#08241b] text-stone-300 pt-16 pb-8 border-t-4 border-amber-500">
@@ -75,9 +70,7 @@ export const Footer: React.FC<FooterProps> = ({
             </div>
 
             <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
-              {isEn 
-                ? "Dedicated non-profit trust in the sacred Narmada valley for destitute cow protection, daily free tea service from 6 AM, Saturday grand community feast (Bhandara), and Prabhu Ramji Ashram construction." 
-                : "सेवा, संस्कार और समाज कल्याण को समर्पित न्यास। प्रतिदिन प्रातः 6 बजे से नित्य निःशुल्क चाय सेवा, हर शनिवार शाम भव्य महाभंडारा, निराश्रित गौसेवा एवं प्रभु रामजी आश्रम व मंदिर निर्माण।"}
+              सेवा, संस्कार और समाज कल्याण को समर्पित न्यास। प्रतिदिन प्रातः 6 बजे से नित्य निःशुल्क चाय सेवा, हर शनिवार शाम भव्य महाभंडारा, निराश्रित गौसेवा एवं प्रभु रामजी आश्रम व मंदिर निर्माण।
             </p>
 
             <div className="text-xs font-heading text-amber-300 italic pt-1">
@@ -113,7 +106,7 @@ export const Footer: React.FC<FooterProps> = ({
                 className="w-9 h-9 rounded-full bg-blue-600/20 hover:bg-blue-600 text-blue-400 hover:text-white border border-blue-500/30 flex items-center justify-center transition-colors"
                 title="Facebook Page"
               >
-                <Facebook className="w-4 h-4" />
+                <span className="font-bold text-sm">f</span>
               </a>
 
               <a
@@ -123,25 +116,20 @@ export const Footer: React.FC<FooterProps> = ({
                 className="w-9 h-9 rounded-full bg-pink-600/20 hover:bg-pink-600 text-pink-400 hover:text-white border border-pink-500/30 flex items-center justify-center transition-colors"
                 title="Instagram Page"
               >
-                <Instagram className="w-4 h-4" />
+                <span className="font-bold text-xs">IG</span>
               </a>
             </div>
           </div>
 
-          {/* Col 2: Quick Navigation */}
+          {/* Col 2: Fast Navigation Links */}
           <div className="lg:col-span-2 space-y-3">
             <h4 className="text-sm font-bold uppercase tracking-wider text-amber-400">
               {t.footerQuickLinks}
             </h4>
             <ul className="space-y-2 text-xs sm:text-sm">
               <li>
-                <button onClick={() => onNavigate('home')} className="hover:text-amber-200 transition-colors cursor-pointer">
+                <button onClick={() => onNavigate('hero')} className="hover:text-amber-200 transition-colors cursor-pointer">
                   {t.navHome}
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('ashram-nirman')} className="text-amber-300 font-bold hover:underline cursor-pointer">
-                  ★ {t.navAshram}
                 </button>
               </li>
               <li>
@@ -152,6 +140,11 @@ export const Footer: React.FC<FooterProps> = ({
               <li>
                 <button onClick={() => onNavigate('objectives')} className="hover:text-amber-200 transition-colors cursor-pointer">
                   {t.navObjectives}
+                </button>
+              </li>
+              <li>
+                <button onClick={() => onNavigate('ashram-nirman')} className="hover:text-amber-200 transition-colors cursor-pointer text-amber-300 font-bold">
+                  {t.navAshramNirman}
                 </button>
               </li>
               <li>
@@ -169,6 +162,11 @@ export const Footer: React.FC<FooterProps> = ({
                   {t.navTransparency}
                 </button>
               </li>
+              <li>
+                <button onClick={() => onNavigate('contact')} className="hover:text-amber-200 transition-colors cursor-pointer">
+                  {t.navContact}
+                </button>
+              </li>
             </ul>
           </div>
 
@@ -181,29 +179,29 @@ export const Footer: React.FC<FooterProps> = ({
               <li>
                 <button onClick={() => onNavigate('ashram-nirman')} className="hover:text-amber-200 transition-colors flex items-center gap-1.5 cursor-pointer">
                   <Building className="w-3.5 h-3.5 text-amber-400" />
-                  <span>{isEn ? "Ashram & Mandir Construction" : "आश्रम व मंदिर निर्माण"}</span>
+                  <span>आश्रम व मंदिर निर्माण</span>
                 </button>
               </li>
               <li>
                 <button onClick={() => onNavigate('services')} className="hover:text-amber-200 transition-colors flex items-center gap-1.5 cursor-pointer">
                   <UtensilsCrossed className="w-3.5 h-3.5 text-amber-400" />
-                  <span>{isEn ? "Saturday Community Bhandara" : "हर शनिवार शाम भंडारा"}</span>
+                  <span>हर शनिवार शाम भंडारा</span>
                 </button>
               </li>
               <li>
                 <button onClick={() => onNavigate('services')} className="hover:text-amber-200 transition-colors flex items-center gap-1.5 cursor-pointer">
                   <Coffee className="w-3.5 h-3.5 text-amber-400" />
-                  <span>{isEn ? "Daily Free Tea & Water Service" : "प्रतिदिन निःशुल्क चाय सेवा"}</span>
+                  <span>प्रतिदिन निःशुल्क चाय सेवा</span>
                 </button>
               </li>
               <li>
                 <button onClick={() => onNavigate('donate')} className="text-amber-300 font-bold hover:underline cursor-pointer">
-                  • {isEn ? "PhonePe QR / Bank Details" : "PhonePe QR / बैंक विवरण"}
+                  • PhonePe QR / बैंक विवरण
                 </button>
               </li>
               <li>
                 <button onClick={onOpenReceiptSearch} className="text-emerald-300 font-semibold hover:underline cursor-pointer">
-                  • {isEn ? "Search Digital Donation Receipt" : "डिजिटल दान रसीद खोजें"}
+                  • डिजिटल दान रसीद खोजें
                 </button>
               </li>
               {onOpenVolunteerModal && (
@@ -246,7 +244,7 @@ export const Footer: React.FC<FooterProps> = ({
 
             <div className="pt-2">
               <span className="text-[11px] text-stone-400 block">
-                {isEn ? "Authorized UPI ID:" : "अधिकृत UPI ID:"} <strong className="font-mono text-amber-200">{TRUST_INFO.upiId}</strong>
+                अधिकृत UPI ID: <strong className="font-mono text-amber-200">{TRUST_INFO.upiId}</strong>
               </span>
             </div>
           </div>
@@ -306,11 +304,11 @@ export const Footer: React.FC<FooterProps> = ({
 
           <div className="flex flex-wrap items-center gap-4 text-xs">
             <button onClick={onOpenPrivacy} className="hover:text-amber-200 transition-colors cursor-pointer">
-              {isEn ? "Privacy Policy" : "गोपनीयता नीति"}
+              गोपनीयता नीति
             </button>
             <span>•</span>
             <button onClick={onOpenTerms} className="hover:text-amber-200 transition-colors cursor-pointer">
-              {isEn ? "Terms of Service" : "नियम व शर्तें"}
+              नियम व शर्तें
             </button>
             <span>•</span>
             <button onClick={onOpenReceiptSearch} className="hover:text-amber-200 transition-colors cursor-pointer">

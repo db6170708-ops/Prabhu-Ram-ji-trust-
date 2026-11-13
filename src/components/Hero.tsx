@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TRUST_INFO, ASHRAM_NIRMAN_INFO } from '../data/defaultData';
-import { TRANSLATIONS, Language } from '../utils/translations';
+import { HINDI_TEXT } from '../utils/translations';
 import { 
   HeartHandshake, 
   ChevronRight, 
@@ -10,16 +10,15 @@ import {
   Coffee, 
   UtensilsCrossed, 
   Heart,
-  MessageCircle,
+  MessageCircle, 
   FileText,
-  Folder,
-  FolderOpen,
-  ChevronDown,
-  ChevronUp,
-  PackageCheck
+  Folder, 
+  FolderOpen, 
+  ChevronDown, 
+  ChevronUp
 } from 'lucide-react';
 
-export const ASHRAM_ACTIVE_WORKS_HI = [
+export const ASHRAM_ACTIVE_WORKS = [
   {
     id: 1,
     title: 'प्रभु रामजी आश्रम एवं परिक्रमा विश्राम भवन निर्माण',
@@ -78,67 +77,7 @@ export const ASHRAM_ACTIVE_WORKS_HI = [
   }
 ];
 
-export const ASHRAM_ACTIVE_WORKS_EN = [
-  {
-    id: 1,
-    title: 'Prabhu Ramji Ashram & Pilgrim Rest Complex Construction',
-    desc: 'Deep foundation, pillars, and solid hall construction progressing actively along Maa Narmada Parikrama route.',
-    badge: 'Active in Progress',
-    icon: '🏛️',
-    actionType: 'ashram'
-  },
-  {
-    id: 2,
-    title: 'Daily Free Tea & Pure Drinking Water Seva',
-    desc: 'Serving fresh hot tea, herbal brew, and pure water daily from 6 AM for sadhus and walking pilgrims.',
-    badge: 'Daily Ongoing',
-    icon: '🍵',
-    actionType: 'donate'
-  },
-  {
-    id: 3,
-    title: 'Every Saturday Evening Grand Bhandara Community Feast',
-    desc: 'Grand public sanctified community prasad feast every Saturday evening for hundreds of devotees.',
-    badge: 'Every Saturday Evening',
-    icon: '🍲',
-    actionType: 'donate'
-  },
-  {
-    id: 4,
-    title: 'Destitute Cow Welfare & Green Fodder Seva',
-    desc: 'Providing daily fresh green fodder, grain porridge, pure water, and primary medical care for abandoned cows.',
-    badge: 'Continuous Daily Care',
-    icon: '🐄',
-    actionType: 'donate'
-  },
-  {
-    id: 5,
-    title: 'Sacred Foundation, Concrete Pillars & Wall Work',
-    desc: 'Contributing cement bags, bricks, TMT steel bars, and pillars for the divine ashram complex.',
-    badge: 'Construction Yajna',
-    icon: '🧱',
-    actionType: 'ashram'
-  },
-  {
-    id: 6,
-    title: 'Shri Ram - Hanuman Mandir & Spiritual Satsang Hall',
-    desc: 'Spiritual haven under development near Maa Narmada for religious discourses and rural community unity.',
-    badge: 'Under Planning',
-    icon: '🛕',
-    actionType: 'ashram'
-  },
-  {
-    id: 7,
-    title: 'Educational Support & Cultural Values for Rural Children',
-    desc: 'Distributing school supplies, books, and fostering moral and cultural foundation among rural youth.',
-    badge: 'Humanitarian Care',
-    icon: '📚',
-    actionType: 'donate'
-  }
-];
-
 interface HeroProps {
-  language?: Language;
   onDonateClick: () => void;
   onAshramClick: () => void;
   onExploreClick: () => void;
@@ -146,30 +85,16 @@ interface HeroProps {
 }
 
 export const Hero: React.FC<HeroProps> = ({ 
-  language = 'hi',
   onDonateClick, 
   onAshramClick,
-  onExploreClick,
   onOpenReceiptSearch 
 }) => {
-  const isEn = language === 'en';
-  const t = TRANSLATIONS[language] || TRANSLATIONS['hi'];
-  const activeWorks = isEn ? ASHRAM_ACTIVE_WORKS_EN : ASHRAM_ACTIVE_WORKS_HI;
+  const t = HINDI_TEXT;
+  const activeWorks = ASHRAM_ACTIVE_WORKS;
 
   const [currentWorkIndex, setCurrentWorkIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isHomeFolderExpanded, setIsHomeFolderExpanded] = useState(false);
-
-  const folderPackages = isEn
-    ? [
-        { name: "1 Cement Bag Contribution", amount: 380, desc: "For solid concrete foundation and pillar construction" },
-        { name: "100 Construction Bricks", amount: 750, desc: "For constructing sacred ashram hall walls" },
-        { name: "1 Quintal TMT Steel", amount: 6200, desc: "For reinforcement of pillars and roof casting" },
-        { name: "1 Ashram Pillar (Stambha)", amount: 11000, desc: "Primary structural support of the pilgrim hall" },
-        { name: "Pilgrim Rest Hall / Shed Unit", amount: 25000, desc: "Dedicated resting shelter for sadhus & walking pilgrims" },
-        { name: "Voluntary Custom Contribution", amount: 0, desc: "Any amount dedicated as per your personal devotion" }
-      ]
-    : ASHRAM_NIRMAN_INFO.packages;
 
   useEffect(() => {
     if (isPaused) return;
@@ -211,7 +136,7 @@ export const Hero: React.FC<HeroProps> = ({
           <h1 className="font-heading text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-amber-50 leading-tight">
             <span>{t.trustName}</span>
             <span className="block text-xs sm:text-sm md:text-base font-sans font-semibold tracking-wider text-amber-300/90 mt-1 uppercase">
-              {isEn ? "Prabhu Ramji Trust · Official Portal · Gram Galgaon" : "प्रभु रामजी ट्रस्ट · आधिकारिक पोर्टल · ग्राम गलगाँव"}
+              प्रभु रामजी ट्रस्ट • आधिकारिक सेवा मंच • ग्राम गलगाँव
             </span>
           </h1>
 
@@ -323,7 +248,7 @@ export const Hero: React.FC<HeroProps> = ({
           </div>
         </div>
 
-        {/* FEATURED: Home Page Dedicated Ashram Construction Folder Widget (User requested: "home page me ek folder hona chahiye") */}
+        {/* FEATURED: Home Page Dedicated Ashram Construction Folder Widget */}
         <div className="w-full max-w-5xl mx-auto mb-10 bg-[#072b20]/95 backdrop-blur-md rounded-3xl p-5 sm:p-7 border-2 border-amber-400/70 shadow-2xl relative overflow-hidden">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
             <div className="flex items-start sm:items-center gap-3.5 sm:gap-4">
@@ -376,9 +301,9 @@ export const Hero: React.FC<HeroProps> = ({
           {/* Quick Item Pills Preview */}
           <div className="mt-4 pt-3 border-t border-emerald-800/60 flex flex-wrap items-center gap-2 text-xs">
             <span className="text-[11px] text-amber-300/80 font-bold">
-              {isEn ? "Folder Items:" : "फोल्डर सामग्री:"}
+              फोल्डर सामग्री:
             </span>
-            {folderPackages.map((pkg, i) => (
+            {ASHRAM_NIRMAN_INFO.packages.map((pkg, i) => (
               <button
                 key={i}
                 onClick={onAshramClick}
@@ -392,7 +317,7 @@ export const Hero: React.FC<HeroProps> = ({
           {/* Expandable 6-item Grid on Home Page */}
           {isHomeFolderExpanded && (
             <div className="mt-5 pt-4 border-t-2 border-amber-400/40 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 animate-slide-up-fade">
-              {folderPackages.map((pkg, idx) => (
+              {ASHRAM_NIRMAN_INFO.packages.map((pkg, idx) => (
                 <div
                   key={idx}
                   className="bg-black/45 rounded-2xl p-4 border border-amber-400/40 hover:border-amber-400 transition-all flex flex-col justify-between"
@@ -403,7 +328,7 @@ export const Hero: React.FC<HeroProps> = ({
                         {idx === 0 ? '🧱' : idx === 1 ? '🧱' : idx === 2 ? '⛓️' : idx === 3 ? '🏛️' : idx === 4 ? '🏠' : '❤️'}
                       </span>
                       <span className="text-sm font-bold font-mono text-amber-300 bg-amber-400/15 px-2 py-0.5 rounded-md border border-amber-400/30">
-                        {pkg.amount > 0 ? `₹${pkg.amount.toLocaleString('en-IN')}` : (isEn ? 'Custom' : 'श्रद्धानुसार')}
+                        {pkg.amount > 0 ? `₹${pkg.amount.toLocaleString('en-IN')}` : 'श्रद्धानुसार'}
                       </span>
                     </div>
                     <h4 className="font-heading font-bold text-sm text-amber-100">

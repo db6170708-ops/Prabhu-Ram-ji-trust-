@@ -1,73 +1,41 @@
 import React, { useState } from 'react';
 import { ASHRAM_NIRMAN_INFO } from '../data/defaultData';
 import { 
-  Sparkles, 
-  Clock, 
-  CheckCircle2, 
-  Folder, 
-  FolderOpen, 
-  FolderHeart, 
+  Building2, 
   Coins, 
   ArrowRight, 
+  CheckCircle2, 
+  Clock, 
+  Sparkles, 
+  Folder, 
+  FolderOpen, 
   ChevronDown, 
   ChevronUp, 
+  FolderHeart,
   X,
   Layers,
-  HeartHandshake,
   ShieldCheck,
-  FileText,
-  Building2
+  FileText
 } from 'lucide-react';
-
 import { Language, TRANSLATIONS } from '../utils/translations';
 
 interface AshramNirmanSectionProps {
   language?: Language;
-  onDonateForAshram: (cause: string, amount: number) => void;
+  onDonateForAshram: (causeName: string, amount: number) => void;
   onOpenProgressReport?: () => void;
 }
 
 export const AshramNirmanSection: React.FC<AshramNirmanSectionProps> = ({ 
-  language = 'hi', 
   onDonateForAshram,
   onOpenProgressReport
 }) => {
-  const isEn = language === 'en';
-  const t = TRANSLATIONS[language] || TRANSLATIONS['hi'];
+  const t = TRANSLATIONS['hi'];
   const [isFolderOpen, setIsFolderOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'materials' | 'structure'>('all');
 
-  const packages = isEn
-    ? [
-        { name: "1 Cement Bag Contribution", amount: 380, desc: "For solid concrete foundation and pillar construction" },
-        { name: "100 Construction Bricks", amount: 750, desc: "For constructing sacred ashram hall walls" },
-        { name: "1 Quintal TMT Steel Bars", amount: 6200, desc: "For reinforcement of pillars and roof casting" },
-        { name: "1 Ashram Pillar (Stambha)", amount: 11000, desc: "Primary structural support of the pilgrim hall" },
-        { name: "Pilgrim Rest Hall / Shed Unit", amount: 25000, desc: "Dedicated resting shelter for sadhus & walking pilgrims" },
-        { name: "Voluntary Custom Contribution", amount: 0, desc: "Any amount dedicated as per your personal devotion" }
-      ]
-    : ASHRAM_NIRMAN_INFO.packages;
-
-  const galleryItems = isEn
-    ? [
-        {
-          url: "/assets/aistudio/ashram-mandir-nirman-1_7dccf72b.jpg",
-          title: "Foundation & Pillar Construction",
-          desc: "Deep concrete foundation and column casting under rapid execution."
-        },
-        {
-          url: "/assets/aistudio/ashram-mandir-nirman-2_e977cf9f.jpg",
-          title: "Ashram Campus & Site Overview",
-          desc: "Prabhu Ramji Ashram & Narmada Pilgrim Service Center in Galgaon."
-        },
-        {
-          url: "/assets/aistudio/IMG-20261102-WA0005_12d23c89.jpg",
-          title: "Installed Shri Hanuman Ji Deity",
-          desc: "Sinduri Sankatmochan Hanuman Vigraha enshrined at the ashram sanctum."
-        }
-      ]
-    : ASHRAM_NIRMAN_INFO.gallery;
+  const packages = ASHRAM_NIRMAN_INFO.packages;
+  const galleryItems = ASHRAM_NIRMAN_INFO.gallery;
 
   const filteredPackages = packages.filter((pkg, idx) => {
     if (selectedCategory === 'materials') return idx < 3;
@@ -78,7 +46,7 @@ export const AshramNirmanSection: React.FC<AshramNirmanSectionProps> = ({
   const handleSelectPackage = (name: string, amount: number) => {
     setIsModalOpen(false);
     setIsFolderOpen(false);
-    onDonateForAshram(isEn ? `Ashram Nirman - ${name}` : `आश्रम निर्माण - ${name}`, amount || 2100);
+    onDonateForAshram(`आश्रम निर्माण - ${name}`, amount || 2100);
   };
 
   return (
@@ -102,16 +70,14 @@ export const AshramNirmanSection: React.FC<AshramNirmanSectionProps> = ({
           <div className="w-24 h-1.5 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 mx-auto mt-4 rounded-full shadow-lg"></div>
 
           <p className="text-stone-200 mt-4 text-base sm:text-lg leading-relaxed">
-            {isEn
-              ? "Construction of permanent pilgrim rest halls, gaushala sheds, community kitchen, and Shri Ram - Hanuman temple is progressing rapidly on the sacred Maa Narmada Parikrama path in Gram Galgaon. Each brick, cement bag, and pillar you contribute turns this sacred ashram into reality."
-              : ASHRAM_NIRMAN_INFO.description}
+            {ASHRAM_NIRMAN_INFO.description}
           </p>
 
           {/* Current Live Work Status Badge */}
           <div className="mt-5 inline-flex flex-wrap items-center justify-center gap-3 bg-black/40 px-5 py-2.5 rounded-2xl border border-amber-400/40 text-xs sm:text-sm">
             <div className="flex items-center gap-1.5 text-amber-300 font-semibold">
               <Clock className="w-4 h-4 text-amber-400 animate-spin" style={{ animationDuration: '6s' }} />
-              <span>{t.ashramStatusPrefix} <strong>{isEn ? "Pillar & Foundation Work in Active Progress" : ASHRAM_NIRMAN_INFO.currentPhase}</strong></span>
+              <span>{t.ashramStatusPrefix} <strong>{ASHRAM_NIRMAN_INFO.currentPhase}</strong></span>
             </div>
             <span className="text-stone-500">|</span>
             <div className="flex items-center gap-1.5 text-emerald-300 font-semibold">
@@ -217,7 +183,7 @@ export const AshramNirmanSection: React.FC<AshramNirmanSectionProps> = ({
           <div className="mt-5 pt-4 border-t border-white/10 flex flex-wrap items-center gap-2">
             <span className="text-[11px] text-stone-400 mr-1 flex items-center gap-1">
               <Layers className="w-3.5 h-3.5 text-amber-400" />
-              {isEn ? "Folder Contents:" : "फोल्डर सामग्री:"}
+              <span>फोल्डर सामग्री:</span>
             </span>
             {packages.map((pkg, i) => (
               <span key={i} className="text-[11px] px-2.5 py-1 rounded-full bg-black/30 border border-emerald-500/30 text-stone-300 font-mono">
@@ -231,9 +197,7 @@ export const AshramNirmanSection: React.FC<AshramNirmanSectionProps> = ({
             <div className="mt-6 pt-6 border-t border-amber-400/20 animate-fadeIn">
               <div className="flex items-center justify-between mb-4">
                 <p className="text-xs text-amber-200">
-                  {isEn
-                    ? "Select any construction item below. Choosing an item will configure your official donation receipt form."
-                    : "नीचे दी गई सूची में से अपनी श्रद्धानुसार घटक चुनें। चयन करने पर दान फॉर्म में विवरण स्वतः भर जाएगा।"}
+                  नीचे दी गई सूची में से अपनी श्रद्धानुसार घटक चुनें। चयन करने पर दान फॉर्म में विवरण स्वतः भर जाएगा।
                 </p>
                 <button
                   onClick={() => setIsFolderOpen(false)}
@@ -253,7 +217,7 @@ export const AshramNirmanSection: React.FC<AshramNirmanSectionProps> = ({
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-[11px] font-bold text-amber-400 bg-amber-500/15 px-2 py-0.5 rounded border border-amber-400/20">
-                          {isEn ? `Item #${idx + 1}` : `घटक ${idx + 1}`}
+                          घटक {idx + 1}
                         </span>
                         {pkg.amount > 0 ? (
                           <span className="font-mono text-base font-bold text-amber-300">
@@ -261,7 +225,7 @@ export const AshramNirmanSection: React.FC<AshramNirmanSectionProps> = ({
                           </span>
                         ) : (
                           <span className="text-[11px] font-bold text-amber-300">
-                            {isEn ? "Custom" : "इच्छानुसार"}
+                            इच्छानुसार
                           </span>
                         )}
                       </div>
@@ -293,17 +257,17 @@ export const AshramNirmanSection: React.FC<AshramNirmanSectionProps> = ({
           <div className="mt-5 pt-4 border-t border-white/10 text-center text-xs text-stone-300 flex flex-wrap items-center justify-center gap-4">
             <span className="flex items-center gap-1.5 text-stone-300">
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              {isEn ? "100% Transparent Construction Audit" : "100% पारदर्शी निर्माण लेखा"}
+              <span>100% पारदर्शी निर्माण लेखा</span>
             </span>
             <span className="text-stone-600">·</span>
             <span className="flex items-center gap-1.5 text-stone-300">
               <FileText className="w-4 h-4 text-emerald-400" />
-              {isEn ? "Instant Official Digital Stamped Receipt" : "डिजिटल दान पावती रसीद तुरंत उपलब्ध"}
+              <span>डिजिटल दान पावती रसीद तुरंत उपलब्ध</span>
             </span>
             <span className="text-stone-600">·</span>
             <span className="flex items-center gap-1.5 text-stone-300">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              {isEn ? "Donor Name Inscribed in Trust Ledger" : "दानदाता का नाम आश्रम रिकॉर्ड पंजिका में अंकित"}
+              <span>दानदाता का नाम आश्रम रिकॉर्ड पंजिका में अंकित</span>
             </span>
           </div>
 
@@ -327,7 +291,7 @@ export const AshramNirmanSection: React.FC<AshramNirmanSectionProps> = ({
                     📁 {t.homeFolderTitle}
                   </h3>
                   <p className="text-xs text-stone-300">
-                    {t.tagline} · {isEn ? "Itemized Contribution Catalog" : "आश्रम एवं मंदिर निर्माण अंशदान सूची"}
+                    {t.tagline} · आश्रम एवं मंदिर निर्माण अंशदान सूची
                   </p>
                 </div>
               </div>
@@ -335,7 +299,7 @@ export const AshramNirmanSection: React.FC<AshramNirmanSectionProps> = ({
               <button
                 onClick={() => setIsModalOpen(false)}
                 className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-stone-300 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
-                title={isEn ? "Close" : "बंद करें"}
+                title="बंद करें"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -351,7 +315,7 @@ export const AshramNirmanSection: React.FC<AshramNirmanSectionProps> = ({
                     : 'bg-white/5 text-stone-300 hover:bg-white/10'
                 }`}
               >
-                {isEn ? "All Items (6)" : "सभी घटक (6)"}
+                सभी घटक (6)
               </button>
               <button
                 onClick={() => setSelectedCategory('materials')}
@@ -361,7 +325,7 @@ export const AshramNirmanSection: React.FC<AshramNirmanSectionProps> = ({
                     : 'bg-white/5 text-stone-300 hover:bg-white/10'
                 }`}
               >
-                {isEn ? "Raw Materials (Cement, Bricks, Steel)" : "सामग्री (सीमेंट, ईंटें, सरिया)"}
+                सामग्री (सीमेंट, ईंटें, सरिया)
               </button>
               <button
                 onClick={() => setSelectedCategory('structure')}
@@ -371,7 +335,7 @@ export const AshramNirmanSection: React.FC<AshramNirmanSectionProps> = ({
                     : 'bg-white/5 text-stone-300 hover:bg-white/10'
                 }`}
               >
-                {isEn ? "Structural (Pillars, Rooms, Custom)" : "संरचना (स्तंभ, कक्ष व ऐच्छिक)"}
+                संरचना (स्तंभ, कक्ष व ऐच्छिक)
               </button>
             </div>
 
@@ -386,7 +350,7 @@ export const AshramNirmanSection: React.FC<AshramNirmanSectionProps> = ({
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-[11px] font-bold text-amber-400 bg-amber-500/20 px-2 py-0.5 rounded border border-amber-400/30">
-                          {pkg.amount > 0 ? (isEn ? `Item #${idx + 1}` : `घटक #${idx + 1}`) : (isEn ? 'Voluntary' : 'विशेष सहयोग')}
+                          {pkg.amount > 0 ? `घटक #${idx + 1}` : 'विशेष सहयोग'}
                         </span>
                         {pkg.amount > 0 ? (
                           <span className="font-mono text-lg font-bold text-white group-hover:text-amber-300">
@@ -394,7 +358,7 @@ export const AshramNirmanSection: React.FC<AshramNirmanSectionProps> = ({
                           </span>
                         ) : (
                           <span className="text-xs font-bold text-amber-300">
-                            {isEn ? "Custom" : "इच्छानुसार"}
+                            इच्छानुसार
                           </span>
                         )}
                       </div>
@@ -423,13 +387,13 @@ export const AshramNirmanSection: React.FC<AshramNirmanSectionProps> = ({
               {/* Guarantees */}
               <div className="mt-4 p-4 rounded-xl bg-black/30 border border-white/10 text-xs text-stone-300 flex flex-wrap items-center justify-around gap-2 text-center">
                 <span className="flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400" /> {isEn ? "100% Transparent Construction Audit" : "100% पारदर्शी निर्माण लेखा"}
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" /> 100% पारदर्शी निर्माण लेखा
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <FileText className="w-4 h-4 text-emerald-400" /> {isEn ? "Instant Official Digital Stamped Receipt" : "डिजिटल दान पावती रसीद तुरंत उपलब्ध"}
+                  <FileText className="w-4 h-4 text-emerald-400" /> डिजिटल दान पावती रसीद तुरंत उपलब्ध
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" /> {isEn ? "Donor Name Inscribed in Trust Ledger" : "दानदाता का नाम रिकॉर्ड पंजिका में अंकित"}
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" /> दानदाता का नाम रिकॉर्ड पंजिका में अंकित
                 </span>
               </div>
             </div>
@@ -437,13 +401,13 @@ export const AshramNirmanSection: React.FC<AshramNirmanSectionProps> = ({
             {/* Modal Footer */}
             <div className="px-6 py-3.5 bg-[#07241a] border-t border-amber-400/30 flex items-center justify-between text-xs">
               <span className="text-stone-400">
-                {isEn ? "Selecting an item opens the official digital receipt generator." : "चयन करने पर दान पेज पर आधिकारिक रसीद प्रणाली खुलेगी"}
+                चयन करने पर दान पेज पर आधिकारिक रसीद प्रणाली खुलेगी
               </span>
               <button
                 onClick={() => setIsModalOpen(false)}
                 className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-stone-200 font-semibold transition-colors cursor-pointer"
               >
-                {isEn ? "Close" : "बंद करें"}
+                बंद करें
               </button>
             </div>
 

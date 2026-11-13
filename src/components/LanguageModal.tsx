@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { SUPPORTED_LANGUAGES, Language, LanguageOption } from '../utils/translations';
+import { SUPPORTED_LANGUAGES_17, LanguageOption } from '../utils/translations';
+import { changeGoogleTranslateLanguage } from './GoogleTranslateWidget';
 import { X, Search, Check, Globe } from 'lucide-react';
 
 interface LanguageModalProps {
   isOpen: boolean;
-  currentLanguage: Language;
-  onSelectLanguage: (lang: Language) => void;
+  currentLanguage: string;
+  onSelectLanguage: (lang: any) => void;
   onClose: () => void;
 }
 
@@ -16,11 +17,10 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
   onClose,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const isEn = currentLanguage === 'en';
 
   if (!isOpen) return null;
 
-  const filteredLanguages = SUPPORTED_LANGUAGES.filter((item) => {
+  const filteredLanguages = SUPPORTED_LANGUAGES_17.filter((item) => {
     const term = searchTerm.toLowerCase().trim();
     return (
       item.name.toLowerCase().includes(term) ||
@@ -28,6 +28,12 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
       item.code.toLowerCase().includes(term)
     );
   });
+
+  const handleChoose = (code: string) => {
+    changeGoogleTranslateLanguage(code);
+    onSelectLanguage(code);
+    onClose();
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
@@ -40,10 +46,10 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
             </div>
             <div>
               <h3 className="text-lg font-bold">
-                {isEn ? "Select Language" : "भाषा चुनें"}
+                भाषा चुनें (Select Language)
               </h3>
               <p className="text-xs text-amber-200/90">
-                {isEn ? "Choose from 17 Indian & World Languages" : "17 भारतीय एवं अंतर्राष्ट्रीय भाषाएं"}
+                17 भारतीय एवं प्रादेशिक भाषाएं (17 Languages Supported)
               </p>
             </div>
           </div>
@@ -62,7 +68,7 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
             <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder={isEn ? "Search language (e.g. Hindi, English, Gujarati)..." : "भाषा खोजें (उदा. हिन्दी, मराठी, गुजराती)..."}
+              placeholder="भाषा खोजें (उदा. हिन्दी, English, ગુજરાતી, मराठी, தமிழ்)..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 text-sm bg-white border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f4d3a] focus:border-transparent"
@@ -79,10 +85,7 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
               return (
                 <button
                   key={item.code}
-                  onClick={() => {
-                    onSelectLanguage(item.code);
-                    onClose();
-                  }}
+                  onClick={() => handleChoose(item.code)}
                   className={`flex items-center justify-between p-3 rounded-xl border text-left transition-all cursor-pointer ${
                     isSelected
                       ? 'border-[#0f4d3a] bg-emerald-50 text-[#0f4d3a] font-bold shadow-xs'
@@ -120,16 +123,14 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
 
           {filteredLanguages.length === 0 && (
             <div className="text-center py-8 text-stone-500 text-sm">
-              {isEn ? "No matching language found." : "कोई भाषा नहीं मिली।"}
+              कोई भाषा नहीं मिली। (No matching language found.)
             </div>
           )}
         </div>
 
         {/* Footer info */}
         <div className="p-3 bg-stone-50 border-t border-stone-200 text-center text-xs text-stone-500 shrink-0">
-          {isEn
-            ? "Website content, receipts, and menus switch instantly into your selected language."
-            : "चयनित भाषा में वेबसाइट सामग्री, रसीद प्रणाली व सभी मेनू तुरंत अपडेट हो जाएंगे।"}
+          चयनित भाषा में पूरी वेबसाइट, रसीद प्रणाली व सभी अनुभाग तुरंत अनुवादित हो जाएंगे।
         </div>
       </div>
     </div>

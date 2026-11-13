@@ -15,109 +15,14 @@ import {
   CheckCircle2,
   Clock
 } from 'lucide-react';
-
 import { Language, TRANSLATIONS } from '../utils/translations';
 
 interface ObjectivesSectionProps {
   language?: Language;
 }
 
-const OBJECTIVES_EN = [
-  {
-    number: "01",
-    type: "proposed" as const,
-    statusLabel: "Proposed Initiative",
-    title: "Construction & Operation of Model Gaushala",
-    desc: "Establishing an eco-friendly modern Gaushala to provide secure sanctuary, nutrition, and veterinary hospital care for destitute cattle.",
-    badge: "Model Gaushala Planned",
-    location: "Galgaon, Khargone"
-  },
-  {
-    number: "02",
-    type: "active" as const,
-    statusLabel: "Active Ongoing Service",
-    title: "Continuous Cow Protection & Daily Nutrition",
-    desc: "Providing fresh green fodder, pure drinking water, grain porridge, and first-aid medical care to abandoned and rescued cows daily.",
-    badge: "Daily Cow Feeding Active",
-    location: "Galgaon, Khargone"
-  },
-  {
-    number: "03",
-    type: "active" as const,
-    statusLabel: "Active Ongoing Service",
-    title: "Narmada Pilgrim Service & Daily Free Tea Seva",
-    desc: "Offering free hot tea, drinking water, resting facilities, and weekly food prasad to sadhus and pilgrims on the Narmada Parikrama.",
-    badge: "Daily Tea Seva Active",
-    location: "Galgaon, Khargone"
-  },
-  {
-    number: "04",
-    type: "active" as const,
-    statusLabel: "Active Ongoing Service",
-    title: "Humanitarian Support for the Underprivileged",
-    desc: "Identifying distressed rural families and extending immediate economic, nutritional, and emotional support in times of hardship.",
-    badge: "Direct Humanitarian Aid",
-    location: "Galgaon, Khargone"
-  },
-  {
-    number: "05",
-    type: "active" as const,
-    statusLabel: "Active Ongoing Service",
-    title: "Rural Child Education & Cultural Values",
-    desc: "Distributing school bags, stationery, notebooks, and conducting value-education workshops for rural girls and boys.",
-    badge: "Student Education Support",
-    location: "Galgaon, Khargone"
-  },
-  {
-    number: "06",
-    type: "proposed" as const,
-    statusLabel: "Proposed Initiative",
-    title: "Free Rural Health Camps & Medical Relief",
-    desc: "Organizing periodic health checkups, eye testing, blood donation drives, and providing essential medicines with visiting doctors.",
-    badge: "Periodic Health Camps Planned",
-    location: "Galgaon, Khargone"
-  },
-  {
-    number: "07",
-    type: "active" as const,
-    statusLabel: "Active Ongoing Service",
-    title: "Spiritual, Devotional & Cultural Assemblies",
-    desc: "Conducting Shri Ram Katha, Sundarkand recitals, devotional kirtans, and celebrating traditional festivals to foster harmony.",
-    badge: "Community Devotional Events",
-    location: "Galgaon, Khargone"
-  },
-  {
-    number: "08",
-    type: "active" as const,
-    statusLabel: "Active Ongoing Service",
-    title: "Weekly Saturday Grand Bhandara Feast",
-    desc: "Organizing a grand community prasad feast every Saturday evening at Hanuman Temple for pilgrims, sadhus, and village families.",
-    badge: "Saturday Grand Bhandara",
-    location: "Galgaon, Khargone"
-  },
-  {
-    number: "09",
-    type: "active" as const,
-    statusLabel: "Active Ongoing Service",
-    title: "Afforestation, Cleanliness & Environmental Care",
-    desc: "Tree planting across Galgaon, cleaning water bodies, reducing single-use plastics, and keeping Maa Narmada banks pristine.",
-    badge: "Green Galgaon & Clean Narmada",
-    location: "Galgaon, Khargone"
-  },
-  {
-    number: "10",
-    type: "active" as const,
-    statusLabel: "Active Ongoing Service",
-    title: "Ration Kits, Warm Clothing & Disaster Relief",
-    desc: "Distributing warm blankets in winter, festival food ration kits, and providing swift relief to families facing emergency distress.",
-    badge: "Clothing & Ration Relief",
-    location: "Galgaon, Khargone"
-  }
-];
-
-export const ObjectivesSection: React.FC<ObjectivesSectionProps> = ({ language = 'hi' }) => {
-  const isEn = language === 'en';
-  const t = TRANSLATIONS[language] || TRANSLATIONS['hi'];
+export const ObjectivesSection: React.FC<ObjectivesSectionProps> = () => {
+  const t = TRANSLATIONS['hi'];
   const [filter, setFilter] = useState<'all' | 'active' | 'proposed'>('all');
 
   const icons = [
@@ -133,8 +38,7 @@ export const ObjectivesSection: React.FC<ObjectivesSectionProps> = ({ language =
     Shirt            // 10 वस्त्र व भोजन सहायता
   ];
 
-  const objectivesList = isEn ? OBJECTIVES_EN : TRUST_OBJECTIVES;
-
+  const objectivesList = TRUST_OBJECTIVES;
   const activeCount = objectivesList.filter(o => o.type === 'active').length;
   const proposedCount = objectivesList.filter(o => o.type === 'proposed').length;
 
@@ -162,11 +66,7 @@ export const ObjectivesSection: React.FC<ObjectivesSectionProps> = ({ language =
           </p>
 
           <p className="text-xs sm:text-sm text-stone-500 mt-2 italic bg-white p-3 rounded-xl border border-stone-200 max-w-2xl mx-auto">
-            {isEn ? (
-              <><strong>Integrity Principle:</strong> Services currently operating are categorized as <strong>“Active Services”</strong>, while upcoming projects are marked as <strong>“Proposed Initiatives”</strong>.</>
-            ) : (
-              <><strong>सत्यनिष्ठ नीति:</strong> जो कार्य वर्तमान में संचालित हैं उन्हें <strong>“सक्रिय सेवा”</strong> तथा जो योजनाधीन हैं उन्हें <strong>“भविष्य के प्रस्तावित प्रकल्प”</strong> के रूप में दर्शाया गया है।</>
-            )}
+            <strong>सत्यनिष्ठ नीति:</strong> जो कार्य वर्तमान में संचालित हैं उन्हें <strong>“सक्रिय सेवा”</strong> तथा जो योजनाधीन हैं उन्हें <strong>“भविष्य के प्रस्तावित प्रकल्प”</strong> के रूप में दर्शाया गया है।
           </p>
         </div>
 
@@ -181,7 +81,7 @@ export const ObjectivesSection: React.FC<ObjectivesSectionProps> = ({ language =
                   : 'text-stone-600 hover:text-stone-900 hover:bg-stone-50'
               }`}
             >
-              {isEn ? `All (${objectivesList.length})` : `सभी (${objectivesList.length})`}
+              सभी ({objectivesList.length})
             </button>
 
             <button
@@ -193,7 +93,7 @@ export const ObjectivesSection: React.FC<ObjectivesSectionProps> = ({ language =
               }`}
             >
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-              <span>{isEn ? `Active Services (${activeCount})` : `सक्रिय सेवा (${activeCount})`}</span>
+              <span>सक्रिय सेवा ({activeCount})</span>
             </button>
 
             <button
@@ -205,7 +105,7 @@ export const ObjectivesSection: React.FC<ObjectivesSectionProps> = ({ language =
               }`}
             >
               <Clock className="w-3.5 h-3.5 text-amber-300" />
-              <span>{isEn ? `Proposed (${proposedCount})` : `प्रस्तावित (${proposedCount})`}</span>
+              <span>प्रस्तावित ({proposedCount})</span>
             </button>
           </div>
         </div>
@@ -227,7 +127,6 @@ export const ObjectivesSection: React.FC<ObjectivesSectionProps> = ({ language =
                 }`}
               >
                 <div>
-                  
                   {/* Top Bar: Number & Status Badge */}
                   <div className="flex items-center justify-between mb-4">
                     <span className="font-heading text-3xl font-bold font-mono text-stone-300 group-hover:text-amber-600 transition-colors">

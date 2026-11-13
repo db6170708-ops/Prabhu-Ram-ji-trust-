@@ -22,16 +22,18 @@ import { CertificateModal } from './components/CertificateModal';
 import { ComplaintFeedbackModal } from './components/ComplaintFeedbackModal';
 import { ConstructionProgressModal } from './components/ConstructionProgressModal';
 import { ServicesDetailModal } from './components/ServicesDetailModal';
+import { OfflineIndicator } from './components/OfflineIndicator';
 import { StorageService } from './utils/storage';
 import { TRUST_INFO, DEFAULT_SEVA_PROJECTS } from './data/defaultData';
 import { Language, TRANSLATIONS } from './utils/translations';
+import { getActiveLanguageCode } from './components/GoogleTranslateWidget';
 import { NewsItem, GalleryPhoto, GalleryVideo, TransparencyRecord, Official, DonationReceipt, SevaProject } from './types';
 import { MessageCircle, Heart, Phone, ArrowUp, Languages, Globe } from 'lucide-react';
 
 export default function App() {
   const [activeSection, setActiveSection] = useState('home');
   const [language, setLanguage] = useState<Language>(() => {
-    return (localStorage.getItem('prt_language') as Language) || 'hi';
+    return getActiveLanguageCode() || 'hi';
   });
   const t = TRANSLATIONS[language] || TRANSLATIONS['hi'];
 
@@ -55,17 +57,12 @@ export default function App() {
   const [donationAmountPreselect, setDonationAmountPreselect] = useState<number>(1100);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
-  // Toggle Language (Quick Hi <-> En)
-  const toggleLanguage = () => {
-    const nextLang: Language = language === 'hi' ? 'en' : 'hi';
-    handleSelectLanguage(nextLang);
-  };
-
   // Switch to any of the 17 languages
   const handleSelectLanguage = (nextLang: Language) => {
     setLanguage(nextLang);
     localStorage.setItem('prt_language', nextLang);
-    if (nextLang === 'ur') {
+    localStorage.setItem('prt_google_lang', nextLang);
+    if (nextLang === 'ur' || nextLang === 'sd') {
       document.documentElement.dir = 'rtl';
     } else {
       document.documentElement.dir = 'ltr';
@@ -112,8 +109,19 @@ export default function App() {
       }
     };
 
+    const handleLangChanged = (e: Event) => {
+      const customEvent = e as CustomEvent<string>;
+      if (customEvent.detail) {
+        setLanguage(customEvent.detail);
+      }
+    };
+
+    window.addEventListener('prt-language-changed', handleLangChanged);
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('prt-language-changed', handleLangChanged);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   const scrollToSection = (sectionId: string) => {
@@ -139,13 +147,10 @@ export default function App() {
       
       {/* Official Header with Language Switcher */}
       <Header
-        language={language}
-        onToggleLanguage={toggleLanguage}
         activeSection={activeSection}
         onNavigate={scrollToSection}
         onOpenAdmin={() => setIsAdminOpen(true)}
         onOpenReceiptSearch={() => setIsReceiptSearchOpen(true)}
-        onOpenLanguageModal={() => setIsLanguageModalOpen(true)}
         onOpenVolunteerModal={() => setIsVolunteerOpen(true)}
         onOpenCertificateModal={() => setIsCertificateOpen(true)}
         onOpenComplaintModal={() => setIsComplaintOpen(true)}
@@ -157,7 +162,6 @@ export default function App() {
         {/* Section 1: Hero */}
         <div id="home">
           <Hero
-            language={language}
             onDonateClick={() => scrollToSection('donate')}
             onAshramClick={() => scrollToSection('ashram-nirman')}
             onExploreClick={() => scrollToSection('services')}
@@ -165,7 +169,18 @@ export default function App() {
           />
         </div>
 
-        {/* Section 2: Dedicated Ashram & Mandir Nirman Campaign Folder */}
+        {/* Section 2: Home Page Dedicated Devotee Services Folder (Volunteer, Certificate, Helpline, Receipt) */}
+        <DevoteeServicesFolder
+          language={language}
+          onOpenVolunteerModal={() => setIsVolunteerOpen(true)}
+          onOpenCertificateModal={() => setIsCertificateOpen(true)}
+          onOpenComplaintModal={() => setIsComplaintOpen(true)}
+          onOpenReceiptSearch={() => setIsReceiptSearchOpen(true)}
+          onNavigateToTransparency={() => scrollToSection('transparency')}
+          onNavigateToContact={() => scrollToSection('contact')}
+        />
+
+        {/* Section 3: Dedicated Ashram & Mandir Nirman Campaign Folder */}
         <AshramNirmanSection 
           language={language} 
           onDonateForAshram={handleDonateForCause}
@@ -180,7 +195,6 @@ export default function App() {
 
         {/* Section 5: Key Seva Services (Daily Tea Seva, Saturday Evening Bhandara, Gaushala + 10 Projects) */}
         <KeyServices 
-          language={language} 
           onDonateForCause={(cause) => handleDonateForCause(cause)}
           onSelectProject={(proj) => setSelectedProjectForDetail(proj)}
         />
@@ -206,7 +220,6 @@ export default function App() {
 
         {/* Section 10: News, Updates & Saturday Bhandara */}
         <NewsSection
-          language={language}
           news={news}
           onDonateClick={() => handleDonateForCause('शनिवार शाम भंडारा महाप्रसाद')}
         />
@@ -275,6 +288,8 @@ export default function App() {
         </a>
 
       </div>
+
+      <OfflineIndicator />
 
       {/* Modals */}
       <ReceiptSearchModal

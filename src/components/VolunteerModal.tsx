@@ -94,12 +94,10 @@ export const VolunteerModal: React.FC<VolunteerModalProps> = ({ isOpen, onClose,
             </div>
             <div>
               <h3 className="text-lg font-bold">
-                {language === 'hi' ? 'स्वयंसेवक सेवा पंजीकरण' : 'Volunteer Registration'}
+                स्वयंसेवक सेवा पंजीकरण
               </h3>
               <p className="text-xs text-amber-200/90">
-                {language === 'hi'
-                  ? 'प्रभु रामजी ट्रस्ट सेवा कार्यों में अपना योगदान दें'
-                  : 'Join the sacred service initiatives of Prabhu Ramji Trust'}
+                प्रभु रामजी ट्रस्ट सेवा कार्यों में अपना योगदान दें
               </p>
             </div>
           </div>
@@ -122,7 +120,7 @@ export const VolunteerModal: React.FC<VolunteerModalProps> = ({ isOpen, onClose,
                 : 'border-transparent text-stone-500 hover:text-stone-800'
             }`}
           >
-            {language === 'hi' ? '📝 नया स्वयंसेवक पंजीकरण' : '📝 New Registration'}
+            📝 नया स्वयंसेवक पंजीकरण
           </button>
           <button
             onClick={() => setActiveTab('status')}
@@ -132,7 +130,7 @@ export const VolunteerModal: React.FC<VolunteerModalProps> = ({ isOpen, onClose,
                 : 'border-transparent text-stone-500 hover:text-stone-800'
             }`}
           >
-            {language === 'hi' ? '🔍 आवेदन स्थिति जांचें' : '🔍 Check Status'}
+            🔍 आवेदन स्थिति जांचें
           </button>
         </div>
 
@@ -146,12 +144,10 @@ export const VolunteerModal: React.FC<VolunteerModalProps> = ({ isOpen, onClose,
                 </div>
                 <div>
                   <h4 className="text-xl font-bold text-stone-900">
-                    {language === 'hi' ? 'पंजीकरण सफल रहा!' : 'Registration Successful!'}
+                    पंजीकरण सफल रहा!
                   </h4>
                   <p className="text-sm text-stone-600 mt-1">
-                    {language === 'hi'
-                      ? 'जय श्री राम! आपका स्वयंसेवक आवेदन ट्रस्ट को प्राप्त हो गया है।'
-                      : 'Jai Shri Ram! Your volunteer registration has been received by the trust.'}
+                    जय श्री राम! आपका स्वयंसेवक आवेदन ट्रस्ट को प्राप्त हो गया है।
                   </p>
                 </div>
 

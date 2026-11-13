@@ -1,10 +1,79 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.night-mode, .night-mode *, .dark, .dark *));
 
 @layer base {
   :root {
     --font-hindi: 'Noto Sans Devanagari', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --font-heading: 'Rozha One', 'Martel', 'Yatra One', serif;
     --font-serif: 'Martel', 'Rozha One', serif;
+
+    /* Default Time Theme Variables (Morning) */
+    --time-bg: #FFF8E7;
+    --time-bg-alt: #FFFDF7;
+    --time-card: #FFFFFF;
+    --time-card-muted: #FFFDF5;
+    --time-text: #333333;
+    --time-text-muted: #57534E;
+    --time-heading: #0f4d3a;
+    --time-border: #EFE0B8;
+    --time-header-bg: rgba(255, 250, 238, 0.96);
+    --time-hero-bg: linear-gradient(180deg, #0b3a2b 0%, #0f4d3a 55%, #093023 100%);
+  }
+
+  /* 1. सुबह का थीम (Morning: 6 AM - 12 PM) */
+  body.morning-mode {
+    --time-bg: #FFF8E7;
+    --time-bg-alt: #FFFDF7;
+    --time-card: #FFFFFF;
+    --time-card-muted: #FFFBF0;
+    --time-text: #333333;
+    --time-text-muted: #57534E;
+    --time-heading: #0f4d3a;
+    --time-border: #EFE0B8;
+    --time-header-bg: rgba(255, 250, 238, 0.96);
+    --time-hero-bg: linear-gradient(180deg, #0b3b2c 0%, #125641 55%, #0a3125 100%);
+  }
+
+  /* 2. दोपहर का थीम (Afternoon: 12 PM - 5 PM) */
+  body.afternoon-mode {
+    --time-bg: #E0F7FA;
+    --time-bg-alt: #EFFBFC;
+    --time-card: #FFFFFF;
+    --time-card-muted: #F0FBFD;
+    --time-text: #004D40;
+    --time-text-muted: #0F6254;
+    --time-heading: #004D40;
+    --time-border: #B2EBF2;
+    --time-header-bg: rgba(235, 252, 254, 0.96);
+    --time-hero-bg: linear-gradient(180deg, #063842 0%, #0a4e5c 55%, #062f38 100%);
+  }
+
+  /* 3. शाम का थीम (Evening: 5 PM - 8 PM) */
+  body.evening-mode {
+    --time-bg: #FFE0B2;
+    --time-bg-alt: #FFEDCC;
+    --time-card: #FFF3E0;
+    --time-card-muted: #FFE8C2;
+    --time-text: #4E342E;
+    --time-text-muted: #6D4C41;
+    --time-heading: #5D2E0E;
+    --time-border: #FFCC80;
+    --time-header-bg: rgba(255, 243, 224, 0.96);
+    --time-hero-bg: linear-gradient(180deg, #3a1d0d 0%, #562b12 55%, #271309 100%);
+  }
+
+  /* 4. रात का थीम (Night/Dark Mode: 8 PM - 6 AM) */
+  body.night-mode {
+    --time-bg: #121212;
+    --time-bg-alt: #181818;
+    --time-card: #1E1E1E;
+    --time-card-muted: #262626;
+    --time-text: #E0E0E0;
+    --time-text-muted: #B0B0B0;
+    --time-heading: #FCD34D;
+    --time-border: #2E2E2E;
+    --time-header-bg: rgba(24, 24, 24, 0.96);
+    --time-hero-bg: linear-gradient(180deg, #060908 0%, #0d1613 55%, #050807 100%);
   }
 
   body {
@@ -19,6 +88,9 @@
     margin: 0;
     padding: 0;
     position: relative;
+    background-color: var(--time-bg);
+    color: var(--time-text);
+    transition: background-color 0.8s ease, color 0.8s ease;
   }
 
   html {
@@ -44,52 +116,116 @@
   }
 }
 
-/* ==========================================================================
-   Google Translate UI Polish & Clean Banner Suppression
-   ========================================================================== */
-/* Hide the default Google Translate top banner frame and prevent page top displacement */
-body {
-  top: 0px !important;
-  position: static !important;
+/* Semantic Time-Based Theme Surfaces with 0.8s Smooth Color Transition */
+.time-bg {
+  background-color: var(--time-bg);
+  color: var(--time-text);
+  border-color: var(--time-border);
+  transition: background-color 0.8s ease, color 0.8s ease, border-color 0.8s ease;
 }
 
+.time-bg-alt {
+  background-color: var(--time-bg-alt);
+  color: var(--time-text);
+  border-color: var(--time-border);
+  transition: background-color 0.8s ease, color 0.8s ease, border-color 0.8s ease;
+}
+
+.time-card {
+  background-color: var(--time-card);
+  color: var(--time-text);
+  border-color: var(--time-border);
+  transition: background-color 0.8s ease, color 0.8s ease, border-color 0.8s ease;
+}
+
+.time-card-muted {
+  background-color: var(--time-card-muted);
+  color: var(--time-text);
+  border-color: var(--time-border);
+  transition: background-color 0.8s ease, color 0.8s ease, border-color 0.8s ease;
+}
+
+.time-header {
+  background-color: var(--time-header-bg);
+  border-color: var(--time-border);
+  transition: background-color 0.8s ease, color 0.8s ease, border-color 0.8s ease;
+}
+
+.time-heading {
+  color: var(--time-heading);
+  transition: color 0.8s ease;
+}
+
+.time-hero {
+  background: var(--time-hero-bg);
+  transition: background 0.8s ease, background-color 0.8s ease;
+}
+
+/* ==========================================================================
+   Google Translate UI Polish & Complete Banner/Popup Suppression
+   ========================================================================== */
+html,
+body {
+  top: 0px !important;
+  margin-top: 0px !important;
+}
+
+/* Hide both legacy (.goog-te-banner-frame) and modern (.VIpgJd-ZVi9od-ORHb-OEVmcd) top bars & popups */
+body > .skiptranslate,
 .goog-te-banner-frame,
 .goog-te-banner-frame.skiptranslate,
 iframe.goog-te-banner-frame,
-.goog-te-banner {
+.goog-te-banner,
+.VIpgJd-ZVi9od-ORHb-OEVmcd,
+iframe.VIpgJd-ZVi9od-ORHb-OEVmcd,
+.VIpgJd-ZVi9od-ORHb,
+.VIpgJd-ZVi9od-l4eHX-hSRGPd,
+.VIpgJd-ZVi9od-SmfZ-OEVmcd,
+.VIpgJd-suEOdc,
+.VIpgJd-yAWNEb-L7lbkb,
+iframe[name="goog-te-banner-frame"],
+iframe[src*="translate.google"],
+iframe[src*="translate.googleapis"] {
   display: none !important;
   visibility: hidden !important;
   height: 0px !important;
+  max-height: 0px !important;
+  width: 0px !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+  position: fixed !important;
+  top: -9999px !important;
+  left: -9999px !important;
+  z-index: -9999 !important;
+}
+
+/* Hide Google Translate tooltip balloon, popups & loading spinner */
+#goog-gt-tt,
+[id^="goog-gt-"],
+.goog-te-balloon-frame,
+.goog-tooltip,
+.goog-tooltip:hover,
+.goog-te-spinner-pos,
+.VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
+.VIpgJd-ZVi9od-aZ2wEe-wOHMyf-ti6hGc {
+  display: none !important;
+  visibility: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
 }
 
-/* Hide Google Translate tooltip balloon on text hover */
-#goog-gt-tt,
-.goog-te-balloon-frame,
-.goog-tooltip,
-.goog-tooltip:hover {
-  display: none !important;
-  visibility: hidden !important;
-}
-
 .goog-text-highlight {
   background: none !important;
+  background-color: transparent !important;
   box-shadow: none !important;
 }
 
 /* Hide native Google Translate combo/gadget elements */
 .goog-te-gadget,
-.goog-te-gadget-simple,
-.VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
-.VIpgJd-ZVi9od-aZ2wEe-wOHMyf-ti6hGc {
+.goog-te-gadget-simple {
   display: none !important;
   visibility: hidden !important;
-}
-
-/* Ensure no Google iframe takes space */
-iframe[name="goog-te-banner-frame"] {
-  display: none !important;
 }
 
 /* Sacred Animations & Glow Effects ("वेबसाइट एनीमेशन वाली") */

@@ -24,6 +24,7 @@ import { ConstructionProgressModal } from './components/ConstructionProgressModa
 import { ServicesDetailModal } from './components/ServicesDetailModal';
 import { OfflineIndicator } from './components/OfflineIndicator';
 import { StorageService } from './utils/storage';
+import { useTimeTheme } from './utils/useTimeTheme';
 import { TRUST_INFO, DEFAULT_SEVA_PROJECTS } from './data/defaultData';
 import { Language, TRANSLATIONS } from './utils/translations';
 import { getActiveLanguageCode } from './components/GoogleTranslateWidget';
@@ -31,6 +32,7 @@ import { NewsItem, GalleryPhoto, GalleryVideo, TransparencyRecord, Official, Don
 import { MessageCircle, Heart, Phone, ArrowUp, Languages, Globe } from 'lucide-react';
 
 export default function App() {
+  useTimeTheme();
   const [activeSection, setActiveSection] = useState('home');
   const [language, setLanguage] = useState<Language>(() => {
     return getActiveLanguageCode() || 'hi';
@@ -143,7 +145,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden flex flex-col bg-[#FAF7F2] text-stone-800 font-sans">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden flex flex-col time-bg font-sans">
       
       {/* Official Header with Language Switcher */}
       <Header
@@ -248,11 +250,11 @@ export default function App() {
       <div className="fixed bottom-4 left-3 sm:bottom-6 sm:left-6 z-40 no-print flex flex-col gap-2">
         <button
           onClick={() => setIsLanguageModalOpen(true)}
-          className="flex items-center gap-2 px-3.5 py-2.5 rounded-full bg-white/95 backdrop-blur-md shadow-xl border-2 border-emerald-700/60 text-[#0f4d3a] hover:bg-emerald-50 transition-all font-bold text-xs sm:text-sm cursor-pointer hover:scale-105 active:scale-95"
+          className="flex items-center gap-2 px-3.5 py-2.5 rounded-full bg-white/95 dark:bg-[#1E1E1E]/95 backdrop-blur-md shadow-xl border-2 border-emerald-700/60 dark:border-amber-500/50 text-[#0f4d3a] dark:text-amber-300 hover:bg-emerald-50 dark:hover:bg-stone-800 transition-all font-bold text-xs sm:text-sm cursor-pointer hover:scale-105 active:scale-95"
           title={t.languageSelectBtn}
           aria-label={t.languageSelectBtn}
         >
-          <Languages className="w-4 h-4 text-amber-600" />
+          <Languages className="w-4 h-4 text-amber-600 dark:text-amber-400" />
           <span className="font-bold">🌐 {t.languageSelectBtn}</span>
         </button>
       </div>
@@ -264,11 +266,11 @@ export default function App() {
         {showScrollTop && (
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="pointer-events-auto w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center bg-white/95 hover:bg-white text-stone-700 rounded-full shadow-md border border-stone-200 transition-all hover:scale-105 active:scale-95 cursor-pointer backdrop-blur-xs"
+            className="pointer-events-auto w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center bg-white/95 dark:bg-[#1E1E1E]/95 hover:bg-white dark:hover:bg-stone-800 text-stone-700 dark:text-amber-300 rounded-full shadow-md border border-stone-200 dark:border-amber-500/40 transition-all hover:scale-105 active:scale-95 cursor-pointer backdrop-blur-xs"
             title={t.scrollTop}
             aria-label={t.scrollTop}
           >
-            <ArrowUp className="w-5 h-5 text-[#0f4d3a]" />
+            <ArrowUp className="w-5 h-5 text-[#0f4d3a] dark:text-amber-300" />
           </button>
         )}
 

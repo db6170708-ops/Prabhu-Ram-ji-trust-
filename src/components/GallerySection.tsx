@@ -48,34 +48,34 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ photos, videos }
   });
 
   return (
-    <section id="gallery" className="py-16 md:py-24 bg-[#FAF7F2] border-b border-stone-200">
+    <section id="gallery" className="py-16 md:py-24 time-bg border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Heading */}
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 bg-emerald-100/70 px-3 py-1 rounded-full border border-emerald-300">
+          <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 dark:text-emerald-200 bg-emerald-100/70 dark:bg-emerald-950/60 px-3 py-1 rounded-full border border-emerald-300 dark:border-emerald-700/60">
             {t.galleryTag}
           </span>
-          <h2 className="font-heading text-3xl sm:text-4xl font-bold text-[#0f4d3a] mt-3">
+          <h2 className="font-heading text-3xl sm:text-4xl font-bold time-heading mt-3">
             {t.galleryTitle}
           </h2>
           <div className="w-20 h-1 bg-amber-500 mx-auto mt-4 rounded-full"></div>
-          <p className="text-stone-600 mt-4 text-base sm:text-lg">
+          <p className="text-stone-600 dark:text-stone-300 mt-4 text-base sm:text-lg">
             ग्राम गलगाँव में संचालित गौसेवा, नर्मदा परिक्रमा पथिक सेवा एवं शनिवार भंडारे के पावन क्षण।
           </p>
         </div>
 
         {/* Media Type & Category Filter Controls */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-10 pb-6 border-b border-stone-200">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-10 pb-6 border-b border-stone-200 dark:border-stone-800">
           
           {/* Photos vs Videos Toggle */}
-          <div className="inline-flex p-1 bg-white rounded-2xl border border-stone-300 shadow-xs">
+          <div className="inline-flex p-1 time-card rounded-2xl border shadow-xs">
             <button
               onClick={() => setActiveTab('photos')}
               className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                 activeTab === 'photos'
                   ? 'bg-[#0f4d3a] text-white shadow-xs'
-                  : 'text-stone-600 hover:text-stone-900'
+                  : 'text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white'
               }`}
             >
               <ImageIcon className="w-4 h-4" />
@@ -87,7 +87,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ photos, videos }
               className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                 activeTab === 'videos'
                   ? 'bg-[#0f4d3a] text-white shadow-xs'
-                  : 'text-stone-600 hover:text-stone-900'
+                  : 'text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white'
               }`}
             >
               <Video className="w-4 h-4" />
@@ -104,7 +104,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ photos, videos }
                 className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                   selectedCategory === c.id
                     ? 'bg-amber-500 text-stone-900 font-bold shadow-xs'
-                    : 'bg-white hover:bg-stone-100 text-stone-600 border border-stone-200'
+                    : 'time-card hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-600 dark:text-stone-300 border'
                 }`}
               >
                 {c.label}
@@ -121,9 +121,9 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ photos, videos }
               <div 
                 key={photo.id}
                 onClick={() => setPreviewPhoto(photo)}
-                className="group bg-white rounded-3xl overflow-hidden shadow-xs hover:shadow-xl transition-all border border-stone-200 hover:border-amber-400 cursor-pointer flex flex-col justify-between"
+                className="group time-card rounded-3xl overflow-hidden shadow-xs hover:shadow-xl transition-all border hover:border-amber-400 cursor-pointer flex flex-col justify-between"
               >
-                <div className="aspect-4/3 overflow-hidden bg-stone-100 relative">
+                <div className="aspect-4/3 overflow-hidden bg-stone-100 dark:bg-stone-900 relative">
                   <img
                     src={photo.imageUrl}
                     alt={photo.title}
@@ -142,16 +142,16 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ photos, videos }
 
                 <div className="p-5 flex-1 flex flex-col justify-between">
                   <div>
-                    <h3 className="font-heading font-bold text-base text-stone-900 group-hover:text-[#0f4d3a] transition-colors line-clamp-1">
+                    <h3 className="font-heading font-bold text-base text-stone-900 dark:text-stone-100 group-hover:text-[#0f4d3a] dark:group-hover:text-amber-300 transition-colors line-clamp-1">
                       {photo.title}
                     </h3>
-                    <p className="text-xs text-stone-600 mt-1 line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-stone-600 dark:text-stone-300 mt-1 line-clamp-2 leading-relaxed">
                       {photo.description}
                     </p>
                   </div>
-                  <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-[11px] text-stone-400">
+                  <div className="mt-4 pt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between text-[11px] text-stone-400 dark:text-stone-500">
                     <span>{photo.date}</span>
-                    <span className="text-emerald-700 font-semibold">गलगाँव सेवा</span>
+                    <span className="text-emerald-700 dark:text-emerald-300 font-semibold">गलगाँव सेवा</span>
                   </div>
                 </div>
               </div>
@@ -166,7 +166,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ photos, videos }
               <div 
                 key={video.id}
                 onClick={() => setPreviewVideo(video)}
-                className="group bg-white rounded-3xl overflow-hidden shadow-xs hover:shadow-xl transition-all border border-stone-200 hover:border-amber-400 cursor-pointer flex flex-col justify-between"
+                className="group time-card rounded-3xl overflow-hidden shadow-xs hover:shadow-xl transition-all border hover:border-amber-400 cursor-pointer flex flex-col justify-between"
               >
                 <div className="aspect-video overflow-hidden bg-stone-900 relative">
                   <img
@@ -188,16 +188,16 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ photos, videos }
 
                 <div className="p-4 flex-1 flex flex-col justify-between">
                   <div>
-                    <h3 className="font-heading font-bold text-sm text-stone-900 line-clamp-2 group-hover:text-[#0f4d3a] transition-colors">
+                    <h3 className="font-heading font-bold text-sm text-stone-900 dark:text-stone-100 line-clamp-2 group-hover:text-[#0f4d3a] dark:group-hover:text-amber-300 transition-colors">
                       {video.title}
                     </h3>
-                    <p className="text-xs text-stone-500 mt-1 line-clamp-2">
+                    <p className="text-xs text-stone-500 dark:text-stone-400 mt-1 line-clamp-2">
                       {video.description}
                     </p>
                   </div>
-                  <div className="mt-3 pt-2 border-t border-stone-100 flex items-center justify-between text-[11px] text-stone-400">
+                  <div className="mt-3 pt-2 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between text-[11px] text-stone-400 dark:text-stone-500">
                     <span>{video.date}</span>
-                    <span className="text-red-600 font-semibold flex items-center gap-1">
+                    <span className="text-red-600 dark:text-red-400 font-semibold flex items-center gap-1">
                       <Youtube className="w-3.5 h-3.5" />
                       YouTube
                     </span>
@@ -209,12 +209,12 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ photos, videos }
         )}
 
         {/* Social Channels Callout Banner */}
-        <div className="mt-14 bg-white rounded-3xl p-6 sm:p-8 border border-stone-200 shadow-xs flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="mt-14 time-card rounded-3xl p-6 sm:p-8 border shadow-xs flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-1 text-center md:text-left">
-            <h3 className="font-heading text-lg font-bold text-[#0f4d3a]">
+            <h3 className="font-heading text-lg font-bold time-heading">
               हमारे सोशल मीडिया चैनलों पर लाइव सेवा दर्शन करें
             </h3>
-            <p className="text-xs sm:text-sm text-stone-500">
+            <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-300">
               यूट्यूब, फेसबुक एवं इंस्टाग्राम पर गौसेवा एवं शनिवार भंडारे के नित्य वीडियो देखें।
             </p>
           </div>
@@ -257,10 +257,10 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ photos, videos }
       {/* Photo Lightbox Modal */}
       {previewPhoto && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs">
-          <div className="bg-white rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl relative animate-in zoom-in-95">
+          <div className="time-card rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl relative animate-in zoom-in-95 border">
             <button
               onClick={() => setPreviewPhoto(null)}
-              className="absolute top-4 right-4 z-10 p-2 text-stone-700 hover:text-black bg-white/80 hover:bg-white rounded-full transition-colors cursor-pointer"
+              className="absolute top-4 right-4 z-10 p-2 text-stone-700 dark:text-stone-200 hover:text-black dark:hover:text-white bg-white/80 dark:bg-stone-800/90 hover:bg-white dark:hover:bg-stone-700 rounded-full transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -279,11 +279,11 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ photos, videos }
             </div>
 
             <div className="p-6">
-              <span className="text-xs text-amber-700 font-semibold">{previewPhoto.date}</span>
-              <h3 className="font-heading text-xl font-bold text-[#0f4d3a] mt-0.5">
+              <span className="text-xs text-amber-700 dark:text-amber-400 font-semibold">{previewPhoto.date}</span>
+              <h3 className="font-heading text-xl font-bold time-heading mt-0.5">
                 {previewPhoto.title}
               </h3>
-              <p className="text-sm text-stone-600 mt-2 leading-relaxed">
+              <p className="text-sm text-stone-600 dark:text-stone-300 mt-2 leading-relaxed">
                 {previewPhoto.description}
               </p>
             </div>

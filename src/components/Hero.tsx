@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TRUST_INFO, ASHRAM_NIRMAN_INFO } from '../data/defaultData';
 import { HINDI_TEXT } from '../utils/translations';
+import { TimeThemeCard } from './TimeThemeCard';
 import { 
   HeartHandshake, 
   ChevronRight, 
@@ -107,7 +108,7 @@ export const Hero: React.FC<HeroProps> = ({
   const activeWork = activeWorks[currentWorkIndex];
 
   return (
-    <section className="relative bg-gradient-to-b from-[#08241b] via-[#0e4333] to-[#0a3125] text-white overflow-hidden py-12 md:py-20 border-b-4 border-amber-500 w-full max-w-full">
+    <section className="relative time-hero text-white overflow-hidden py-12 md:py-20 border-b-4 border-amber-500 w-full max-w-full">
       
       {/* Background illumination */}
       <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#f59e0b_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
@@ -247,6 +248,9 @@ export const Hero: React.FC<HeroProps> = ({
 
           </div>
         </div>
+
+        {/* Live Time-Based Automatic Greeting & Theme Switcher Card */}
+        <TimeThemeCard />
 
         {/* FEATURED: Home Page Dedicated Ashram Construction Folder Widget */}
         <div className="w-full max-w-5xl mx-auto mb-10 bg-[#072b20]/95 backdrop-blur-md rounded-3xl p-5 sm:p-7 border-2 border-amber-400/70 shadow-2xl relative overflow-hidden">

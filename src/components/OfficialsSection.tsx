@@ -16,19 +16,19 @@ export const OfficialsSection: React.FC<OfficialsSectionProps> = ({ officials })
   };
 
   return (
-    <section id="officials" className="py-16 md:py-24 bg-[#FAF7F2] border-b border-stone-200">
+    <section id="officials" className="py-16 md:py-24 time-bg border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Heading */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 bg-emerald-100/70 px-3 py-1 rounded-full border border-emerald-300">
+          <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 dark:text-emerald-200 bg-emerald-100/70 dark:bg-emerald-950/70 px-3 py-1 rounded-full border border-emerald-300 dark:border-emerald-700">
             {t.officialsTag}
           </span>
-          <h2 className="font-heading text-3xl sm:text-4xl font-bold text-[#0f4d3a] mt-3">
+          <h2 className="font-heading text-3xl sm:text-4xl font-bold time-heading mt-3">
             {t.officialsTitle}
           </h2>
           <div className="w-20 h-1 bg-amber-500 mx-auto mt-4 rounded-full"></div>
-          <p className="text-stone-600 mt-4 text-base sm:text-lg">
+          <p className="text-stone-600 dark:text-stone-300 mt-4 text-base sm:text-lg">
             {t.officialsSub}
           </p>
         </div>
@@ -38,7 +38,7 @@ export const OfficialsSection: React.FC<OfficialsSectionProps> = ({ officials })
           {officials.map((official) => (
             <div 
               key={official.id}
-              className="bg-white rounded-3xl p-8 shadow-xs hover:shadow-lg transition-all border border-stone-200 hover:border-amber-400 flex flex-col justify-between text-center relative overflow-hidden group"
+              className="time-card rounded-3xl p-8 shadow-xs hover:shadow-lg transition-all border hover:border-amber-400 flex flex-col justify-between text-center relative overflow-hidden group"
             >
               {/* Top Accent Strip */}
               <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-[#0f4d3a] via-amber-500 to-[#0f4d3a]"></div>
@@ -49,21 +49,21 @@ export const OfficialsSection: React.FC<OfficialsSectionProps> = ({ officials })
                   <UserCheck className="w-10 h-10 text-amber-300" />
                 </div>
 
-                <div className="inline-block px-3 py-1 rounded-full text-xs font-bold text-[#0f4d3a] bg-emerald-50 border border-emerald-200 mb-3">
+                <div className="inline-block px-3 py-1 rounded-full text-xs font-bold text-[#0f4d3a] dark:text-emerald-200 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-700 mb-3">
                   {getCleanDesignation(official.designation)}
                 </div>
 
-                <h3 className="font-heading text-2xl font-bold text-stone-900 mb-3">
+                <h3 className="font-heading text-2xl font-bold text-stone-900 dark:text-stone-100 mb-3">
                   {official.name}
                 </h3>
 
-                <p className="text-stone-600 text-sm leading-relaxed mb-6">
+                <p className="text-stone-600 dark:text-stone-300 text-sm leading-relaxed mb-6">
                   {official.roleDescription}
                 </p>
               </div>
 
-              <div className="pt-4 border-t border-stone-100 flex items-center justify-center gap-2 text-xs font-semibold text-emerald-800">
-                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <div className="pt-4 border-t border-stone-200/70 dark:border-stone-700 flex items-center justify-center gap-2 text-xs font-semibold text-emerald-800 dark:text-emerald-300">
+                <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>अधिकृत एवं सत्यापित न्यासी</span>
               </div>
             </div>
@@ -71,11 +71,11 @@ export const OfficialsSection: React.FC<OfficialsSectionProps> = ({ officials })
         </div>
 
         {/* Accountability & Public Declaration Box */}
-        <div className="mt-12 bg-white rounded-2xl p-6 border border-amber-200/90 shadow-xs max-w-3xl mx-auto text-center">
-          <h4 className="font-heading text-base font-bold text-[#0f4d3a] mb-1">
+        <div className="mt-12 time-card rounded-2xl p-6 border shadow-xs max-w-3xl mx-auto text-center">
+          <h4 className="font-heading text-base font-bold time-heading mb-1">
             न्यासी मंडल की ओर से सार्वजनिक प्रतिज्ञा
           </h4>
-          <p className="text-xs sm:text-sm text-stone-600 leading-relaxed">
+          <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 leading-relaxed">
             “हम वचन देते हैं कि प्रभु रामजी ट्रस्ट को प्राप्त होने वाला हर एक दान सीधे गौमाता की सेवा, अन्नदान एवं नर्मदा परिक्रमा सेवा में लगाया जाता है। किसी भी दानदाता को यदि किसी भी प्रकार की जानकारी या हिसाब चाहिए, तो वे सीधे हमसे संपर्क कर सकते हैं।”
           </p>
         </div>

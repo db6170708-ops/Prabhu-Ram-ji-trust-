@@ -74,8 +74,8 @@ export const changeGoogleTranslateLanguage = (langCode: string) => {
   if (selectEl) {
     if (langCode === 'hi') {
       // Restore original Hindi cleanly
-      const bannerFrame = document.querySelector('.goog-te-banner-frame') as HTMLIFrameElement | null;
-      const restoreBtn = bannerFrame?.contentDocument?.querySelector('#\\:1\\.restore') as HTMLElement | null;
+      const bannerFrame = document.querySelector('.goog-te-banner-frame, iframe.VIpgJd-ZVi9od-ORHb-OEVmcd') as HTMLIFrameElement | null;
+      const restoreBtn = bannerFrame?.contentDocument?.querySelector('#\\:1\\.restore, button[id$=".restore"]') as HTMLElement | null;
       if (restoreBtn) {
         restoreBtn.click();
         return;
@@ -114,6 +114,29 @@ export const GoogleTranslateWidget: React.FC<GoogleTranslateWidgetProps> = ({
     const current = getActiveLanguageCode();
     setSelectedLang(current);
 
+    const suppressGoogleBanner = () => {
+      if (document.body && document.body.style.top && document.body.style.top !== '0px') {
+        document.body.style.setProperty('top', '0px', 'important');
+      }
+      const bannerEls = document.querySelectorAll<HTMLElement>(
+        'body > .skiptranslate, .goog-te-banner-frame, .VIpgJd-ZVi9od-ORHb-OEVmcd, .VIpgJd-ZVi9od-ORHb, #goog-gt-tt, .goog-te-spinner-pos'
+      );
+      bannerEls.forEach((el) => {
+        el.style.setProperty('display', 'none', 'important');
+        el.style.setProperty('visibility', 'hidden', 'important');
+        el.style.setProperty('height', '0px', 'important');
+      });
+    };
+
+    suppressGoogleBanner();
+    const observer = new MutationObserver(suppressGoogleBanner);
+    observer.observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style', 'class'],
+    });
+
     const handleLangSync = (e: Event) => {
       const customEvent = e as CustomEvent<string>;
       if (customEvent.detail) {
@@ -130,6 +153,7 @@ export const GoogleTranslateWidget: React.FC<GoogleTranslateWidgetProps> = ({
     window.addEventListener('prt-language-changed', handleLangSync);
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
+      observer.disconnect();
       window.removeEventListener('prt-language-changed', handleLangSync);
       document.removeEventListener('mousedown', handleClickOutside);
     };

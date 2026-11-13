@@ -63,7 +63,7 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-xs border-b border-stone-200 w-full max-w-full notranslate-header">
+    <header className="sticky top-0 z-50 time-header backdrop-blur-md shadow-xs border-b w-full max-w-full notranslate-header">
       
       {/* Top Sacred Ribbon: Location, Routine, Social Links & Google Translate */}
       <div className="bg-[#0b382c] text-amber-200 text-xs py-2 px-3 sm:px-8 border-b border-emerald-950/40 w-full">
@@ -181,21 +181,21 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
-                <span className="font-heading text-lg sm:text-2xl md:text-3xl font-bold tracking-tight text-[#0f4d3a] truncate">
+                <span className="font-heading text-lg sm:text-2xl md:text-3xl font-bold tracking-tight time-heading truncate">
                   प्रभु रामजी ट्रस्ट
                 </span>
                 <span className="hidden lg:inline text-[11px] font-bold px-2 py-0.5 rounded-full text-amber-900 bg-gradient-to-r from-amber-200 to-amber-300 border border-amber-400 shadow-xs">
                   आधिकारिक सेवा मंच
                 </span>
               </div>
-              <p className="text-[11px] sm:text-xs md:text-sm text-stone-600 font-medium truncate">
+              <p className="text-[11px] sm:text-xs md:text-sm text-stone-600 dark:text-stone-300 font-medium truncate">
                 सेवा ही संकल्प • सहयोग ही शक्ति
               </p>
             </div>
           </button>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden xl:flex items-center gap-3 text-sm font-medium text-stone-700">
+          <nav className="hidden xl:flex items-center gap-3 text-sm font-medium text-stone-700 dark:text-stone-200">
             {navItems.map((item) => (
               <button
                 key={item.id}
@@ -203,11 +203,11 @@ export const Header: React.FC<HeaderProps> = ({
                 className={`whitespace-nowrap transition-all py-1 cursor-pointer border-b-2 text-xs font-semibold ${
                   item.highlight
                     ? activeSection === item.id
-                      ? 'border-amber-500 text-amber-700 font-bold bg-amber-50 px-2 rounded-t'
-                      : 'border-transparent text-amber-700 hover:text-amber-800 font-bold bg-amber-50/70 hover:bg-amber-100 px-2 rounded-t'
+                      ? 'border-amber-500 text-amber-700 dark:text-amber-300 font-bold bg-amber-50 dark:bg-amber-500/20 px-2 rounded-t'
+                      : 'border-transparent text-amber-700 dark:text-amber-300 hover:text-amber-800 dark:hover:text-amber-200 font-bold bg-amber-50/70 dark:bg-amber-500/10 hover:bg-amber-100 dark:hover:bg-amber-500/20 px-2 rounded-t'
                     : activeSection === item.id 
-                      ? 'border-[#0f4d3a] text-[#0f4d3a] font-bold' 
-                      : 'border-transparent hover:text-[#0f4d3a] hover:border-amber-400'
+                      ? 'border-[#0f4d3a] dark:border-amber-400 text-[#0f4d3a] dark:text-amber-300 font-bold' 
+                      : 'border-transparent hover:text-[#0f4d3a] dark:hover:text-amber-300 hover:border-amber-400'
                 }`}
               >
                 {item.label}
@@ -225,10 +225,10 @@ export const Header: React.FC<HeaderProps> = ({
             {onOpenVolunteerModal && (
               <button
                 onClick={onOpenVolunteerModal}
-                className="hidden xl:inline-flex items-center gap-1 px-3 py-2 text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors border border-emerald-300 cursor-pointer"
+                className="hidden xl:inline-flex items-center gap-1 px-3 py-2 text-xs font-semibold text-emerald-800 dark:text-emerald-200 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/70 rounded-lg transition-colors border border-emerald-300 dark:border-emerald-700/60 cursor-pointer"
                 title="स्वयंसेवक बनें"
               >
-                <Users className="w-3.5 h-3.5 text-emerald-700" />
+                <Users className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-300" />
                 <span>स्वयंसेवक</span>
               </button>
             )}
@@ -236,10 +236,10 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Receipt Search Button */}
             <button
               onClick={onOpenReceiptSearch}
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg transition-colors border border-stone-300 cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-stone-700 dark:text-stone-200 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 rounded-lg transition-colors border border-stone-300 dark:border-stone-700 cursor-pointer"
               title="रसीद खोजें"
             >
-              <Search className="w-3.5 h-3.5 text-stone-600" />
+              <Search className="w-3.5 h-3.5 text-stone-600 dark:text-stone-300" />
               <span>रसीद खोजें</span>
             </button>
 
@@ -255,7 +255,7 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Admin Login */}
             <button
               onClick={onOpenAdmin}
-              className="p-2 text-stone-500 hover:text-stone-800 hover:bg-stone-100 rounded-lg transition-colors cursor-pointer"
+              className="p-2 text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-white hover:bg-stone-100 dark:hover:bg-stone-800 rounded-lg transition-colors cursor-pointer"
               title="व्यवस्थापक प्रवेश"
               aria-label="व्यवस्थापक प्रवेश"
             >
@@ -277,7 +277,7 @@ export const Header: React.FC<HeaderProps> = ({
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-1.5 text-stone-700 hover:bg-stone-100 rounded-lg transition-colors shrink-0 cursor-pointer"
+              className="p-1.5 text-stone-700 dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-lg transition-colors shrink-0 cursor-pointer"
               aria-label="मेनू खोलें"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -289,7 +289,7 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="xl:hidden bg-white border-b border-stone-200 px-4 pt-3 pb-6 shadow-xl animate-in slide-in-from-top duration-200">
+        <div className="xl:hidden time-card border-b px-4 pt-3 pb-6 shadow-xl animate-in slide-in-from-top duration-200">
           
           {/* Navigation Links Grid */}
           <div className="grid grid-cols-2 gap-2 mb-4">
@@ -299,10 +299,10 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={() => handleNavClick(item.id)}
                 className={`text-left px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors cursor-pointer ${
                   item.highlight
-                    ? 'bg-amber-100 text-amber-900 font-bold border border-amber-300'
+                    ? 'bg-amber-100 dark:bg-amber-500/20 text-amber-900 dark:text-amber-200 font-bold border border-amber-300 dark:border-amber-500/40'
                     : activeSection === item.id
-                      ? 'bg-emerald-50 text-[#0f4d3a] font-bold border border-emerald-200'
-                      : 'text-stone-700 hover:bg-stone-50'
+                      ? 'bg-emerald-50 dark:bg-emerald-900/40 text-[#0f4d3a] dark:text-emerald-200 font-bold border border-emerald-200 dark:border-emerald-700'
+                      : 'text-stone-700 dark:text-stone-200 hover:bg-stone-50 dark:hover:bg-stone-800'
                 }`}
               >
                 {item.label}
@@ -310,12 +310,12 @@ export const Header: React.FC<HeaderProps> = ({
             ))}
           </div>
 
-          <div className="space-y-2 pt-2 border-t border-stone-100">
+          <div className="space-y-2 pt-2 border-t border-stone-100 dark:border-stone-800">
             {/* PWA Mobile App Install Banner */}
-            <div className="p-2.5 bg-gradient-to-r from-emerald-50 to-amber-50 rounded-xl border border-emerald-200/80 flex items-center justify-between gap-2">
+            <div className="p-2.5 bg-gradient-to-r from-emerald-50 to-amber-50 dark:from-emerald-950/60 dark:to-amber-950/40 rounded-xl border border-emerald-200/80 dark:border-emerald-800/60 flex items-center justify-between gap-2">
               <div className="text-left">
-                <span className="font-bold text-xs text-[#0f4d3a] block">प्रभु रामजी ट्रस्ट ऐप डाउनलोड करें</span>
-                <span className="text-[10px] text-stone-500">बिना किसी रुकावट के सेवा, दान व रसीद की सुविधा मोबाइल पर</span>
+                <span className="font-bold text-xs time-heading block">प्रभु रामजी ट्रस्ट ऐप डाउनलोड करें</span>
+                <span className="text-[10px] text-stone-500 dark:text-stone-300">बिना किसी रुकावट के सेवा, दान व रसीद की सुविधा मोबाइल पर</span>
               </div>
               <PWAInstallButton />
             </div>
@@ -327,9 +327,9 @@ export const Header: React.FC<HeaderProps> = ({
                   onOpenVolunteerModal();
                   setMobileMenuOpen(false);
                 }}
-                className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-semibold text-emerald-900 bg-emerald-50 hover:bg-emerald-100 rounded-lg border border-emerald-200 cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-semibold text-emerald-900 dark:text-emerald-200 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/70 rounded-lg border border-emerald-200 dark:border-emerald-800/60 cursor-pointer"
               >
-                <Users className="w-4 h-4 text-emerald-700" />
+                <Users className="w-4 h-4 text-emerald-700 dark:text-emerald-300" />
                 <span>स्वयंसेवक पंजीकरण</span>
               </button>
             )}
@@ -341,9 +341,9 @@ export const Header: React.FC<HeaderProps> = ({
                   onOpenCertificateModal();
                   setMobileMenuOpen(false);
                 }}
-                className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-semibold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg border border-stone-300 cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-semibold text-stone-700 dark:text-stone-200 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 rounded-lg border border-stone-300 dark:border-stone-700 cursor-pointer"
               >
-                <Award className="w-4 h-4 text-amber-600" />
+                <Award className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                 <span>सेवा सम्मान प्रमाण-पत्र</span>
               </button>
             )}
@@ -355,9 +355,9 @@ export const Header: React.FC<HeaderProps> = ({
                   onOpenComplaintModal();
                   setMobileMenuOpen(false);
                 }}
-                className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-semibold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg border border-stone-300 cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-semibold text-stone-700 dark:text-stone-200 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 rounded-lg border border-stone-300 dark:border-stone-700 cursor-pointer"
               >
-                <MessageSquare className="w-4 h-4 text-blue-600" />
+                <MessageSquare className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                 <span>सुझाव एवं सहायता</span>
               </button>
             )}
@@ -369,9 +369,9 @@ export const Header: React.FC<HeaderProps> = ({
                   onOpenConstructionProgress();
                   setMobileMenuOpen(false);
                 }}
-                className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-semibold text-amber-900 bg-amber-50 hover:bg-amber-100 rounded-lg border border-amber-200 cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 py-2 px-4 text-xs font-semibold text-amber-900 dark:text-amber-200 bg-amber-50 dark:bg-amber-950/50 hover:bg-amber-100 dark:hover:bg-amber-900/60 rounded-lg border border-amber-200 dark:border-amber-700/60 cursor-pointer"
               >
-                <Building2 className="w-4 h-4 text-amber-700" />
+                <Building2 className="w-4 h-4 text-amber-700 dark:text-amber-400" />
                 <span>आश्रम निर्माण प्रगति रिपोर्ट</span>
               </button>
             )}
@@ -382,7 +382,7 @@ export const Header: React.FC<HeaderProps> = ({
                 onOpenReceiptSearch();
                 setMobileMenuOpen(false);
               }}
-              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-medium text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg border border-stone-300 cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 text-xs sm:text-sm font-medium text-stone-700 dark:text-stone-200 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 rounded-lg border border-stone-300 dark:border-stone-700 cursor-pointer"
             >
               <Search className="w-4 h-4" />
               <span>रसीद खोजें व डाउनलोड करें</span>
@@ -390,7 +390,7 @@ export const Header: React.FC<HeaderProps> = ({
 
             {/* Official Social Channels in Mobile Menu */}
             <div className="pt-2">
-              <p className="text-[11px] font-semibold text-stone-500 mb-2 text-center">
+              <p className="text-[11px] font-semibold text-stone-500 dark:text-stone-400 mb-2 text-center">
                 आधिकारिक सोशल मीडिया माध्यम
               </p>
               <div className="flex items-center justify-center gap-3">
@@ -398,7 +398,7 @@ export const Header: React.FC<HeaderProps> = ({
                   href={TRUST_INFO.youtube}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 rounded-full bg-red-100 text-red-600 hover:bg-red-200"
+                  className="p-2 rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/70"
                   title="YouTube"
                 >
                   <Youtube className="w-4 h-4" />
@@ -407,7 +407,7 @@ export const Header: React.FC<HeaderProps> = ({
                   href={TRUST_INFO.whatsappChannel}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 rounded-full bg-emerald-100 text-emerald-600 hover:bg-emerald-200"
+                  className="p-2 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-200 dark:hover:bg-emerald-900/70"
                   title="WhatsApp Channel"
                 >
                   <MessageCircle className="w-4 h-4" />
@@ -416,7 +416,7 @@ export const Header: React.FC<HeaderProps> = ({
                   href={TRUST_INFO.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 rounded-full bg-pink-100 text-pink-600 hover:bg-pink-200"
+                  className="p-2 rounded-full bg-pink-100 dark:bg-pink-950/60 text-pink-600 dark:text-pink-400 hover:bg-pink-200 dark:hover:bg-pink-900/70"
                   title="Instagram"
                 >
                   <Instagram className="w-4 h-4" />
@@ -425,7 +425,7 @@ export const Header: React.FC<HeaderProps> = ({
                   href={TRUST_INFO.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200"
+                  className="p-2 rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900/70"
                   title="Facebook"
                 >
                   <Facebook className="w-4 h-4" />

@@ -9,7 +9,9 @@ import {
   SevaCertificate, 
   ComplaintFeedback, 
   ConstructionProgress, 
-  PaymentGatewayConfig 
+  PaymentGatewayConfig,
+  VolunteerServiceEvent,
+  VolunteerTaskItem
 } from '../types';
 import { 
   DEFAULT_NEWS, 
@@ -18,7 +20,9 @@ import {
   DEFAULT_TRANSPARENCY_RECORDS, 
   DEFAULT_OFFICIALS, 
   INITIAL_RECEIPTS,
-  DEFAULT_CONSTRUCTION_PROGRESS
+  DEFAULT_CONSTRUCTION_PROGRESS,
+  DEFAULT_VOLUNTEER_EVENTS,
+  DEFAULT_VOLUNTEER_TASKS
 } from '../data/defaultData';
 
 const KEYS = {
@@ -460,5 +464,78 @@ export const StorageService = {
     } catch (e) {
       console.error(e);
     }
+  },
+
+  // 7. Volunteer Dashboard Events & Tasks
+  getVolunteerEvents: (): VolunteerServiceEvent[] => {
+    try {
+      const data = localStorage.getItem('prt_volunteer_events');
+      return data ? JSON.parse(data) : DEFAULT_VOLUNTEER_EVENTS;
+    } catch {
+      return DEFAULT_VOLUNTEER_EVENTS;
+    }
+  },
+  saveVolunteerEvents: (events: VolunteerServiceEvent[]) => {
+    try {
+      localStorage.setItem('prt_volunteer_events', JSON.stringify(events));
+    } catch (e) {
+      console.error(e);
+    }
+  },
+  toggleVolunteerEventRsvp: (eventId: string, volunteerKey: string): VolunteerServiceEvent[] => {
+    const events = StorageService.getVolunteerEvents();
+    const updated = events.map((ev) => {
+      if (ev.id !== eventId) return ev;
+      const exists = ev.rsvpVolunteerIds.includes(volunteerKey);
+      return {
+        ...ev,
+        rsvpVolunteerIds: exists
+          ? ev.rsvpVolunteerIds.filter((id) => id !== volunteerKey)
+          : [...ev.rsvpVolunteerIds, volunteerKey]
+      };
+    });
+    StorageService.saveVolunteerEvents(updated);
+    return updated;
+  },
+
+  getVolunteerTasks: (): VolunteerTaskItem[] => {
+    try {
+      const data = localStorage.getItem('prt_volunteer_tasks');
+      return data ? JSON.parse(data) : DEFAULT_VOLUNTEER_TASKS;
+    } catch {
+      return DEFAULT_VOLUNTEER_TASKS;
+    }
+  },
+  saveVolunteerTasks: (tasks: VolunteerTaskItem[]) => {
+    try {
+      localStorage.setItem('prt_volunteer_tasks', JSON.stringify(tasks));
+    } catch (e) {
+      console.error(e);
+    }
+  },
+  updateVolunteerTaskStatus: (
+    taskId: string,
+    status: 'pending' | 'in_progress' | 'completed',
+    assignedTo?: string
+  ): VolunteerTaskItem[] => {
+    const tasks = StorageService.getVolunteerTasks();
+    const updated = tasks.map((task) =>
+      task.id === taskId
+        ? {
+            ...task,
+            status,
+            assignedTo: assignedTo !== undefined ? assignedTo : task.assignedTo
+          }
+        : task
+    );
+    StorageService.saveVolunteerTasks(updated);
+    return updated;
+  },
+  addVolunteerTask: (task: VolunteerTaskItem): VolunteerTaskItem[] => {
+    const tasks = StorageService.getVolunteerTasks();
+    const updated = [task, ...tasks];
+    StorageService.saveVolunteerTasks(updated);
+    return updated;
   }
 };
+

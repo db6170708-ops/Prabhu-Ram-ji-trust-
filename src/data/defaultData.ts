@@ -6,7 +6,9 @@ import {
   TransparencyRecord, 
   DonationReceipt, 
   ConstructionProgress, 
-  SevaProject 
+  SevaProject,
+  VolunteerServiceEvent,
+  VolunteerTaskItem
 } from '../types';
 
 export const TRUST_INFO = {
@@ -569,4 +571,116 @@ export const DEFAULT_SEVA_PROJECTS: SevaProject[] = [
     donationTargetCause: "धार्मिक व सांस्कृतिक कार्यक्रम"
   }
 ];
+
+export const DEFAULT_VOLUNTEER_EVENTS: VolunteerServiceEvent[] = [
+  {
+    id: "evt-bhandara",
+    title: "शनिवार शाम भव्य महाभंडारा एवं संकीर्तन सेवा",
+    category: "bhandara",
+    dateLabel: "प्रत्येक शनिवार (आगामी)",
+    timeSlot: "सायं 05:00 – रात्रि 09:30 बजे",
+    location: "श्री हनुमान मंदिर एवं आश्रम परिसर, ग्राम गलगाँव",
+    coordinator: "श्री दिनेश जी (+91 95753 01233)",
+    neededVolunteers: 12,
+    rsvpVolunteerIds: ["VOL-2026-1001", "VOL-2026-1002", "VOL-2026-1003", "VOL-2026-1004"],
+    priority: "urgent"
+  },
+  {
+    id: "evt-chai",
+    title: "दैनिक प्रातः निःशुल्क चाय एवं परिक्रमा पथिक जल सेवा",
+    category: "chaiseva",
+    dateLabel: "प्रतिदिन प्रातःकाल",
+    timeSlot: "प्रातः 06:00 – प्रातः 10:00 बजे",
+    location: "सनावद-गलगाँव माँ नर्मदा परिक्रमा मार्ग",
+    coordinator: "श्री गुलाबचंद जी",
+    neededVolunteers: 4,
+    rsvpVolunteerIds: ["VOL-2026-1001", "VOL-2026-1005"],
+    priority: "regular"
+  },
+  {
+    id: "evt-gauseva",
+    title: "गौशाला हरा चारा वितरण व स्वच्छता सेवा अभियान",
+    category: "gauseva",
+    dateLabel: "रविवार एवं बुधवार",
+    timeSlot: "प्रातः 07:00 – 10:30 बजे",
+    location: "प्रभु रामजी ट्रस्ट गौशाला परिसर, गलगाँव",
+    coordinator: "श्रीमती चम्पा बाई",
+    neededVolunteers: 6,
+    rsvpVolunteerIds: ["VOL-2026-1002", "VOL-2026-1006", "VOL-2026-1007"],
+    priority: "regular"
+  },
+  {
+    id: "evt-ashram",
+    title: "प्रभु रामजी आश्रम निर्माण (स्तंभ, सीमेंट व विश्राम भवन सेवा)",
+    category: "ashram",
+    dateLabel: "आगामी सप्ताह (निरंतर)",
+    timeSlot: "प्रातः 09:00 – सायं 05:00 बजे",
+    location: "प्रभु रामजी आश्रम निर्माण स्थल, गलगाँव",
+    coordinator: "ट्रस्ट निर्माण समिति",
+    neededVolunteers: 8,
+    rsvpVolunteerIds: ["VOL-2026-1003", "VOL-2026-1004"],
+    priority: "urgent"
+  }
+];
+
+export const DEFAULT_VOLUNTEER_TASKS: VolunteerTaskItem[] = [
+  {
+    id: "tsk-1",
+    title: "भंडारा महाप्रसाद सामग्री (आटा, दाल, घी, गुड़) की मात्रा और भंडार व्यवस्था जांचना",
+    eventRef: "शनिवार शाम भव्य महाभंडारा",
+    sevaArea: "शनिवार शाम भंडारा सेवा",
+    dueDate: "इस शुक्रवार सायं तक",
+    priority: "high",
+    status: "pending",
+    assignedTo: "श्री दिनेश जी"
+  },
+  {
+    id: "tsk-2",
+    title: "पंगत बैठक दरी, स्वच्छ पेयजल टैंकर एवं पत्तल-दोना वितरण काउंटर तैयार करना",
+    eventRef: "शनिवार शाम भव्य महाभंडारा",
+    sevaArea: "शनिवार शाम भंडारा सेवा",
+    dueDate: "शनिवार सायं 04:30 बजे",
+    priority: "high",
+    status: "in_progress",
+    assignedTo: "सेवा दल टोली"
+  },
+  {
+    id: "tsk-3",
+    title: "नर्मदा परिक्रमा पदयात्रियों के लिए प्रातः 6 बजे गर्मागर्म चाय व प्राथमिक चिकित्सा किट तैयार रखना",
+    eventRef: "दैनिक प्रातः निःशुल्क चाय सेवा",
+    sevaArea: "दैनिक निःशुल्क चाय सेवा",
+    dueDate: "प्रतिदिन प्रातः 05:45 बजे",
+    priority: "medium",
+    status: "pending"
+  },
+  {
+    id: "tsk-4",
+    title: "गौशाला शेड की स्वच्छता व 50+ गोवंश के लिए हरा चारा व दलिया वितरण",
+    eventRef: "गौशाला चारा व स्वच्छता अभियान",
+    sevaArea: "गौशाला सेवा व चारा वितरण",
+    dueDate: "रविवार प्रातः 07:30 बजे",
+    priority: "medium",
+    status: "pending"
+  },
+  {
+    id: "tsk-5",
+    title: "आश्रम निर्माण स्थल पर सीमेंट बोरियों एवं स्तंभ ढलाई कार्य की प्रगति रिपोर्ट लेना",
+    eventRef: "आश्रम व मंदिर निर्माण",
+    sevaArea: "आश्रम एवं मंदिर निर्माण",
+    dueDate: "पूर्ण (समीक्षित)",
+    priority: "normal",
+    status: "completed",
+    assignedTo: "निर्माण सहयोग दल"
+  },
+  {
+    id: "tsk-6",
+    title: "सेवा कार्यक्रमों के फ़ोटो व वीडियो संकलन कर ट्रस्ट वेबसाइट व चैनल हेतु भेजना",
+    eventRef: "ट्रस्ट जनसंपर्क सेवा",
+    sevaArea: "डिजिटल व सोशल मीडिया प्रचार",
+    dueDate: "शनिवार रात्रि",
+    priority: "normal",
+    status: "pending"
+  }
+];
+
 

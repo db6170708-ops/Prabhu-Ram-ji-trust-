@@ -191,3 +191,28 @@ export interface SevaProject {
   donationTargetCause?: string;
   highlights?: string[];
 }
+
+export interface VolunteerServiceEvent {
+  id: string;
+  title: string;
+  category: 'bhandara' | 'chaiseva' | 'gauseva' | 'ashram' | 'utsav' | 'narmada';
+  dateLabel: string;
+  timeSlot: string;
+  location: string;
+  coordinator: string;
+  neededVolunteers: number;
+  rsvpVolunteerIds: string[];
+  priority?: 'urgent' | 'regular';
+}
+
+export interface VolunteerTaskItem {
+  id: string;
+  title: string;
+  eventRef: string;
+  sevaArea: string;
+  dueDate: string;
+  priority: 'high' | 'medium' | 'normal';
+  status: 'pending' | 'in_progress' | 'completed';
+  assignedTo?: string;
+}
+

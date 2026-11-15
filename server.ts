@@ -3,16 +3,21 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
+import { initializeCertificateDatabase } from './server/db.js';
+import { createCertificatesRouter } from './server/certificatesRouter.js';
 
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+initializeCertificateDatabase();
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
+app.use(express.json({ limit: '6mb' }));
+app.use('/api', createCertificatesRouter());
 
 interface ReceiptPayload {
   receiptNo: string;

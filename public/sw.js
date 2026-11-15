@@ -48,6 +48,9 @@ self.addEventListener('fetch', (event) => {
   const request = event.request;
   if (request.method !== 'GET') return;
 
+  const url = new URL(request.url);
+  if (url.pathname.startsWith('/api/')) return;
+
   // Use Network-First for HTML navigation requests so app updates load immediately
   if (request.mode === 'navigate') {
     event.respondWith(
@@ -67,7 +70,6 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Network-First for manifest and icons so updated sharp icons reflect immediately
-  const url = new URL(request.url);
   if (
     url.pathname.endsWith('.json') ||
     url.pathname.endsWith('.webmanifest') ||

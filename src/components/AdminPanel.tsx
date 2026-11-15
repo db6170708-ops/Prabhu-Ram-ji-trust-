@@ -49,23 +49,27 @@ import {
   CreditCard,
   CheckCircle2,
   XCircle,
-  Clock
+  Clock,
+  Award
 } from 'lucide-react';
 import { TRUST_INFO } from '../data/defaultData';
 import { sendReceiptEmail } from '../utils/emailService';
+import { CertificateManagementModule } from './certificates/CertificateManagementModule';
+import { CertificateApi, setStoredAdminToken } from '../utils/certificateApi';
 
 interface AdminPanelProps {
   isOpen: boolean;
   onClose: () => void;
   onDataUpdated: () => void;
+  onOpenPublicVerify?: (certNo: string) => void;
 }
 
-export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataUpdated }) => {
+export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataUpdated, onOpenPublicVerify }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [activeTab, setActiveTab] = useState<
-    'receipts' | 'volunteers' | 'complaints' | 'construction' | 'gateway' | 'photos' | 'videos' | 'news' | 'transparency' | 'backup'
+    'receipts' | 'certificates' | 'volunteers' | 'complaints' | 'construction' | 'gateway' | 'photos' | 'videos' | 'news' | 'transparency' | 'backup'
   >('receipts');
   const [statusMessage, setStatusMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
 
@@ -192,14 +196,22 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
     setTimeout(() => setStatusMessage(null), 3500);
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (StorageService.verifyAdminPassword(passwordInput)) {
+    const customLocal = localStorage.getItem('prt_admin_password') || '';
+    try {
+      await CertificateApi.adminLogin(passwordInput, customLocal);
       setIsAuthenticated(true);
       setPasswordInput('');
       showStatus('सफलता पूर्वक लॉगिन हुआ! आपका स्वागत है।', 'success');
-    } else {
-      showStatus('अमान्य पासवर्ड! कृपया सही एडमिन पासवर्ड दर्ज करें।', 'error');
+    } catch {
+      if (StorageService.verifyAdminPassword(passwordInput)) {
+        setIsAuthenticated(true);
+        setPasswordInput('');
+        showStatus('सफलता पूर्वक लॉगिन हुआ! आपका स्वागत है।', 'success');
+      } else {
+        showStatus('अमान्य पासवर्ड! कृपया सही एडमिन पासवर्ड दर्ज करें।', 'error');
+      }
     }
   };
 
@@ -587,7 +599,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
   };
 
   // 7. Security Password change
-  const handleChangePassword = (e: React.FormEvent) => {
+  const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!StorageService.verifyAdminPassword(oldPassword)) {
       showStatus('वर्तमान पासवर्ड सही नहीं है!', 'error');
@@ -603,6 +615,11 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
     }
 
     StorageService.setAdminPassword(newPassword.trim());
+    try {
+      await CertificateApi.changeAdminPassword(newPassword.trim());
+    } catch {
+      // client fallback preserved
+    }
     setOldPassword('');
     setNewPassword('');
     setConfirmPassword('');
@@ -724,7 +741,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
                   <span className="hidden sm:inline">रीफ्रेश</span>
                 </button>
                 <button
-                  onClick={() => setIsAuthenticated(false)}
+                  onClick={() => {
+                    setStoredAdminToken('');
+                    setIsAuthenticated(false);
+                  }}
                   className="px-3 py-1.5 text-xs font-semibold text-stone-600 hover:text-stone-900 border border-stone-300 rounded-lg"
                 >
                   लॉगआउट
@@ -750,6 +770,16 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
               >
                 <Receipt className="w-3.5 h-3.5 text-amber-500" />
                 <span>दान रिकॉर्ड व सत्यापन ({receiptsList.length})</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab('certificates')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer ${
+                  activeTab === 'certificates' ? 'bg-[#0f4d3a] text-white shadow-xs ring-1 ring-amber-400' : 'bg-amber-50 text-amber-950 hover:bg-amber-100 border border-amber-300'
+                }`}
+              >
+                <Award className="w-3.5 h-3.5 text-amber-600" />
+                <span>DIGITAL CERTIFICATE MANAGEMENT</span>
               </button>
 
               <button
@@ -846,6 +876,17 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
             {/* TAB CONTENTS - Scrollable Container */}
             <div className="flex-1 overflow-y-auto pr-1 pb-4">
               
+              {/* TAB: DIGITAL CERTIFICATE MANAGEMENT */}
+              {activeTab === 'certificates' && (
+                <CertificateManagementModule
+                  onNotify={showStatus}
+                  onOpenPublicVerify={(certNo) => {
+                    onClose();
+                    if (onOpenPublicVerify) onOpenPublicVerify(certNo);
+                  }}
+                />
+              )}
+
               {/* TAB: DONATION RECEIPTS MANAGEMENT */}
               {activeTab === 'receipts' && (
                 <div className="space-y-6">

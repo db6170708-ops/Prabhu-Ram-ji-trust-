@@ -566,5 +566,68 @@ iframe[src*="translate.googleapis"] {
     font-size: 8pt !important;
     color: #78716c !important;
   }
+
+  /* Scoped Public Verify Slip Printing */
+  #printable-verify-slip,
+  #printable-verify-slip * {
+    visibility: visible !important;
+  }
+
+  #printable-verify-slip {
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    box-shadow: none !important;
+  }
+
+  /* Scoped A4 Landscape Certificate Printing */
+  body.printing-a4-certificate #printable-receipt,
+  body.printing-a4-certificate #printable-receipt *,
+  body.printing-a4-certificate #printable-verify-slip,
+  body.printing-a4-certificate #printable-verify-slip * {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  body.printing-a4-certificate #printable-a4-certificate-wrapper {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 297mm !important;
+    height: 210mm !important;
+    z-index: 99999 !important;
+    visibility: visible !important;
+    display: block !important;
+    overflow: hidden !important;
+  }
+
+  body.printing-a4-certificate #printable-a4-certificate,
+  body.printing-a4-certificate #printable-a4-certificate * {
+    visibility: visible !important;
+  }
+
+  body.printing-a4-certificate #printable-a4-certificate {
+    width: 1122px !important;
+    height: 794px !important;
+    transform: scale(1) !important;
+    transform-origin: top left !important;
+    margin: 0 !important;
+  }
 }
+
+@page a4-landscape {
+  size: A4 landscape;
+  margin: 0;
+}
+
+@media print {
+  body.printing-a4-certificate {
+    page: a4-landscape;
+  }
+}
+
 

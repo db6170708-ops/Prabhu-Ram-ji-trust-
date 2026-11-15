@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { StorageService } from '../utils/storage';
 import { VolunteerCertificate } from '../types';
+import { PublicVerifiedCertificate } from '../types/certificates';
+import { CertificateApi } from '../utils/certificateApi';
 import { TRUST_INFO } from '../data/defaultData';
 import { Language } from '../utils/translations';
-import { X, Award, Search, Printer, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { X, Award, Search, Printer, ShieldCheck, CheckCircle2, XCircle } from 'lucide-react';
 
 interface CertificateModalProps {
   isOpen: boolean;
@@ -17,16 +19,38 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
 }) => {
   const [certIdInput, setCertIdInput] = useState('');
   const [certificate, setCertificate] = useState<VolunteerCertificate | null>(null);
+  const [publicCert, setPublicCert] = useState<PublicVerifiedCertificate | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!certIdInput.trim()) return;
-    const cert = StorageService.getCertificateById(certIdInput.trim());
-    setCertificate(cert);
+    const query = certIdInput.trim();
+    if (!query) return;
+
+    setIsSearching(true);
+    setHasSearched(false);
+    setCertificate(null);
+    setPublicCert(null);
+
+    try {
+      const apiRes = await CertificateApi.publicVerify(query);
+      if (apiRes.found && apiRes.certificate) {
+        setPublicCert(apiRes.certificate);
+        setHasSearched(true);
+        setIsSearching(false);
+        return;
+      }
+    } catch {
+      // fallback to local check below
+    }
+
+    const localCert = StorageService.getCertificateById(query);
+    setCertificate(localCert);
     setHasSearched(true);
+    setIsSearching(false);
   };
 
   const handlePrint = () => {
@@ -65,24 +89,86 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
           <form onSubmit={handleSearch} className="flex gap-2">
             <input
               type="text"
-              placeholder="प्रमाण-पत्र क्रमांक दर्ज करें (उदा. PRT-CERT-2026-101)..."
+              placeholder="प्रमाण-पत्र क्रमांक दर्ज करें (उदा. PRRT-2026-0001 या PRT-CERT-2026-101)..."
               value={certIdInput}
               onChange={(e) => setCertIdInput(e.target.value)}
               className="flex-1 px-3 py-2 text-sm border border-stone-300 rounded-xl focus:ring-2 focus:ring-[#0f4d3a] focus:outline-none bg-white"
             />
             <button
               type="submit"
-              className="px-4 py-2 bg-[#0f4d3a] hover:bg-[#145e48] text-white text-xs sm:text-sm font-semibold rounded-xl flex items-center gap-1.5 cursor-pointer"
+              disabled={isSearching}
+              className="px-4 py-2 bg-[#0f4d3a] hover:bg-[#145e48] text-white text-xs sm:text-sm font-semibold rounded-xl flex items-center gap-1.5 cursor-pointer disabled:opacity-60"
             >
               <Search className="w-4 h-4" />
-              <span>सत्यापित करें</span>
+              <span>{isSearching ? 'खोज रहे हैं...' : 'सत्यापित करें'}</span>
             </button>
           </form>
         </div>
 
         {/* Certificate Display Area */}
         <div className="p-4 sm:p-6 overflow-y-auto flex-1 flex flex-col items-center justify-center bg-stone-100">
-          {certificate ? (
+          {publicCert ? (
+            <div className="w-full max-w-xl bg-white border-2 border-[#0f4d3a] rounded-2xl p-6 shadow-md space-y-4">
+              <div className="flex items-center justify-between gap-2 pb-3 border-b border-stone-200">
+                <div className="flex items-center gap-2.5">
+                  <img
+                    src={TRUST_INFO.logoUrl}
+                    alt="Prabhu Ramji Trust Logo"
+                    className="w-11 h-11 rounded-full object-cover border border-amber-500 bg-[#08241b]"
+                  />
+                  <div>
+                    <div className="font-heading font-bold text-lg text-[#0f4d3a]">
+                      {publicCert.issuer}
+                    </div>
+                    <div className="text-[11px] text-stone-500">आधिकारिक डिजिटल प्रमाण-पत्र सत्यापन</div>
+                  </div>
+                </div>
+                <span
+                  className={`px-3 py-1 rounded-md text-xs font-extrabold inline-flex items-center gap-1 ${
+                    publicCert.status === 'valid'
+                      ? 'bg-emerald-700 text-white'
+                      : 'bg-red-700 text-white'
+                  }`}
+                >
+                  {publicCert.status === 'valid' ? (
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                  ) : (
+                    <XCircle className="w-3.5 h-3.5" />
+                  )}
+                  <span>{publicCert.status === 'valid' ? 'VALID' : 'REVOKED'}</span>
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
+                <div className="p-3 rounded-xl bg-stone-50 border border-stone-200">
+                  <span className="text-stone-500 text-xs block">प्रमाण-पत्र क्रमांक</span>
+                  <strong className="font-mono text-[#0f4d3a]">{publicCert.certificateNumber}</strong>
+                </div>
+                <div className="p-3 rounded-xl bg-stone-50 border border-stone-200">
+                  <span className="text-stone-500 text-xs block">प्राप्तकर्ता का नाम</span>
+                  <strong className="text-stone-900">{publicCert.recipientName}</strong>
+                </div>
+                <div className="p-3 rounded-xl bg-stone-50 border border-stone-200">
+                  <span className="text-stone-500 text-xs block">श्रेणी / प्रकार</span>
+                  <strong className="text-stone-900">{publicCert.category}</strong>
+                </div>
+                <div className="p-3 rounded-xl bg-stone-50 border border-stone-200">
+                  <span className="text-stone-500 text-xs block">जारी दिनांक</span>
+                  <strong className="font-mono text-stone-900">{publicCert.issueDate}</strong>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-2 text-xs text-stone-500">
+                <span>स्थिति: {publicCert.status === 'valid' ? 'वैध / सक्रिय' : 'रद्द (Revoked)'}</span>
+                <a
+                  href={`/verify/${encodeURIComponent(publicCert.certificateNumber)}`}
+                  className="font-bold text-[#0f4d3a] hover:underline"
+                >
+                  पूर्ण सत्यापन पेज खोलें →
+                </a>
+              </div>
+            </div>
+          ) : certificate ? (
             <div
               id="printable-certificate"
               className="w-full max-w-xl bg-[#FFFDF9] border-8 border-double border-amber-600/80 p-6 sm:p-8 rounded-lg shadow-lg relative text-center text-stone-800"
@@ -189,7 +275,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
         {/* Actions Footer */}
         <div className="p-3 bg-stone-100 border-t border-stone-200 flex justify-between items-center text-xs text-stone-600 shrink-0 no-print">
           <div>
-            {certificate && (
+            {(certificate || publicCert) && (
               <span className="text-emerald-700 font-semibold flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 <span>सत्यापित डिजिटल प्रमाण-पत्र</span>

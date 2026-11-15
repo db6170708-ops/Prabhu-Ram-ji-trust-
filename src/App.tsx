@@ -23,6 +23,7 @@ import { ComplaintFeedbackModal } from './components/ComplaintFeedbackModal';
 import { ConstructionProgressModal } from './components/ConstructionProgressModal';
 import { ServicesDetailModal } from './components/ServicesDetailModal';
 import { OfflineIndicator } from './components/OfflineIndicator';
+import { PublicVerifyPage } from './components/certificates/PublicVerifyPage';
 import { StorageService } from './utils/storage';
 import { useTimeTheme } from './utils/useTimeTheme';
 import { TRUST_INFO, DEFAULT_SEVA_PROJECTS } from './data/defaultData';
@@ -30,6 +31,12 @@ import { Language, TRANSLATIONS } from './utils/translations';
 import { getActiveLanguageCode } from './components/GoogleTranslateWidget';
 import { NewsItem, GalleryPhoto, GalleryVideo, TransparencyRecord, Official, DonationReceipt, SevaProject } from './types';
 import { MessageCircle, Heart, Phone, ArrowUp, Languages, Globe } from 'lucide-react';
+
+function extractVerifyCertFromPath(pathname: string): string | null {
+  const match = pathname.match(/^\/verify(?:\/([^/?#]+))?\/?$/i);
+  if (!match) return null;
+  return match[1] ? decodeURIComponent(match[1]) : '';
+}
 
 export default function App() {
   useTimeTheme();
@@ -58,6 +65,9 @@ export default function App() {
   const [donationCausePreselect, setDonationCausePreselect] = useState<string>('आश्रम एवं मंदिर निर्माण सहयोग');
   const [donationAmountPreselect, setDonationAmountPreselect] = useState<number>(1100);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [verifyRouteCertNo, setVerifyRouteCertNo] = useState<string | null>(() =>
+    extractVerifyCertFromPath(window.location.pathname)
+  );
 
   // Switch to any of the 17 languages
   const handleSelectLanguage = (nextLang: Language) => {
@@ -118,9 +128,15 @@ export default function App() {
       }
     };
 
+    const handlePopState = () => {
+      setVerifyRouteCertNo(extractVerifyCertFromPath(window.location.pathname));
+    };
+
+    window.addEventListener('popstate', handlePopState);
     window.addEventListener('prt-language-changed', handleLangChanged);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
+      window.removeEventListener('popstate', handlePopState);
       window.removeEventListener('prt-language-changed', handleLangChanged);
       window.removeEventListener('scroll', handleScroll);
     };
@@ -143,6 +159,25 @@ export default function App() {
     }
     scrollToSection('donate');
   };
+
+  const handleOpenPublicVerify = (certNo: string) => {
+    const clean = certNo.trim().toUpperCase();
+    window.history.pushState(null, '', `/verify/${encodeURIComponent(clean)}`);
+    setVerifyRouteCertNo(clean);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  if (verifyRouteCertNo !== null) {
+    return (
+      <PublicVerifyPage
+        initialCertificateNumber={verifyRouteCertNo}
+        onGoHome={() => {
+          window.history.pushState(null, '', '/');
+          setVerifyRouteCertNo(null);
+        }}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden flex flex-col time-bg font-sans">
@@ -304,6 +339,7 @@ export default function App() {
         isOpen={isAdminOpen}
         onClose={() => setIsAdminOpen(false)}
         onDataUpdated={refreshData}
+        onOpenPublicVerify={handleOpenPublicVerify}
       />
 
       <LegalModal

@@ -24,6 +24,7 @@ import { ConstructionProgressModal } from './components/ConstructionProgressModa
 import { ServicesDetailModal } from './components/ServicesDetailModal';
 import { OfflineIndicator } from './components/OfflineIndicator';
 import { PublicVerifyPage } from './components/certificates/PublicVerifyPage';
+import { CouponVerifyPage } from './components/luckydraw/CouponVerifyPage';
 import { StorageService } from './utils/storage';
 import { useTimeTheme } from './utils/useTimeTheme';
 import { TRUST_INFO, DEFAULT_SEVA_PROJECTS } from './data/defaultData';
@@ -34,6 +35,12 @@ import { MessageCircle, Heart, Phone, ArrowUp, Languages, Globe } from 'lucide-r
 
 function extractVerifyCertFromPath(pathname: string): string | null {
   const match = pathname.match(/^\/verify(?:\/([^/?#]+))?\/?$/i);
+  if (!match) return null;
+  return match[1] ? decodeURIComponent(match[1]) : '';
+}
+
+function extractVerifyCouponFromPath(pathname: string): string | null {
+  const match = pathname.match(/^\/verify-coupon(?:\/([^/?#]+))?\/?$/i);
   if (!match) return null;
   return match[1] ? decodeURIComponent(match[1]) : '';
 }
@@ -67,6 +74,9 @@ export default function App() {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [verifyRouteCertNo, setVerifyRouteCertNo] = useState<string | null>(() =>
     extractVerifyCertFromPath(window.location.pathname)
+  );
+  const [verifyRouteCouponNo, setVerifyRouteCouponNo] = useState<string | null>(() =>
+    extractVerifyCouponFromPath(window.location.pathname)
   );
 
   // Switch to any of the 17 languages
@@ -130,6 +140,7 @@ export default function App() {
 
     const handlePopState = () => {
       setVerifyRouteCertNo(extractVerifyCertFromPath(window.location.pathname));
+      setVerifyRouteCouponNo(extractVerifyCouponFromPath(window.location.pathname));
     };
 
     window.addEventListener('popstate', handlePopState);
@@ -163,9 +174,30 @@ export default function App() {
   const handleOpenPublicVerify = (certNo: string) => {
     const clean = certNo.trim().toUpperCase();
     window.history.pushState(null, '', `/verify/${encodeURIComponent(clean)}`);
+    setVerifyRouteCouponNo(null);
     setVerifyRouteCertNo(clean);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const handleOpenPublicCouponVerify = (couponNo: string) => {
+    const clean = couponNo.trim().toUpperCase();
+    window.history.pushState(null, '', `/verify-coupon/${encodeURIComponent(clean)}`);
+    setVerifyRouteCertNo(null);
+    setVerifyRouteCouponNo(clean);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  if (verifyRouteCouponNo !== null) {
+    return (
+      <CouponVerifyPage
+        initialCouponNumber={verifyRouteCouponNo}
+        onGoHome={() => {
+          window.history.pushState(null, '', '/');
+          setVerifyRouteCouponNo(null);
+        }}
+      />
+    );
+  }
 
   if (verifyRouteCertNo !== null) {
     return (
@@ -340,6 +372,7 @@ export default function App() {
         onClose={() => setIsAdminOpen(false)}
         onDataUpdated={refreshData}
         onOpenPublicVerify={handleOpenPublicVerify}
+        onOpenPublicCouponVerify={handleOpenPublicCouponVerify}
       />
 
       <LegalModal

@@ -50,11 +50,13 @@ import {
   CheckCircle2,
   XCircle,
   Clock,
-  Award
+  Award,
+  Ticket
 } from 'lucide-react';
 import { TRUST_INFO } from '../data/defaultData';
 import { sendReceiptEmail } from '../utils/emailService';
 import { CertificateManagementModule } from './certificates/CertificateManagementModule';
+import { LuckyDrawAdminModule } from './luckydraw/LuckyDrawAdminModule';
 import { CertificateApi, setStoredAdminToken } from '../utils/certificateApi';
 
 interface AdminPanelProps {
@@ -62,14 +64,15 @@ interface AdminPanelProps {
   onClose: () => void;
   onDataUpdated: () => void;
   onOpenPublicVerify?: (certNo: string) => void;
+  onOpenPublicCouponVerify?: (couponNo: string) => void;
 }
 
-export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataUpdated, onOpenPublicVerify }) => {
+export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataUpdated, onOpenPublicVerify, onOpenPublicCouponVerify }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [activeTab, setActiveTab] = useState<
-    'receipts' | 'certificates' | 'volunteers' | 'complaints' | 'construction' | 'gateway' | 'photos' | 'videos' | 'news' | 'transparency' | 'backup'
+    'receipts' | 'certificates' | 'lucky_draw' | 'volunteers' | 'complaints' | 'construction' | 'gateway' | 'photos' | 'videos' | 'news' | 'transparency' | 'backup'
   >('receipts');
   const [statusMessage, setStatusMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
 
@@ -783,6 +786,16 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
               </button>
 
               <button
+                onClick={() => setActiveTab('lucky_draw')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer ${
+                  activeTab === 'lucky_draw' ? 'bg-[#0f4d3a] text-white shadow-xs ring-1 ring-amber-400' : 'bg-amber-50 text-amber-950 hover:bg-amber-100 border border-amber-300'
+                }`}
+              >
+                <Ticket className="w-3.5 h-3.5 text-amber-600" />
+                <span>LUCKY DRAW LIVE CONTROL</span>
+              </button>
+
+              <button
                 onClick={() => setActiveTab('volunteers')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer ${
                   activeTab === 'volunteers' ? 'bg-[#0f4d3a] text-white shadow-xs ring-1 ring-amber-400' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
@@ -883,6 +896,17 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onDataU
                   onOpenPublicVerify={(certNo) => {
                     onClose();
                     if (onOpenPublicVerify) onOpenPublicVerify(certNo);
+                  }}
+                />
+              )}
+
+              {/* TAB: LUCKY DRAW LIVE CONTROL & DYNAMIC SAMPLE ENGINE */}
+              {activeTab === 'lucky_draw' && (
+                <LuckyDrawAdminModule
+                  onNotify={showStatus}
+                  onOpenPublicCouponVerify={(couponNo) => {
+                    onClose();
+                    if (onOpenPublicCouponVerify) onOpenPublicCouponVerify(couponNo);
                   }}
                 />
               )}

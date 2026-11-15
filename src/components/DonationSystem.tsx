@@ -32,6 +32,7 @@ import {
 } from 'lucide-react';
 import { sendReceiptEmail, getReceiptMailtoLink } from '../utils/emailService';
 import { TRANSLATIONS, Language } from '../utils/translations';
+import { LuckyDrawPublicSection } from './luckydraw/LuckyDrawPublicSection';
 
 interface DonationSystemProps {
   initialCause?: string;
@@ -658,6 +659,9 @@ export const DonationSystem: React.FC<DonationSystemProps> = ({
 
           </div>
         </div>
+
+        {/* Conditional Lucky Draw Coupon Booking Widget (Strictly Hidden While Default OFF) */}
+        <LuckyDrawPublicSection />
 
       </div>
 

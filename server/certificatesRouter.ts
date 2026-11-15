@@ -19,7 +19,7 @@ interface AdminTokenPayload {
   exp: number;
 }
 
-interface AuthenticatedRequest extends Request {
+export interface AuthenticatedRequest extends Request {
   admin?: AdminTokenPayload;
 }
 
@@ -61,7 +61,7 @@ function verifyAdminToken(token: string): AdminTokenPayload | null {
   }
 }
 
-function getClientIp(req: Request): string {
+export function getClientIp(req: Request): string {
   const fwd = req.headers['x-forwarded-for'];
   if (typeof fwd === 'string' && fwd.length > 0) {
     return fwd.split(',')[0].trim();
@@ -88,7 +88,7 @@ function recordAuditLog(
   }
 }
 
-function requireAdmin(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+export function requireAdmin(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization || '';
   const bearerToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
   const queryToken = typeof req.query.token === 'string' ? req.query.token.trim() : '';

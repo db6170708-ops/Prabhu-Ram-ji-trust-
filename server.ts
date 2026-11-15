@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
 import { initializeCertificateDatabase } from './server/db.js';
 import { createCertificatesRouter } from './server/certificatesRouter.js';
+import { createLuckyDrawRouter } from './server/luckyDrawRouter.js';
 
 dotenv.config();
 
@@ -16,8 +17,9 @@ initializeCertificateDatabase();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json({ limit: '6mb' }));
+app.use(express.json({ limit: '15mb' }));
 app.use('/api', createCertificatesRouter());
+app.use('/api', createLuckyDrawRouter());
 
 interface ReceiptPayload {
   receiptNo: string;

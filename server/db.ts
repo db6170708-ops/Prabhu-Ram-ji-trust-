@@ -220,6 +220,131 @@ export function initializeCertificateDatabase() {
     insertSig.run('श्री दिनेश जी', 'सचिव (Secretary)', 'प्रभु रामजी ट्रस्ट · ग्राम गलगाँव', 0, now);
     insertSig.run('श्रीमती चम्पा बाई', 'कोषाध्यक्ष (Treasurer)', 'प्रभु रामजी ट्रस्ट · ग्राम गलगाँव', 0, now);
   }
+
+  // Initialize Lucky Draw Database Tables (Default State = OFF)
+  initializeLuckyDrawDatabase();
+}
+
+export function initializeLuckyDrawDatabase() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS lucky_draw_settings (
+      id INTEGER PRIMARY KEY CHECK (id = 1),
+      master_enabled INTEGER NOT NULL DEFAULT 0,
+      homepage_visibility INTEGER NOT NULL DEFAULT 0,
+      booking_enabled INTEGER NOT NULL DEFAULT 0,
+      auto_coupon_generation INTEGER NOT NULL DEFAULT 0,
+      ticket_price INTEGER NOT NULL DEFAULT 200,
+      campaign_title TEXT NOT NULL DEFAULT 'प्रभु रामजी ट्रस्ट · पावन सेवा लकी ड्रॉ कूपन 2026',
+      campaign_subtitle TEXT NOT NULL DEFAULT 'आश्रम एवं गौसेवा निर्माण सहायतार्थ लकी ड्रॉ कूपन (₹200 प्रति कूपन)',
+      payment_gateway_mode TEXT NOT NULL DEFAULT 'test' CHECK (payment_gateway_mode IN ('test', 'live')),
+      payment_provider TEXT NOT NULL DEFAULT 'razorpay',
+      kyc_verified INTEGER NOT NULL DEFAULT 0,
+      legal_permission_verified INTEGER NOT NULL DEFAULT 0,
+      webhook_verified INTEGER NOT NULL DEFAULT 0,
+      webhook_secret TEXT NOT NULL DEFAULT '',
+      bank_verified INTEGER NOT NULL DEFAULT 0,
+      active_sample_id INTEGER DEFAULT NULL,
+      activated_at TEXT NOT NULL DEFAULT '',
+      activated_by TEXT NOT NULL DEFAULT '',
+      updated_at TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS lucky_draw_samples (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL UNIQUE,
+      sample_file_type TEXT NOT NULL DEFAULT 'image' CHECK (sample_file_type IN ('image', 'pdf')),
+      sample_data_url TEXT NOT NULL,
+      width_px INTEGER NOT NULL DEFAULT 1000,
+      height_px INTEGER NOT NULL DEFAULT 420,
+      number_prefix TEXT NOT NULL DEFAULT 'PRRT-LD-2026-',
+      pad_length INTEGER NOT NULL DEFAULT 4,
+      start_number INTEGER NOT NULL DEFAULT 1,
+      serial_x_pct REAL NOT NULL DEFAULT 72,
+      serial_y_pct REAL NOT NULL DEFAULT 24,
+      serial_font_size INTEGER NOT NULL DEFAULT 24,
+      serial_color TEXT NOT NULL DEFAULT '#0f4d3a',
+      name_x_pct REAL NOT NULL DEFAULT 28,
+      name_y_pct REAL NOT NULL DEFAULT 58,
+      name_font_size INTEGER NOT NULL DEFAULT 22,
+      name_color TEXT NOT NULL DEFAULT '#1c1917',
+      show_qr INTEGER NOT NULL DEFAULT 1,
+      qr_x_pct REAL NOT NULL DEFAULT 84,
+      qr_y_pct REAL NOT NULL DEFAULT 66,
+      qr_size_px INTEGER NOT NULL DEFAULT 72,
+      is_active INTEGER NOT NULL DEFAULT 0,
+      created_by TEXT NOT NULL DEFAULT 'Super Admin',
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS lucky_draw_payments (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      order_id TEXT NOT NULL UNIQUE,
+      payment_ref TEXT NOT NULL DEFAULT '',
+      buyer_name TEXT NOT NULL,
+      buyer_mobile TEXT NOT NULL,
+      buyer_email TEXT NOT NULL DEFAULT '',
+      quantity INTEGER NOT NULL DEFAULT 1,
+      amount INTEGER NOT NULL,
+      gateway_mode TEXT NOT NULL DEFAULT 'test',
+      payment_status TEXT NOT NULL DEFAULT 'pending' CHECK (payment_status IN ('pending', 'verified', 'failed')),
+      webhook_verified INTEGER NOT NULL DEFAULT 0,
+      webhook_signature TEXT NOT NULL DEFAULT '',
+      coupon_generated INTEGER NOT NULL DEFAULT 0,
+      notes TEXT NOT NULL DEFAULT '',
+      created_at TEXT NOT NULL,
+      verified_at TEXT NOT NULL DEFAULT ''
+    );
+
+    CREATE TABLE IF NOT EXISTS lucky_draw_coupons (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      coupon_number TEXT NOT NULL UNIQUE,
+      serial_seq INTEGER NOT NULL,
+      sample_id INTEGER NOT NULL,
+      number_prefix TEXT NOT NULL,
+      payment_id INTEGER NOT NULL,
+      order_id TEXT NOT NULL,
+      buyer_name TEXT NOT NULL,
+      buyer_mobile TEXT NOT NULL,
+      buyer_email TEXT NOT NULL DEFAULT '',
+      amount INTEGER NOT NULL,
+      status TEXT NOT NULL DEFAULT 'valid' CHECK (status IN ('valid', 'cancelled')),
+      issued_at TEXT NOT NULL,
+      FOREIGN KEY (sample_id) REFERENCES lucky_draw_samples(id),
+      FOREIGN KEY (payment_id) REFERENCES lucky_draw_payments(id),
+      UNIQUE (number_prefix, serial_seq)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_ld_coupons_number ON lucky_draw_coupons(coupon_number);
+    CREATE INDEX IF NOT EXISTS idx_ld_coupons_mobile ON lucky_draw_coupons(buyer_mobile);
+    CREATE INDEX IF NOT EXISTS idx_ld_coupons_order ON lucky_draw_coupons(order_id);
+    CREATE INDEX IF NOT EXISTS idx_ld_coupons_status ON lucky_draw_coupons(status);
+    CREATE INDEX IF NOT EXISTS idx_ld_coupons_issued ON lucky_draw_coupons(issued_at DESC);
+
+    CREATE TABLE IF NOT EXISTS lucky_draw_audit_logs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      action TEXT NOT NULL,
+      actor TEXT NOT NULL,
+      actor_role TEXT NOT NULL DEFAULT 'super_admin',
+      previous_state TEXT NOT NULL DEFAULT '',
+      new_state TEXT NOT NULL DEFAULT '',
+      details TEXT NOT NULL DEFAULT '',
+      ip_address TEXT NOT NULL DEFAULT '',
+      created_at TEXT NOT NULL
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_ld_audit_created_at ON lucky_draw_audit_logs(created_at DESC);
+  `);
+
+  const now = new Date().toISOString();
+  // Ensure default OFF row (id = 1) exists
+  db.prepare(
+    `INSERT OR IGNORE INTO lucky_draw_settings (
+      id, master_enabled, homepage_visibility, booking_enabled, auto_coupon_generation,
+      ticket_price, payment_gateway_mode, kyc_verified, legal_permission_verified,
+      webhook_verified, bank_verified, updated_at
+    ) VALUES (1, 0, 0, 0, 0, 200, 'test', 0, 0, 0, 0, ?)`
+  ).run(now);
 }
 
 export function generateNextCertificateNumber(yearOverride?: number): string {
@@ -241,3 +366,23 @@ export function generateNextCertificateNumber(yearOverride?: number): string {
   const nextNum = maxNum + 1;
   return `${prefix}${String(nextNum).padStart(4, '0')}`;
 }
+
+export function generateNextCouponSerial(
+  prefix: string,
+  padLength: number,
+  startNumber: number
+): { serialSeq: number; couponNumber: string } {
+  const cleanPrefix = prefix.trim() || 'PRRT-LD-2026-';
+  const row = db
+    .prepare('SELECT MAX(serial_seq) as max_seq FROM lucky_draw_coupons WHERE number_prefix = ?')
+    .get(cleanPrefix) as { max_seq: number | null } | undefined;
+
+  const currentMax = row?.max_seq ?? null;
+  const nextSeq = currentMax !== null ? currentMax + 1 : Math.max(1, startNumber || 1);
+  const pad = Math.min(Math.max(Number(padLength) || 4, 2), 10);
+  return {
+    serialSeq: nextSeq,
+    couponNumber: `${cleanPrefix}${String(nextSeq).padStart(pad, '0')}`,
+  };
+}
+

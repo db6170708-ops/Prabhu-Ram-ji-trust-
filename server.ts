@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
@@ -347,6 +348,33 @@ app.get('/api/smtp-config', (_req: Request, res: Response) => {
 // Health check endpoint
 app.get('/api/health', (_req: Request, res: Response) => {
   res.json({ status: 'ok', service: 'Prabhu Ramji Trust API', timestamp: new Date().toISOString() });
+});
+
+// Explicit SEO endpoints so Googlebot always gets crisp XML/TXT (never HTML fallback)
+app.get('/sitemap.xml', (_req: Request, res: Response) => {
+  const distPath = path.join(__dirname, 'dist', 'sitemap.xml');
+  const publicPath = path.join(__dirname, 'public', 'sitemap.xml');
+  const filePath = fs.existsSync(distPath) ? distPath : publicPath;
+  if (fs.existsSync(filePath)) {
+    res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.sendFile(filePath);
+    return;
+  }
+  res.status(404).send('Sitemap not found');
+});
+
+app.get('/robots.txt', (_req: Request, res: Response) => {
+  const distPath = path.join(__dirname, 'dist', 'robots.txt');
+  const publicPath = path.join(__dirname, 'public', 'robots.txt');
+  const filePath = fs.existsSync(distPath) ? distPath : publicPath;
+  if (fs.existsSync(filePath)) {
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.sendFile(filePath);
+    return;
+  }
+  res.status(404).send('Robots.txt not found');
 });
 
 // Development vs Production static / vite serving

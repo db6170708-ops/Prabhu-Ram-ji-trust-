@@ -37,6 +37,77 @@ export const getActiveLanguageCode = (): string => {
   return localStorage.getItem('prt_google_lang') || localStorage.getItem('prt_language') || 'hi';
 };
 
+declare global {
+  interface Window {
+    googleTranslateElementInit?: () => void;
+    google?: any;
+  }
+}
+
+function isSearchCrawler(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  return /googlebot|bingbot|yandex|baiduspider|duckduckbot|slurp|crawler|spider|headlesschrome|lighthouse/i.test(
+    navigator.userAgent || ''
+  );
+}
+
+let translateScriptLoading = false;
+
+function ensureGoogleTranslateLoaded(onReady?: () => void) {
+  if (typeof window === 'undefined' || isSearchCrawler()) return;
+
+  if (!document.getElementById('google_translate_element')) {
+    const mount = document.createElement('div');
+    mount.id = 'google_translate_element';
+    mount.style.cssText = 'display:none;position:absolute;top:-9999px;left:-9999px;visibility:hidden;height:0;width:0;';
+    document.body.appendChild(mount);
+  }
+
+  if (window.google?.translate?.TranslateElement) {
+    if (!document.querySelector('.goog-te-combo')) {
+      new window.google.translate.TranslateElement(
+        {
+          pageLanguage: 'hi',
+          includedLanguages: 'hi,en,gu,mr,pa,bn,ta,te,kn,ml,or,as,ur,sa,ne,sd,gom',
+          autoDisplay: false,
+        },
+        'google_translate_element'
+      );
+    }
+    if (onReady) setTimeout(onReady, 150);
+    return;
+  }
+
+  window.googleTranslateElementInit = function () {
+    if (window.google?.translate?.TranslateElement) {
+      new window.google.translate.TranslateElement(
+        {
+          pageLanguage: 'hi',
+          includedLanguages: 'hi,en,gu,mr,pa,bn,ta,te,kn,ml,or,as,ur,sa,ne,sd,gom',
+          autoDisplay: false,
+        },
+        'google_translate_element'
+      );
+      if (onReady) setTimeout(onReady, 250);
+    }
+  };
+
+  if (!translateScriptLoading && !document.getElementById('prt-google-translate-js')) {
+    translateScriptLoading = true;
+    const script = document.createElement('script');
+    script.id = 'prt-google-translate-js';
+    script.type = 'text/javascript';
+    script.async = true;
+    script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+    script.onerror = () => {
+      translateScriptLoading = false;
+    };
+    document.body.appendChild(script);
+  } else if (onReady) {
+    setTimeout(onReady, 350);
+  }
+}
+
 export const changeGoogleTranslateLanguage = (langCode: string) => {
   localStorage.setItem('prt_google_lang', langCode);
   localStorage.setItem('prt_language', langCode);
@@ -69,31 +140,44 @@ export const changeGoogleTranslateLanguage = (langCode: string) => {
     }
   }
 
-  // Trigger Google Translate Combo if available
-  const selectEl = document.querySelector('.goog-te-combo') as HTMLSelectElement | null;
-  if (selectEl) {
-    if (langCode === 'hi') {
-      // Restore original Hindi cleanly
-      const bannerFrame = document.querySelector('.goog-te-banner-frame, iframe.VIpgJd-ZVi9od-ORHb-OEVmcd') as HTMLIFrameElement | null;
-      const restoreBtn = bannerFrame?.contentDocument?.querySelector('#\\:1\\.restore, button[id$=".restore"]') as HTMLElement | null;
-      if (restoreBtn) {
-        restoreBtn.click();
+  const applySelection = () => {
+    const selectEl = document.querySelector('.goog-te-combo') as HTMLSelectElement | null;
+    if (selectEl) {
+      if (langCode === 'hi') {
+        const bannerFrame = document.querySelector('.goog-te-banner-frame, iframe.VIpgJd-ZVi9od-ORHb-OEVmcd') as HTMLIFrameElement | null;
+        const restoreBtn = bannerFrame?.contentDocument?.querySelector('#\\:1\\.restore, button[id$=".restore"]') as HTMLElement | null;
+        if (restoreBtn) {
+          restoreBtn.click();
+          return;
+        }
+        selectEl.value = '';
+        selectEl.dispatchEvent(new Event('change'));
+        if (document.documentElement.classList.contains('translated-ltr') || document.documentElement.classList.contains('translated-rtl')) {
+          window.location.reload();
+        }
         return;
       }
-      selectEl.value = '';
-      selectEl.dispatchEvent(new Event('change'));
-      // If page was already translated by Google Translate, reload cleanly to restore pristine Hindi
-      if (document.documentElement.classList.contains('translated-ltr') || document.documentElement.classList.contains('translated-rtl')) {
-        window.location.reload();
-      }
-      return;
-    }
 
-    selectEl.value = langCode;
-    selectEl.dispatchEvent(new Event('change'));
-  } else if (langCode !== 'hi') {
-    // Reload page to let Google Translate initialize with the new cookie if script wasn't ready
-    window.location.reload();
+      selectEl.value = langCode;
+      selectEl.dispatchEvent(new Event('change'));
+    } else if (langCode !== 'hi') {
+      // Wait briefly if script just finished loading, otherwise reload with cookie
+      setTimeout(() => {
+        const retrySelect = document.querySelector('.goog-te-combo') as HTMLSelectElement | null;
+        if (retrySelect) {
+          retrySelect.value = langCode;
+          retrySelect.dispatchEvent(new Event('change'));
+        } else {
+          window.location.reload();
+        }
+      }, 600);
+    }
+  };
+
+  if (langCode === 'hi') {
+    applySelection();
+  } else {
+    ensureGoogleTranslateLoaded(applySelection);
   }
 };
 
@@ -113,6 +197,11 @@ export const GoogleTranslateWidget: React.FC<GoogleTranslateWidgetProps> = ({
   useEffect(() => {
     const current = getActiveLanguageCode();
     setSelectedLang(current);
+
+    // If a returning human user previously picked a non-Hindi language, lazy-load translate now
+    if (current && current !== 'hi' && !isSearchCrawler()) {
+      ensureGoogleTranslateLoaded();
+    }
 
     const suppressGoogleBanner = () => {
       if (document.body && document.body.style.top && document.body.style.top !== '0px') {

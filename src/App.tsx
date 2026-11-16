@@ -49,9 +49,35 @@ export default function App() {
   useTimeTheme();
   const [activeSection, setActiveSection] = useState('home');
   const [language, setLanguage] = useState<Language>(() => {
+    const urlLang = new URLSearchParams(window.location.search).get('lang');
+    if (urlLang && urlLang.trim()) {
+      return urlLang.trim().toLowerCase() as Language;
+    }
     return getActiveLanguageCode() || 'hi';
   });
   const t = TRANSLATIONS[language] || TRANSLATIONS['hi'];
+
+  useEffect(() => {
+    document.documentElement.lang = language === 'en' ? 'en' : 'hi';
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (language === 'en') {
+      document.title = 'Prabhu Ram Ji Trust | Official Bilingual Website – Galgaon, Sanawad';
+      if (metaDesc) {
+        metaDesc.setAttribute(
+          'content',
+          'Welcome to the official website of Prabhu Ram Ji Trust. Explore our religious service, gaushala, annadan, mission, ashram work, and trust updates online.'
+        );
+      }
+    } else {
+      document.title = 'प्रभु रामजी ट्रस्ट | Prabhu Ram Ji Trust – Official Website';
+      if (metaDesc) {
+        metaDesc.setAttribute(
+          'content',
+          'प्रभु रामजी ट्रस्ट (Prabhu Ram Ji Trust) की आधिकारिक वेबसाइट। धार्मिक सेवा, गौसेवा, अन्नदान, आश्रम निर्माण, कार्य व ट्रस्ट अपडेट्स की संपूर्ण जानकारी यहाँ देखें।'
+        );
+      }
+    }
+  }, [language]);
 
   const [news, setNews] = useState<NewsItem[]>([]);
   const [photos, setPhotos] = useState<GalleryPhoto[]>([]);

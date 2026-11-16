@@ -73,7 +73,7 @@ export default function App() {
       if (metaDesc) {
         metaDesc.setAttribute(
           'content',
-          'प्रभु रामजी ट्रस्ट (Prabhu Ram Ji Trust) की आधिकारिक वेबसाइट। धार्मिक सेवा, गौसेवा, अन्नदान, आश्रम निर्माण, कार्य व ट्रस्ट अपडेट्स की संपूर्ण जानकारी यहाँ देखें।'
+          'Prabhu Ram Ji Trust (प्रभु रामजी ट्रस्ट) Official Website - Dharmik Sewa, गौसेवा, अन्नदान, आश्रम निर्माण, सेवा कार्य व ट्रस्ट के नए updates यहाँ देखें।'
         );
       }
     }

@@ -31,14 +31,14 @@
       gtag('js', new Date());
     </script>
 
-    <!-- Primary Crisp PNG & ICO Icons for Mobile Launchers, Google Search Favicon & Apple Touch Icon -->
+    <!-- Primary Crisp PNG & Genuine ICO Icons (48px multiples first per Google Search Favicon Guidelines) -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/pwa-192x192.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/pwa-512x512.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
-    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
-    <link rel="icon" type="image/png" sizes="192x192" href="/pwa-192x192.png" />
-    <link rel="icon" type="image/png" sizes="512x512" href="/pwa-512x512.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="apple-touch-startup-image" href="/splash-1170x2532.png" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" />
     <link rel="apple-touch-startup-image" href="/splash-screen.png" />
@@ -74,10 +74,7 @@
     <meta name="twitter:image" content="https://prabhuramjitrustram.ai.studio/pwa-512x512.png" />
     <meta name="twitter:image:alt" content="Prabhu Ram Ji Trust Official Logo" />
 
-    <!-- Google Fonts for Sacred Hindi Devanagari and Modern Typography -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Martel:wght@400;600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Rozha+One&family=Yatra+One&display=swap" rel="stylesheet">
+    <!-- Native System Fonts (Devanagari + Latin) — Zero external font requests for instant load & clean Search Console crawl -->
 
     <!-- Schema.org Structured Data (JSON-LD) for Google Search Logo, Rich Results & Knowledge Panel -->
     <script type="application/ld+json">
@@ -85,9 +82,10 @@
       "@context": "https://schema.org",
       "@graph": [
         {
-          "@type": ["Organization", "NGO"],
+          "@type": "Organization",
+          "additionalType": "https://schema.org/NGO",
           "@id": "https://prabhuramjitrustram.ai.studio/#organization",
-          "name": "प्रभु रामजी ट्रस्ट (Prabhu Ram Ji Trust)",
+          "name": "Prabhu Ram Ji Trust",
           "alternateName": [
             "Prabhu Ram Ji Trust",
             "प्रभु रामजी ट्रस्ट",

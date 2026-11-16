@@ -3,9 +3,9 @@
 
 @layer base {
   :root {
-    --font-hindi: 'Noto Sans Devanagari', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    --font-heading: 'Rozha One', 'Martel', 'Yatra One', serif;
-    --font-serif: 'Martel', 'Rozha One', serif;
+    --font-hindi: system-ui, -apple-system, BlinkMacSystemFont, 'Nirmala UI', 'Kohinoor Devanagari', 'Segoe UI', Roboto, Arial, sans-serif;
+    --font-heading: 'Kohinoor Devanagari', 'Nirmala UI', Georgia, 'Times New Roman', serif;
+    --font-serif: 'Kohinoor Devanagari', 'Nirmala UI', Georgia, 'Times New Roman', serif;
 
     /* Default Time Theme Variables (Morning) */
     --time-bg: #FFF8E7;

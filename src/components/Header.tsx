@@ -94,7 +94,7 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
             
             {/* Social Channels Pill Box */}
-            <div className="flex items-center gap-1 bg-black/35 px-2.5 py-1 rounded-full border border-amber-400/30">
+            <div className="flex flex-wrap items-center justify-center gap-1 bg-black/35 px-2.5 py-1 rounded-full border border-amber-400/30">
               {/* YouTube */}
               <a
                 href={TRUST_INFO.youtube}
@@ -141,6 +141,34 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 <Facebook className="w-3.5 h-3.5 text-blue-400" />
                 <span className="hidden sm:inline">Facebook</span>
+              </a>
+
+              {/* X (Twitter) */}
+              <a
+                href={TRUST_INFO.x}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-stone-700/40 hover:bg-black text-stone-200 hover:text-white transition-all text-[11px] font-semibold"
+                title="X (Twitter)"
+              >
+                <svg viewBox="0 0 24 24" className="w-3 h-3 fill-current" aria-hidden="true">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
+                <span className="hidden md:inline">X</span>
+              </a>
+
+              {/* Threads */}
+              <a
+                href={TRUST_INFO.threads}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-zinc-700/40 hover:bg-zinc-900 text-zinc-200 hover:text-white transition-all text-[11px] font-semibold"
+                title="Threads"
+              >
+                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current" aria-hidden="true">
+                  <path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.964-.065-1.19.408-2.285 1.33-3.082.88-.76 2.119-1.207 3.583-1.291a13.853 13.853 0 0 1 3.02.142c-.126-.742-.375-1.332-.75-1.757-.513-.586-1.308-.883-2.359-.89h-.029c-.844 0-1.992.232-2.721 1.32l-1.757-1.182c.98-1.454 2.513-2.259 4.448-2.259h.048c3.194.02 5.094 1.988 5.382 5.437.338.15.654.324.946.523 1.283.868 2.138 2.085 2.473 3.52.548 2.345-.19 4.92-1.98 6.672C18.001 23.164 15.69 23.978 12.186 24Zm.143-8.198c-.974.054-1.69.314-2.126.774-.415.438-.582.976-.553 1.505.055.995.924 1.737 2.266 1.664 1.448-.079 2.435-.906 2.743-2.463a11.093 11.093 0 0 0-2.33.52Z" />
+                </svg>
+                <span className="hidden md:inline">Threads</span>
               </a>
             </div>
 
@@ -393,7 +421,7 @@ export const Header: React.FC<HeaderProps> = ({
               <p className="text-[11px] font-semibold text-stone-500 dark:text-stone-400 mb-2 text-center">
                 आधिकारिक सोशल मीडिया माध्यम
               </p>
-              <div className="flex items-center justify-center gap-3">
+              <div className="flex flex-wrap items-center justify-center gap-3">
                 <a
                   href={TRUST_INFO.youtube}
                   target="_blank"
@@ -429,6 +457,28 @@ export const Header: React.FC<HeaderProps> = ({
                   title="Facebook"
                 >
                   <Facebook className="w-4 h-4" />
+                </a>
+                <a
+                  href={TRUST_INFO.x}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-full bg-stone-200 dark:bg-stone-800 text-stone-800 dark:text-stone-200 hover:bg-stone-300 dark:hover:bg-stone-700"
+                  title="X (Twitter)"
+                >
+                  <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" aria-hidden="true">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                  </svg>
+                </a>
+                <a
+                  href={TRUST_INFO.threads}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-full bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-300 dark:hover:bg-zinc-700"
+                  title="Threads"
+                >
+                  <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" aria-hidden="true">
+                    <path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.964-.065-1.19.408-2.285 1.33-3.082.88-.76 2.119-1.207 3.583-1.291a13.853 13.853 0 0 1 3.02.142c-.126-.742-.375-1.332-.75-1.757-.513-.586-1.308-.883-2.359-.89h-.029c-.844 0-1.992.232-2.721 1.32l-1.757-1.182c.98-1.454 2.513-2.259 4.448-2.259h.048c3.194.02 5.094 1.988 5.382 5.437.338.15.654.324.946.523 1.283.868 2.138 2.085 2.473 3.52.548 2.345-.19 4.92-1.98 6.672C18.001 23.164 15.69 23.978 12.186 24Zm.143-8.198c-.974.054-1.69.314-2.126.774-.415.438-.582.976-.553 1.505.055.995.924 1.737 2.266 1.664 1.448-.079 2.435-.906 2.743-2.463a11.093 11.093 0 0 0-2.33.52Z" />
+                  </svg>
                 </a>
               </div>
             </div>

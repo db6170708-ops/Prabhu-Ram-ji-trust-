@@ -57,6 +57,8 @@ export const TRUST_INFO = {
   youtube: "https://youtube.com/@ramjitrust?si=4jFyZIqtamM7oxE4",
   facebook: "https://www.facebook.com/share/1FJX1492GR/",
   instagram: "https://www.instagram.com/prabhushriramtrust?srtk=MTIxZng4dnBwa21kag==",
+  x: "https://x.com/PrabhuRamjj4",
+  threads: "https://www.threads.com/@prabhushriramtrust",
   
   taxExemptionStatus: "पंजीकरण 12AB एवं 80G आयकर विभाग में प्रक्रियाधीन है। ट्रस्ट पूर्ण वित्तीय शुचिता और नैतिक नियमों का पालन करता है।"
 };
